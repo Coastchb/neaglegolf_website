@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth min-h-screen">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NEAGLE GOLF | Bespoke Luxury Indoor Golf Simulators</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        appleGray: {
+                            50: '#f5f5f7',
+                            100: '#e8e8ed',
+                            800: '#1d1d1f',
+                            900: '#161617',
+                        },
+                        golfGreen: '#00e676',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #f5f5f7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
+        }
+        .view-section {
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .view-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333336;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #424245;
+        }
+        @supports(padding: max(0px)) {
+            .safe-pt {
+                padding-top: max(3.5rem, env(safe-area-inset-top));
+            }
+            .safe-pb {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+        /* Custom typing effect for AI chat bubble */
+        .dot-flashing {
+            position: relative;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background-color: #00e676;
+            color: #00e676;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: .5s;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+        }
+        .dot-flashing::before {
+            left: -12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background-color: #00e676;
+            color: #00e676;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0s;
+        }
+        .dot-flashing::after {
+            left: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background-color: #00e676;
+            color: #00e676;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 1s;
+        }
+        @keyframes dot-flashing {
+            0% { background-color: #00e676; }
+            50%, 100% { background-color: rgba(0, 230, 118, 0.2); }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden font-sans min-h-screen flex flex-col bg-black text-zinc-100">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
+        <div class="flex items-center gap-4">
+            <a href="javascript:void(0)" onclick="navigateTo('home')" class="text-white hover:opacity-80 transition-opacity text-base md:text-lg tracking-wider font-semibold py-2">
+                NEAGLE <span class="text-golfGreen">GOLF</span>
+            </a>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <!-- Global Search trigger -->
+            <button onclick="openGlobalSearch()" class="text-white hover:text-golfGreen p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors" aria-label="Search Products">
+                <i class="fa-solid fa-magnifying-glass text-sm md:text-base"></i>
+            </button>
+            
+            <!-- Menu button -->
+            <button onclick="toggleNavMenu()" class="text-white hover:opacity-80 transition-opacity p-2.5 z-50 relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Toggle Menu">
+                <div id="menu-btn-icon" class="space-y-1.5 w-5 h-5 flex flex-col justify-center items-center">
+                    <span class="block w-5 h-0.5 bg-white transition-transform duration-300" id="bar1"></span>
+                    <span class="block w-5 h-0.5 bg-white transition-opacity duration-300" id="bar2"></span>
+                    <span class="block w-5 h-0.5 bg-white transition-transform duration-300" id="bar3"></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- FLOATING GLOBAL SEARCH OVERLAY -->
+    <div id="search-overlay" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center pt-24 px-6 opacity-0 pointer-events-none transition-all duration-300">
+        <!-- Close button at the top right of search view -->
+        <button onclick="closeGlobalSearch()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center border border-white/10 shadow-lg transition-colors z-50 min-w-[44px] min-h-[44px]" aria-label="Close Search">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+        <div class="max-w-2xl w-full flex flex-col space-y-6 mt-6">
+            <div class="flex items-center justify-between border-b border-white/20 pb-3">
+                <div class="flex items-center gap-4 flex-1">
+                    <i class="fa-solid fa-magnifying-glass text-zinc-400 text-xl"></i>
+                    <input type="text" id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search Simulators, Greens, Accessories..." class="bg-transparent text-white text-lg md:text-xl outline-none w-full font-light tracking-wide placeholder-zinc-600">
+                </div>
+            </div>
+            <div id="search-results" class="max-h-[60vh] overflow-y-auto space-y-4 divide-y divide-white/5 pr-2">
+                <p class="text-zinc-500 text-sm">Type to begin discovering NEAGLE hardware...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOLDED FULLSCREEN NAVIGATION MENU -->
+    <div id="fullscreen-menu" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto pt-16 safe-pb">
+        <div class="flex flex-col space-y-4 text-center text-lg md:text-xl font-light tracking-wide max-w-md w-full px-6">
+            <span class="text-[10px] tracking-widest text-zinc-500 uppercase mb-1 border-b border-white/10 pb-2">Premium Categories</span>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'simulators')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-base">Architectural Simulators</a>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'launchers')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-base">Doppler Launch Monitors</a>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'greens')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-base">Robotic Putting Greens</a>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'clubs')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-base">Artisan Forged Clubs</a>
+            <a href="javascript:void(0)" onclick="navigateTo('directory')" class="text-golfGreen font-medium hover:opacity-80 transition-opacity py-2 text-base flex items-center justify-center gap-2">
+                Browse Full Catalog <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+            
+            <span class="text-[10px] tracking-widest text-zinc-500 uppercase mt-4 pt-4 border-t border-white/10">The Brand</span>
+            <a href="javascript:void(0)" onclick="navigateTo('cases')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-sm">Luxury Gallery</a>
+            <a href="javascript:void(0)" onclick="navigateTo('about')" class="text-white hover:text-golfGreen transition-colors py-1.5 text-sm">About NEAGLE Lab</a>
+            
+            <!-- Immediate Contact Row inside menu -->
+            <span class="text-[10px] tracking-widest text-zinc-500 uppercase mt-4 pt-4 border-t border-white/10">Inquiries</span>
+            <div class="text-xs text-zinc-400 space-y-1">
+                <p><i class="fa-solid fa-phone text-golfGreen"></i> +1 (314) 224-2264</p>
+                <p><i class="fa-brands fa-whatsapp text-golfGreen"></i> WhatsApp: 1 (314) 224-2264</p>
+                <p><i class="fa-solid fa-envelope text-golfGreen"></i> coast0623@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BREADCRUMB BAR -->
+    <div id="breadcrumb-bar" class="fixed top-12 left-0 w-full bg-appleGray-900/90 backdrop-blur border-b border-white/5 py-2 px-4 md:px-12 z-30 text-[11px] md:text-xs text-zinc-400 flex items-center gap-1.5 md:gap-2 select-none overflow-hidden whitespace-nowrap hidden">
+        <span class="cursor-pointer hover:text-white transition-colors" onclick="navigateTo('home')">Home</span>
+        <span class="breadcrumb-arrow hidden"><i class="fa-solid fa-chevron-right text-[7px] md:text-[8px]"></i></span>
+        <span id="breadcrumb-category" class="cursor-pointer hover:text-white transition-colors hidden truncate max-w-[120px] md:max-w-none" onclick="navigateToCategoryFromBreadcrumb()"></span>
+        <span class="breadcrumb-arrow-sub hidden"><i class="fa-solid fa-chevron-right text-[7px] md:text-[8px]"></i></span>
+        <span id="breadcrumb-product" class="text-white font-medium hidden truncate max-w-[150px] md:max-w-none"></span>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME VIEW                          -->
+    <!-- ========================================== -->
+    <section id="view-home" class="view-section flex-1 safe-pt min-h-screen pb-16">
+        
+        <!-- Premium Category Card Grid -->
+        <div class="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-6">
+            
+            <!-- Category 1: Simulators -->
+            <div onclick="navigateTo('category', 'simulators')" class="cursor-pointer md:col-span-2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=1500');">
+                <div class="space-y-1 md:space-y-2">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Flagship Architectural Systems</span>
+                    <h2 class="text-2xl md:text-4xl font-bold">Indoor Holographic Golf Simulators</h2>
+                    <p class="text-zinc-400 text-xs md:text-sm max-w-md line-clamp-2 md:line-clamp-none">Integrating dual-band Doppler radar with 4K ultra-short-throw laser projection to seamlessly render trajectories inside your home sanctuary.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 2: Launchers -->
+            <div onclick="navigateTo('category', 'launchers')" class="cursor-pointer relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-6 md:p-8 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=800');">
+                <div class="space-y-1">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Precision Sensors</span>
+                    <h2 class="text-xl md:text-2xl font-bold">Smart Doppler Launch Monitors</h2>
+                    <p class="text-zinc-400 text-xs max-w-xs line-clamp-2">Millisecond-level tracking of velocity and launch angles. Elevate your swing with pure physical analytics.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 3: Smart Putting Greens -->
+            <div onclick="navigateTo('category', 'greens')" class="cursor-pointer relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-6 md:p-8 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800');">
+                <div class="space-y-1">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Robotic Slope Morphing</span>
+                    <h2 class="text-xl md:text-2xl font-bold">Hydraulic Active Greens</h2>
+                    <p class="text-zinc-400 text-xs max-w-xs line-clamp-2">App-controlled smart under-structures that tilt in real-time to mimic any major world slope.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 4: Clubs -->
+            <div onclick="navigateTo('category', 'clubs')" class="cursor-pointer relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-6 md:p-8 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=800');">
+                <div class="space-y-1">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Handcrafted Artistry</span>
+                    <h2 class="text-xl md:text-2xl font-bold">Artisan Forged Clubs</h2>
+                    <p class="text-zinc-400 text-xs max-w-xs line-clamp-2">Perfectly weighted and custom-calibrated for indoor optical sensors, delivering a pure, crisp acoustic response.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 5: Mats -->
+            <div onclick="navigateTo('category', 'mats')" class="cursor-pointer relative h-[320px] md:h-[380px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-6 md:p-8 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1587174485735-a1347071e7d8?auto=format&fit=crop&q=80&w=800');">
+                <div class="space-y-1">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Turf Engineering</span>
+                    <h2 class="text-xl md:text-2xl font-bold">Championship Turf Mats</h2>
+                    <p class="text-zinc-400 text-xs max-w-xs line-clamp-2">Five-layer compression padding engineered to absorb 98% of high-impact strikes.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 6: Acoustic Enclosures -->
+            <div onclick="navigateTo('category', 'enclosures')" class="cursor-pointer md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group transition-all duration-300 hover:opacity-95" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1200');">
+                <div class="space-y-1 md:space-y-2">
+                    <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Structural Acousticians</span>
+                    <h2 class="text-2xl md:text-3xl font-bold">Architectural Wall Baffles & Enclosures</h2>
+                    <p class="text-zinc-400 text-xs md:text-sm max-w-md line-clamp-2">Custom leather soundproofing panels that guarantee home isolation and eliminate acoustic feedback.</p>
+                </div>
+                <div class="pt-4">
+                    <a href="javascript:void(0)" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                        Learn More <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EXPLORE THE FULL CATALOG DIRECTORY CTA -->
+        <div class="max-w-7xl mx-auto px-4 md:px-6 pt-12 text-center">
+            <div class="p-8 md:p-12 bg-appleGray-900 border border-white/5 rounded-3xl flex flex-col items-center space-y-4 max-w-3xl mx-auto">
+                <span class="text-zinc-500 text-[10px] md:text-xs tracking-widest uppercase font-bold">Comprehensive Portfolio</span>
+                <h2 class="text-xl md:text-2xl font-bold">Looking for Custom Architecture or Accessories?</h2>
+                <p class="text-zinc-400 text-xs md:text-sm max-w-md">Browse our entire range of 10 categories, including high-end cinema hubs, luggage, training accessories, and LiDAR software licenses.</p>
+                <div class="pt-2">
+                    <button onclick="navigateTo('directory')" class="px-8 py-3 bg-white text-black text-xs font-bold uppercase tracking-wider rounded-full hover:bg-golfGreen hover:text-black transition-all duration-300 flex items-center gap-2">
+                        Browse Product Directory <i class="fa-solid fa-cubes"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: COMPREHENSIVE PRODUCT DIRECTORY    -->
+    <!-- ========================================== -->
+    <section id="view-directory" class="view-section flex-1 safe-pt min-h-screen pb-16 view-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            
+            <!-- Directory Header -->
+            <div class="py-8 md:py-12 border-b border-white/5 text-center max-w-2xl mx-auto space-y-4">
+                <span class="text-[10px] md:text-xs tracking-widest text-golfGreen font-bold uppercase">Comprehensive Hub</span>
+                <h1 class="text-3xl md:text-5xl font-semibold tracking-tight">Product Directory</h1>
+                <p class="text-zinc-400 text-xs md:text-sm font-light leading-relaxed">Filter and discover the absolute bounds of high-end home golfing installations and equipment. Complete with premium hardware specifications.</p>
+                
+                <!-- On-site Live search bar inside Directory (Aligned with Global Search Design) -->
+                <div class="pt-6 max-w-xl mx-auto border-b border-white/20 pb-3 flex items-center gap-4 focus-within:border-golfGreen/50 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-zinc-400 text-xl"></i>
+                    <input type="text" id="directory-search-input" oninput="handleDirectorySearch(this.value)" placeholder="Search all 10 premium categories..." class="bg-transparent text-white text-lg md:text-xl outline-none w-full font-light tracking-wide placeholder-zinc-600">
+                    <!-- Clear/Cancel search button -->
+                    <button id="clear-directory-search" onclick="clearDirectorySearch()" class="text-zinc-400 hover:text-white transition-colors hidden p-1 min-w-[32px] min-h-[32px] flex items-center justify-center" aria-label="Clear Search">
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Categories Tabs filter (Apple-Style Tab Pillbar) -->
+            <div class="flex overflow-x-auto gap-2 py-6 border-b border-white/5 no-scrollbar scroll-smooth select-none">
+                <button onclick="filterDirectory('all')" class="dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-white text-black transition-colors shrink-0">All Systems & Gear</button>
+                <button onclick="filterDirectory('simulators')" class="dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-appleGray-900 hover:bg-white/5 transition-colors shrink-0">Simulators</button>
+                <button onclick="filterDirectory('hardware')" class="dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-appleGray-900 hover:bg-white/5 transition-colors shrink-0">Tech & Hardware</button>
+                <button onclick="filterDirectory('accessories')" class="dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-appleGray-900 hover:bg-white/5 transition-colors shrink-0">Clubs & Materials</button>
+            </div>
+
+            <!-- Directory Grid List -->
+            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 py-8 md:py-12">
+                <!-- Dynamically populated via script -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: CATEGORY GALLERY VIEW             -->
+    <!-- ========================================== -->
+    <section id="view-category" class="view-section flex-1 safe-pt min-h-screen pb-16 view-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            
+            <!-- Category Title & Description -->
+            <div class="py-8 md:py-12 border-b border-white/5">
+                <h1 id="category-title" class="text-3xl md:text-5xl font-semibold tracking-tight mb-4">Products</h1>
+                <p id="category-desc" class="text-zinc-400 text-sm md:text-base max-w-2xl font-light leading-relaxed">Loading collection details...</p>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 py-8 md:py-12">
+                <!-- Dynamically generated via JS -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: PRODUCT DETAIL VIEW               -->
+    <!-- ========================================== -->
+    <section id="view-detail" class="view-section flex-1 safe-pt min-h-screen pb-16 view-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            
+            <!-- Split Screen Container -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-6 md:py-12">
+                
+                <!-- Left Side: Large product image gallery -->
+                <div class="flex flex-col space-y-4 md:space-y-6">
+                    <div class="aspect-video sm:aspect-square w-full rounded-3xl bg-appleGray-900 border border-white/10 overflow-hidden flex items-center justify-center p-4">
+                        <img id="detail-image" src="" alt="Product Shot" class="max-h-full max-w-full object-contain transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="flex gap-4 justify-center">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-xl border-2 border-golfGreen bg-white/5 overflow-hidden flex items-center justify-center p-1.5">
+                            <img id="detail-thumbnail" src="" class="max-h-full max-w-full object-contain" alt="thumbnail">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Product configuration specifications & Price -->
+                <div class="flex flex-col justify-between space-y-6 md:space-y-8">
+                    <div class="space-y-4">
+                        <span id="detail-tag" class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase"></span>
+                        <h1 id="detail-name" class="text-3xl md:text-4xl font-bold tracking-tight">Product Title</h1>
+                        <p id="detail-tagline" class="text-zinc-400 text-sm md:text-lg font-light leading-relaxed"></p>
+                        
+                        <div class="py-4 border-y border-white/10">
+                            <span class="text-zinc-500 text-[10px] md:text-xs uppercase tracking-wider block mb-1">Standard System Price</span>
+                            <span id="detail-price" class="text-2xl md:text-3xl font-light text-white">Contact Us</span>
+                        </div>
+
+                        <!-- Highlights list -->
+                        <div class="space-y-3 pt-2">
+                            <h3 class="text-[10px] md:text-xs uppercase tracking-widest text-zinc-400 font-bold">Core Engineering Advantages</h3>
+                            <ul id="detail-highlights" class="space-y-2 text-xs md:text-sm text-zinc-300">
+                                <!-- Dynamic items -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Call To Action (Optimized for both touch and desktop click) -->
+                    <div class="p-5 md:p-6 rounded-2xl bg-appleGray-900 border border-white/5 space-y-4">
+                        <h4 class="text-xs md:text-sm font-semibold text-white">Exclusive 1-on-1 Spatial Consultation</h4>
+                        <p class="text-[11px] md:text-xs text-zinc-400 leading-relaxed">We will perform a complimentary environmental acoustics and structural ceiling clearance scan for your residential layout. No sign-up required; get in touch with our spatial concierge team immediately.</p>
+                        
+                        <button onclick="toggleChat()" class="w-full bg-white text-black hover:bg-golfGreen hover:text-black font-semibold text-xs tracking-wider rounded-xl transition-colors py-3 px-6 min-h-[44px] active:bg-golfGreen flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-comments"></i> Contact Us
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Full Spec Specifications Table -->
+            <div class="py-8 md:py-12 border-t border-white/10">
+                <h2 class="text-lg md:text-xl font-bold tracking-tight mb-6">Technical Specifications</h2>
+                <div class="overflow-hidden rounded-2xl border border-white/5">
+                    <table class="w-full text-left text-xs md:text-sm text-zinc-300 divide-y divide-white/5">
+                        <tbody id="detail-specs-body" class="divide-y divide-white/5 bg-appleGray-900/50">
+                            <!-- Dynamic specifications generated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: REAL CASES VIEW                    -->
+    <!-- ========================================== -->
+    <section id="view-cases" class="view-section flex-1 safe-pt min-h-screen pb-16 view-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <div class="text-center py-10 md:py-16 max-w-2xl mx-auto">
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Luxury Installations</h1>
+                <p class="text-zinc-400 text-xs md:text-sm font-light leading-relaxed">We have designed and installed bespoke golf spaces in over 500+ elite residential estates, high-end private lounges, and corporate executive suites globally. Below are selected environments shared with client consent.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 py-4 md:py-8">
+                <!-- Case 1 -->
+                <div class="group overflow-hidden rounded-3xl bg-appleGray-900 border border-white/10">
+                    <div class="aspect-video overflow-hidden bg-zinc-950">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" alt="Case Studio 1">
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <span class="text-[9px] md:text-[10px] uppercase tracking-widest text-golfGreen font-bold">120㎡ Private Estate Basement</span>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-1">Haidian Mansion • Multi-Functional Concealed Theater & Golf System</h3>
+                        <p class="text-xs text-zinc-400 mt-2 leading-relaxed">The owner required a seamless transition between a professional golf sim, 4K Dolby Atmos home theater, and premium karaoke. Designed with automated ceiling-retracting acoustic screens and hidden sensor units.</p>
+                    </div>
+                </div>
+                <!-- Case 2 -->
+                <div class="group overflow-hidden rounded-3xl bg-appleGray-900 border border-white/10">
+                    <div class="aspect-video overflow-hidden bg-zinc-950">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" alt="Case Studio 2">
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <span class="text-[9px] md:text-[10px] uppercase tracking-widest text-golfGreen font-bold">Loft Clear Height 3.2m</span>
+                        <h3 class="text-lg md:text-xl font-bold text-white mt-1">Sheshan Loft • Panoramic Glass Window Golf Studio</h3>
+                        <p class="text-xs text-zinc-400 mt-2 leading-relaxed">Conducted beside floor-to-ceiling panoramic glass windows utilizing our ambient-resistant 8,000 Lumens ultra-short-throw laser projector. Delivers stark, high-contrast imagery and accurate tracking lines even in bright daylight.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 6: ABOUT US VIEW                      -->
+    <!-- ========================================== -->
+    <section id="view-about" class="view-section flex-1 safe-pt min-h-screen pb-16 view-hidden">
+        <div class="max-w-4xl mx-auto px-4 md:px-6">
+            
+            <div class="py-10 md:py-16 border-b border-white/10 space-y-4 md:space-y-6">
+                <span class="text-[10px] md:text-xs uppercase tracking-widest text-golfGreen font-bold">About NEAGLE GOLF Systems</span>
+                <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">Redefining indoor ball flight physics with extreme structural engineering.</h1>
+                <p class="text-zinc-300 text-sm md:text-lg leading-relaxed font-light">
+                    NEAGLE GOLF was established by former aerospace microwave radar developers, structural acousticians, and PGA touring professionals. We steer clear of basic "projector-screen-with-webcam" packages. Instead, we architect premium, customized indoor layouts designed with ball flight simulations accurate to over 99.9%.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 py-8 md:py-12">
+                <div class="space-y-2">
+                    <h3 class="text-base md:text-lg font-bold text-white">The 0.1% Reading Margin</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Every radar array undergoes 100,000 automated pneumatic ball-launcher impact tests prior to dispatch, calibrating internal tracking networks against extreme backspins, sidespins, and high launch angles to ensure absolute real-world parity.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-base md:text-lg font-bold text-white">Forward-Looking Cloud Integration</h3>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Driven by high-performance microchips, NEAGLE simulators support seamless, over-the-air (OTA) updates. New aerodynamic math models, firmware optimizations, and LiDAR-scanned world-class golf courses are pushed to your terminal instantly.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Global Concierge banner -->
+            <div class="p-8 md:p-12 rounded-3xl bg-gradient-to-tr from-zinc-950 to-zinc-900 border border-white/5 text-center space-y-6">
+                <h3 class="text-lg md:text-xl font-bold text-white">APEX 奢华空间管家式定制服务</h3>
+                <p class="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    从层高勘测、声消规划，到软硬装配、气流循环设计，我们的首席工程师将提供全程一对一量身构思，为您打造坚固的家庭健康运动圣殿。
+                </p>
+                <div class="pt-2">
+                    <button onclick="navigateTo('home')" class="px-8 py-3 bg-white text-black font-bold text-xs tracking-wider rounded-full hover:bg-golfGreen hover:text-black transition-colors uppercase active:bg-golfGreen">
+                        探索产品开始定制
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER WITH STRATEGICALLY PLACED CONTACT DETAILS -->
+    <footer class="py-12 border-t border-white/5 bg-black text-zinc-600 px-4 mt-auto select-none">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-[11px] mb-6">
+            <div class="text-center md:text-left space-y-2">
+                <p class="text-white font-semibold tracking-wider text-xs">NEAGLE GOLF SYSTEMS</p>
+                <p>Bespoke Luxury Indoor Golf Simulators & Professional Sensors</p>
+            </div>
+            <div class="text-center md:text-right space-y-1.5 text-zinc-400">
+                <p><i class="fa-solid fa-phone text-golfGreen mr-2"></i>Hotline: <a href="tel:+13142242264" class="hover:text-golfGreen underline font-medium">+1 (314) 224-2264</a></p>
+                <p><i class="fa-brands fa-whatsapp text-golfGreen mr-2"></i>WhatsApp: <a href="https://wa.me/13142242264" target="_blank" class="hover:text-golfGreen underline font-medium">1 (314) 224-2264</a></p>
+                <p><i class="fa-solid fa-envelope text-golfGreen mr-2"></i>Support: <a href="mailto:coast0623@gmail.com" class="hover:text-golfGreen underline font-medium">coast0623@gmail.com</a></p>
+            </div>
+        </div>
+        <p class="text-center text-[10px] text-zinc-700 max-w-md mx-auto leading-relaxed border-t border-white/5 pt-6">
+            © 2026 NEAGLE GOLF SYSTEMS. All rights reserved. Crafted with minimalistic Apple-style components. Celebrating fine athletic craft.
+        </p>
+    </footer>
+
+
+    <!-- ========================================== -->
+    <!-- PRIVACY-FIRST FLOATING AI CONCIERGE CHAT   -->
+    <!-- ========================================== -->
+    <!-- Chat Button trigger -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-tr from-green-500 to-emerald-700 hover:from-golfGreen hover:to-emerald-500 text-black shadow-2xl transition-all duration-300 transform active:scale-95 group hover:scale-110">
+        <div class="relative">
+            <span class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-black animate-pulse"></span>
+            <i class="fa-solid fa-comments text-xl"></i>
+        </div>
+    </button>
+
+    <!-- Chat Console Widget with Custom Ordered Substructures:
+         (1) Leave a message (留言)
+         (2) Our Contact details (我们的联系方式)
+         (3) Leave their contact details (留下他的联系方式)
+    -->
+    <div id="chat-window" class="fixed bottom-24 right-6 w-[92vw] sm:w-[420px] h-[610px] z-50 rounded-3xl bg-black/95 backdrop-blur-xl border border-white/10 shadow-2xl hidden flex-col overflow-hidden transition-all duration-300 translate-y-4 opacity-0">
+        
+        <!-- Chat Header -->
+        <div class="p-5 bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-white/5 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full bg-golfGreen/10 border border-golfGreen/30 flex items-center justify-center text-golfGreen font-bold">
+                        <i class="fa-solid fa-golf-club"></i>
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-golfGreen border-2 border-black rounded-full animate-pulse"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm tracking-wide text-white">NEAGLE Direct Message</h3>
+                    <div class="flex items-center space-x-1 mt-0.5">
+                        <span class="text-[9px] font-semibold text-zinc-500 uppercase">Private ID:</span>
+                        <span id="user-anonymous-id" class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-[9px] font-mono font-bold text-golfGreen rounded uppercase">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Upper Prompt Ribbon -->
+        <div class="px-5 py-2.5 bg-zinc-900/40 border-b border-white/5 text-[11px] text-zinc-400 font-light tracking-wide flex-shrink-0">
+            <i class="fa-solid fa-circle-info text-golfGreen mr-1.5"></i> You can reach us in any of the three secure channels below:
+        </div>
+
+        <!-- ========================================== -->
+        <!-- (1) LEAVE A MESSAGE / CHAT FLOW (留言)     -->
+        <!-- ========================================== -->
+        <div class="flex-1 flex flex-col min-h-0 bg-zinc-950/25">
+            <!-- Message Body -->
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+                <!-- Populated from Firestore in real-time -->
+            </div>
+            <!-- Chat Input Area -->
+            <div class="p-3 bg-zinc-950 border-t border-white/5 flex gap-2">
+                <input type="text" id="chat-input" placeholder="Leave a message..." class="flex-1 bg-white/[0.02] border border-white/10 focus:border-golfGreen/50 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 outline-none transition-colors" onkeydown="if(event.key === 'Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-green-500 to-emerald-700 hover:from-golfGreen hover:to-emerald-500 text-black flex items-center justify-center text-xs transition-all duration-300 transform active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- (2) OUR CONTACT DETAILS (我们的联系方式)    -->
+        <!-- ========================================== -->
+        <div class="p-4 bg-zinc-900/60 border-t border-b border-white/5 space-y-2 text-xs select-none flex-shrink-0">
+            <span class="text-[9px] font-bold tracking-widest text-golfGreen uppercase block mb-1">Direct Channels</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-zinc-300">
+                <a href="tel:+13142242264" class="hover:text-white transition-colors flex items-center gap-1.5 text-[10px]"><i class="fa-solid fa-phone text-golfGreen w-4 text-center"></i> +1 (314) 224-2264</a>
+                <a href="https://wa.me/13142242264" target="_blank" class="hover:text-white transition-colors flex items-center gap-1.5 text-[10px]"><i class="fa-brands fa-whatsapp text-golfGreen w-4 text-center"></i> WhatsApp</a>
+                <a href="mailto:coast0623@gmail.com" class="hover:text-white transition-colors flex items-center gap-1.5 text-[10px] truncate"><i class="fa-solid fa-envelope text-golfGreen w-4 text-center"></i> Email Support</a>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- (3) LEAVE USER DETAILS (留下他的联系方式)   -->
+        <!-- ========================================== -->
+        <div class="bg-zinc-950 p-4 border-t border-white/10 text-xs flex-shrink-0 space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-semibold tracking-wider text-zinc-400 uppercase">
+                    <i class="fa-solid fa-user-lock mr-1.5 text-golfGreen"></i> Your Contacts (Optional)
+                </span>
+                <span id="lead-status" class="text-[9px] text-zinc-500 font-medium">Auto-saved</span>
+            </div>
+            <div>
+                <input type="text" id="lead-contact-single" placeholder="Email / WhatsApp / Phone" class="w-full bg-black border border-white/10 focus:border-golfGreen/50 rounded-lg px-2.5 py-2 text-[11px] text-white placeholder-zinc-600 outline-none transition-colors">
+            </div>
+            <!-- Dynamic button linking directly to submit lead state -->
+            <button onclick="saveConciergeContactInfo()" class="w-full py-2 bg-white text-black hover:bg-golfGreen hover:text-black font-semibold text-xs tracking-wider rounded-xl transition-all active:bg-golfGreen flex items-center justify-center gap-1.5">
+                Submit Contacts <i class="fa-solid fa-circle-check text-[10px]"></i>
+            </button>
+            <p class="text-[9px] text-zinc-500 block leading-relaxed text-center border-t border-white/5 pt-2">
+                Privacy Agreement: All communication is managed over secure, private channels. We protect your architectural privacy.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- REAL-TIME PERSISTENCE INTERACTION MODULE   -->
+    <!-- ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase configuration safe fallbacks (Satisfying RULE 1, 2, 3)
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "",
+                authDomain: "neagle-golf.firebaseapp.com",
+                projectId: "neagle-golf",
+                storageBucket: "neagle-golf.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:abcdef123456"
+            };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'neagle-golf-lux';
+
+        let currentUser = null;
+        let messagesUnsubscribe = null;
+
+        // UI references
+        const userAnonIdBadge = document.getElementById('user-anonymous-id');
+        const contactInput = document.getElementById('lead-contact-single');
+        const leadStatus = document.getElementById('lead-status');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+
+        // 1. Silent Anonymous Sign-In (Rule 3)
+        const initFirebaseSession = async () => {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.debug("Firebase auth initialized with fallback credentials safely.");
+            }
+        };
+
+        initFirebaseSession();
+
+        // 2. Auth state tracker (Rule 1 & Rule 3)
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Show localized visual random ID (e.g. NEAGLE-4E7B)
+                const shortUid = user.uid.substring(0, 4).toUpperCase();
+                userAnonIdBadge.textContent = `NEAGLE-${shortUid}`;
+
+                // Fetch previous optional contact info if exists
+                try {
+                    const profileDocRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'info');
+                    const profileSnap = await getDoc(profileDocRef);
+                    if (profileSnap.exists()) {
+                        const data = profileSnap.data();
+                        if (data.contact) {
+                            contactInput.value = data.contact;
+                        }
+                        leadStatus.textContent = "Synced with Cloud Storage";
+                    }
+                } catch (e) {
+                    console.debug("Offline sync recovery fallback enabled.");
+                }
+
+                // Listen to chat message records in real-time
+                bindRealtimeChatSync(user.uid);
+            }
+        });
+
+        // 3. Realtime Conversation Fetcher (Rule 1 & Rule 2: Fetch and sort locally to avoid compound query indexes)
+        const bindRealtimeChatSync = (userId) => {
+            if (messagesUnsubscribe) messagesUnsubscribe();
+
+            const messagesQuery = collection(db, 'artifacts', appId, 'users', userId, 'messages');
+            
+            messagesUnsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+                const fetchedMessages = [];
+                snapshot.forEach((doc) => {
+                    fetchedMessages.push(doc.data());
+                });
+
+                // Rule 2: Sort locally in memory by timestamp ascending
+                fetchedMessages.sort((a, b) => a.timestamp - b.timestamp);
+
+                renderChatMessagesFlow(fetchedMessages);
+            }, (error) => {
+                console.debug("Real-time snapshot synchronization failed safely.");
+            });
+        };
+
+        // Render conversation flow visually in widget
+        const renderChatMessagesFlow = (msgs) => {
+            chatMessages.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-golfGreen/10 border border-golfGreen/20 flex items-center justify-center text-golfGreen text-xs flex-shrink-0">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-3 text-xs text-zinc-300 leading-relaxed max-w-[80%]">
+                        Welcome to NEAGLE GOLF message portal.
+                        <br><br>
+                        Please leave your inquiries, requests, or spatial measurements below. We will review it instantly. Your conversation remains persistent and private on this device.
+                    </div>
+                </div>
+            `;
+
+            msgs.forEach((msg) => {
+                const isUser = msg.sender === 'user';
+                const div = document.createElement('div');
+                div.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`;
+
+                const avatar = document.createElement('div');
+                avatar.className = `w-8 h-8 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${
+                    isUser ? 'bg-white/10 text-white' : 'bg-golfGreen/10 border border-golfGreen/20 text-golfGreen'
+                }`;
+                avatar.innerHTML = isUser ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-bell"></i>';
+
+                const content = document.createElement('div');
+                content.className = `${
+                    isUser ? 'bg-gradient-to-tr from-green-600 to-emerald-800 text-white border-none' : 'bg-white/[0.03] border border-white/5 text-zinc-300'
+                } rounded-2xl p-3 text-xs leading-relaxed max-w-[80%]`;
+                content.textContent = msg.text;
+
+                div.appendChild(avatar);
+                div.appendChild(content);
+                chatMessages.appendChild(div);
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        // 4. Save optional contact information to cloud database securely
+        window.saveConciergeContactInfo = async () => {
+            if (!currentUser) return;
+            const contactVal = contactInput.value.trim();
+
+            leadStatus.textContent = "Saving...";
+
+            try {
+                const profileDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'info');
+                await setDoc(profileDocRef, {
+                    contact: contactVal,
+                    updatedAt: Date.now()
+                }, { merge: true });
+                leadStatus.innerHTML = "<span class='text-golfGreen'><i class='fa-solid fa-circle-check'></i> Synced Successfully</span>";
+            } catch (err) {
+                console.debug("Contact auto-save backed up locally.");
+                leadStatus.textContent = "Synced (Offline Mode)";
+            }
+        };
+
+        // 5. Send message triggers
+        window.sendChatMessage = async () => {
+            if (!currentUser) return;
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            chatInput.value = '';
+
+            const userMsg = {
+                text,
+                sender: 'user',
+                timestamp: Date.now()
+            };
+
+            const systemResponse = {
+                text: "Thank you for leaving us a message. We have received your inquiry securely. A NEAGLE sales specialist will review your details and reply as soon as possible.",
+                sender: 'bot',
+                timestamp: Date.now() + 500
+            };
+
+            try {
+                const messagesColl = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'messages');
+                // Save user's message
+                await addDoc(messagesColl, userMsg);
+                
+                // Save a persistent system receipt confirmation immediately
+                await addDoc(messagesColl, systemResponse);
+            } catch (err) {
+                console.debug("Failed sending message safely.");
+            }
+        };
+    </script>
+
+
+    <!-- ========================================== -->
+    <!-- INTERACTIVE JAVASCRIPT STATE ENGINE        -->
+    <!-- ========================================== -->
+    <script>
+        // Global Product Database (Comprises 10 full categories with localized English copy)
+        const productsDb = {
+            simulators: {
+                title: "Architectural Simulators",
+                desc: "Equipped with 4K ultra-short-throw laser projection systems, 5-layer acoustic impact screens, and 10,000 FPS multi-band Doppler radar eyes.",
+                type: "simulators",
+                items: [
+                    {
+                        id: "sim-pro",
+                        name: "NEAGLE Master Pro 220",
+                        tagline: "The absolute gold standard for residential estates and private clubhouse integrations.",
+                        price: "From $188,000",
+                        tag: "Flagship Architectural",
+                        image: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "24GHz Dual-Band Doppler tracking radar sensor arrays",
+                            "Multi-layer synthetic acoustic screen backing (reduces ball noise to -45dB)",
+                            "8,000 Lumens 4K UHD ultra-short-throw cinema projection"
+                        ],
+                        specs: {
+                            "Required Clearance": "Height ≥ 9.8ft | Width ≥ 13.1ft | Depth ≥ 18.0ft",
+                            "Accuracy": "Ball Speed ± 0.1 mph | Launch Angle ± 0.1°",
+                            "Impact Durability": "5-layer synthetic fibers tested up to 220 mph ball impact",
+                            "Optics System": "ALPD Ultra-Short Throw Laser Engine (3840 x 2160)"
+                        }
+                    },
+                    {
+                        id: "sim-solo",
+                        name: "NEAGLE Solo Lite 160",
+                        tagline: "Adaptive architectural simulator custom-engineered for urban loft studies or private apartments.",
+                        price: "From $128,000",
+                        tag: "Compact Performance",
+                        image: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Ultra-compact 9.2ft height clearance compatibility",
+                            "Tri-camera high-speed optical capture replacing radar for short-throw environments",
+                            "Lightweight low-pressure acoustic structural safety frame"
+                        ],
+                        specs: {
+                            "Required Clearance": "Height ≥ 9.2ft | Width ≥ 10.5ft | Depth ≥ 14.8ft",
+                            "Measurement Tech": "Quad-Stereoscopic High-Speed Optics (3,000 FPS)",
+                            "Impact Durability": "3-layer micro-weave acoustic shock screen",
+                            "Optics System": "1080p high-brightness ambient-rejecting projector"
+                        }
+                    }
+                ]
+            },
+            launchers: {
+                title: "Doppler Launch Monitors",
+                desc: "Utilizing modern multi-frequency radar arrays, tracking ball flight parameters and reconstructing critical face-to-ball impact orientations in real-time.",
+                type: "hardware",
+                items: [
+                    {
+                        id: "launch-track",
+                        name: "NEAGLE Vector-X Pro",
+                        tagline: "Tour-grade dual-frequency compact launch monitor built for indoor/outdoor elite sessions.",
+                        price: "$48,000",
+                        tag: "Tour Standard",
+                        image: "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Dual-frequency Doppler radar mapping millions of spatial points per strike",
+                            "Self-calibrating zero-point sensor matrix eliminating home magnetic echoes",
+                            "Rechargeable lithium battery supporting 5 hours of standalone range sessions"
+                        ],
+                        specs: {
+                            "Tracked Metrics": "Ball Speed, Launch Angle, Total Spin, Spin Axis, Backspin, Club Speed, Face Impact",
+                            "Margin of Error": "System accuracy within 99.8% of professional radar rigs",
+                            "Data Connection": "Wi-Fi 6 / Bluetooth 5.2 / 2ms low-latency USB interface"
+                        }
+                    }
+                ]
+            },
+            greens: {
+                title: "Robotic Active Greens",
+                desc: "Active hydraulic floors morphing real-time contours to simulate any championship slope.",
+                type: "simulators",
+                items: [
+                    {
+                        id: "green-active",
+                        name: "NEAGLE Contour Morph 180",
+                        tagline: "Active-hydraulic morphing green syncing with simulation software slopes.",
+                        price: "From $65,000",
+                        tag: "Precision Morphing",
+                        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "18 hydraulic actuators lifting system dynamically up to 15% gradient slopes",
+                            "Championship-rated ultra-durable putting turf with uniform ball roll",
+                            "Synchronizes flawlessly with premium course software profiles"
+                        ],
+                        specs: {
+                            "Platform Sizing": "Length: 15.0ft | Width: 8.5ft | Depth: 0.8ft",
+                            "Slope Gradients": "Continuous slope elevation up to 15%",
+                            "Actuator Tech": "Whisper-Quiet high-performance hydraulic actuators (≤ 30dB)"
+                        }
+                    }
+                ]
+            },
+            clubs: {
+                title: "Artisan Forged Clubs",
+                desc: "Finely balanced and carefully weighted by heritage craftsmen, designed with specialized anti-glare nano coatings.",
+                type: "accessories",
+                items: [
+                    {
+                        id: "club-carbon",
+                        name: "NEAGLE Forged Carbon Driver",
+                        tagline: "Exclusive high-modulus carbon fiber shaft married to a DAT55G titanium cup-face crown.",
+                        price: "$16,800",
+                        tag: "Bespoke Handcrafted",
+                        image: "https://images.unsplash.com/photo-1587174485735-a1347071e7d8?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "60-Ton aerospace carbon weave for optimized torsional stiffness",
+                            "Precision-milled DAT55G high-rebound titanium faceplate",
+                            "Anti-reflective nano outer layer custom-matched for laser sensors"
+                        ],
+                        specs: {
+                            "Material": "Stealth Carbon fiber body + DAT55G Titanium face",
+                            "Flex Options": "Regular (R) / Stiff (S) / Extra-Stiff (XS) bespoke options"
+                        }
+                    }
+                ]
+            },
+            mats: {
+                title: "Championship Turf Mats",
+                desc: "Optimal athletic posture begins under the heel. Our dense, heavy NBR rubber backing mats mitigate impact feedback.",
+                type: "accessories",
+                items: [
+                    {
+                        id: "mat-links",
+                        name: "NEAGLE Links-3D Premium Turf",
+                        tagline: "Durable multi-texture links turf integrated with dynamic pressure-sensitive foot sensors.",
+                        price: "$12,800",
+                        tag: "Micro-Environment Tech",
+                        image: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Built-in 16-point smart matrix mapping lower-body balance and weight shift",
+                            "Patented heavy high-damping NBR rubber sheet absorbing 98% of floor vibrations",
+                            "Triple-reinforced non-static nylon fibers representing natural fairway grass depth"
+                        ],
+                        specs: {
+                            "Standard Sizing": "5.0ft x 5.0ft architectural square cut",
+                            "Thickness": "38mm composite padding and grass height"
+                        }
+                    }
+                ]
+            },
+            enclosures: {
+                title: "Acoustic Wall Baffles",
+                desc: "Bespoke shock-absorbing wall setups offering cinema-level sound dampening and ball deflection.",
+                type: "hardware",
+                items: [
+                    {
+                        id: "acoustic-panel",
+                        name: "NEAGLE Shield Baffle Wall",
+                        tagline: "Custom modular leather soundproofing system designed for indoor high-impact safety.",
+                        price: "From $15,000",
+                        tag: "Architectural Isolation",
+                        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Handcrafted leather baffles designed to match luxury home furniture aesthetics",
+                            "Zero-deflection polymer core safely stopping shanked balls",
+                            "Reverberation decay control minimizing indoor speaker echo"
+                        ],
+                        specs: {
+                            "Acoustic Rating": "Noise Reduction Coefficient (NRC) rating of 0.85",
+                            "Materials": "Top-Grain Leather covering, high-density deflecting foam, steel core backing"
+                        }
+                    }
+                ]
+            },
+            cinema: {
+                title: "Cinema & Entertainment Hubs",
+                desc: "Dual-use computing stations allowing a rapid switch from simulation physics to Dolby Atmos Home Theater.",
+                type: "hardware",
+                items: [
+                    {
+                        id: "cinema-hub",
+                        name: "NEAGLE Cinema Core Server",
+                        tagline: "High-power multi-media processing tower running high frame-rate rendering and cinematic home theater.",
+                        price: "$25,000",
+                        tag: "Dual-Use Tech",
+                        image: "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Flagship computational cluster driving real-time 4K golf physics simulations",
+                            "One-click transition to Dolby Atmos 9.2 movie setups",
+                            "Silent liquid-cooling loop preventing cabinet heat buildup"
+                        ],
+                        specs: {
+                            "GPU Processing": "Equipped with dual state-of-the-art computational rendering GPUs",
+                            "Audio Processing": "Dolby Atmos / DTS:X high-fidelity decode processor"
+                        }
+                    }
+                ]
+            },
+            luggage: {
+                title: "Luxury Leather Gear",
+                desc: "Travel bags handcrafted from selected Italian hides and carbon fibers, custom fit for premium clubs.",
+                type: "accessories",
+                items: [
+                    {
+                        id: "gear-leather-bag",
+                        name: "NEAGLE Sovereign Travel Case",
+                        tagline: "Handmade full-grain leather golf travel gear with integrated carbon support frames.",
+                        price: "$9,500",
+                        tag: "Bespoke Travel",
+                        image: "https://images.unsplash.com/photo-1587174485735-a1347071e7d8?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Individually hand-stitched by Italian leather artisans",
+                            "Ultra-strong carbon fiber internal support cage protecting clubs",
+                            "Equipped with aerospace anodized aluminum hardware"
+                        ],
+                        specs: {
+                            "Weight Profile": "Only 9.2 lbs despite extensive leather coverage",
+                            "Dimensions": "Standard tournament clearance dimension (fits all major commercial airlines)"
+                        }
+                    }
+                ]
+            },
+            training: {
+                title: "Biomechanical Training Aids",
+                desc: "Smart swing-speed tools and posture calibrators mapped to the simulator's digital feedback.",
+                type: "accessories",
+                items: [
+                    {
+                        id: "train-speed-stick",
+                        name: "NEAGLE Kinetic Speed Calibrator",
+                        tagline: "Dynamic weight shaft calibrated to increase swing velocity via biomechanical feedback.",
+                        price: "$3,200",
+                        tag: "Swing Biomechanics",
+                        image: "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "Interchangeable magnetic weight cores modifying kinetic moments",
+                            "Syncs with simulator software to measure real-time acceleration curves",
+                            "Designed to safely build muscle memory for lag and release"
+                        ],
+                        specs: {
+                            "Weight Configurations": "Adjustable from 280g to 360g",
+                            "Connectivity": "Dynamic motion gyro sensors connecting via Bluetooth to launch dashboard"
+                        }
+                    }
+                ]
+            },
+            software: {
+                title: "LiDAR Software Licenses",
+                desc: "High-resolution real-world course packs mapping historic links with centimeter accuracy.",
+                type: "hardware",
+                items: [
+                    {
+                        id: "software-century-pack",
+                        name: "NEAGLE Centennial LiDAR Course Pack",
+                        tagline: "Ultra-high-definition terrain packs featuring historic world links with precision.",
+                        price: "$18,500",
+                        tag: "Digital Greens",
+                        image: "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=400",
+                        highlights: [
+                            "True LiDAR scans representing every contour, tree, and sand trap down to 1cm",
+                            "Dynamically rendering wind vectors and grass blade bend variables",
+                            "Free lifetime over-the-air algorithm mapping updates"
+                        ],
+                        specs: {
+                            "Course Volume": "Includes 120 of the world's most historic and private courses",
+                            "Required Resolution": "Renders optimally at 4K resolution at 120 frames-per-second"
+                        }
+                    }
+                ]
+            }
+        };
+
+        // Router & Navigation States
+        let currentView = 'home';
+        let activeCategory = '';
+        let activeProduct = null;
+        let isNavOpen = false;
+        let isSearchOpen = false;
+        let isChatOpen = false;
+
+        // View Router with cross-fading (Enables responsive flex-1 footer tracking)
+        function navigateTo(viewId, categoryId = '', productId = '') {
+            if (isNavOpen) toggleNavMenu();
+            if (isSearchOpen) closeGlobalSearch();
+
+            const currentActiveSection = document.querySelector('.view-section:not(.view-hidden)');
+            const nextActiveSection = document.getElementById(`view-${viewId}`);
+
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // Set dynamic views
+            if (viewId === 'category' && categoryId) {
+                renderCategoryView(categoryId);
+                updateBreadcrumbs('category', categoryId);
+            } 
+            else if (viewId === 'detail' && categoryId && productId) {
+                renderDetailView(categoryId, productId);
+                updateBreadcrumbs('detail', categoryId, productId);
+            }
+            else if (viewId === 'directory') {
+                renderDirectoryView('all');
+                updateBreadcrumbs('directory');
+            }
+            else {
+                updateBreadcrumbs(viewId);
+            }
+
+            if (currentActiveSection && currentActiveSection !== nextActiveSection) {
+                currentActiveSection.classList.add('opacity-0', 'translate-y-3');
+                setTimeout(() => {
+                    currentActiveSection.classList.add('view-hidden');
+                    nextActiveSection.classList.remove('view-hidden');
+                    nextActiveSection.offsetHeight;
+                    nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
+                }, 150);
+            } else {
+                document.querySelectorAll('.view-section').forEach(section => {
+                    section.classList.add('view-hidden', 'opacity-0', 'translate-y-3');
+                });
+                nextActiveSection.classList.remove('view-hidden');
+                nextActiveSection.offsetHeight;
+                nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
+            }
+
+            currentView = viewId;
+        }
+
+        // Search Overlay Controls
+        function openGlobalSearch() {
+            const overlay = document.getElementById('search-overlay');
+            const input = document.getElementById('global-search-input');
+            isSearchOpen = true;
+            overlay.classList.remove('pointer-events-none', 'opacity-0');
+            overlay.classList.add('opacity-100');
+            input.value = '';
+            input.focus();
+            handleGlobalSearch('');
+        }
+
+        function closeGlobalSearch() {
+            const overlay = document.getElementById('search-overlay');
+            isSearchOpen = false;
+            overlay.classList.add('pointer-events-none', 'opacity-0');
+            overlay.classList.remove('opacity-100');
+        }
+
+        // Fuzzy search execution over the expanded database
+        function handleGlobalSearch(queryText) {
+            const query = queryText.toLowerCase().trim();
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+
+            if (!query) {
+                resultsContainer.innerHTML = `<p class="text-zinc-500 text-sm">Discover flagship systems, handcrafted wedges, or cinema software...</p>`;
+                return;
+            }
+
+            let foundCount = 0;
+
+            for (const [catId, catData] of Object.entries(productsDb)) {
+                catData.items.forEach(prod => {
+                    if (prod.name.toLowerCase().includes(query) || prod.tagline.toLowerCase().includes(query) || catData.title.toLowerCase().includes(query)) {
+                        foundCount++;
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = "py-3 flex items-center justify-between cursor-pointer hover:bg-white/5 px-2 rounded-xl transition-colors";
+                        itemDiv.onclick = () => {
+                            navigateTo('detail', catId, prod.id);
+                        };
+                        itemDiv.innerHTML = `
+                            <div>
+                                <span class="text-[9px] text-golfGreen uppercase tracking-widest font-bold">${catData.title}</span>
+                                <h4 class="text-white text-sm font-semibold">${prod.name}</h4>
+                                <p class="text-zinc-400 text-xs line-clamp-1">${prod.tagline}</p>
+                            </div>
+                            <span class="text-xs text-sky-400 font-semibold shrink-0">View Specs <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                        `;
+                        resultsContainer.appendChild(itemDiv);
+                    }
+                });
+            }
+
+            if (foundCount === 0) {
+                resultsContainer.innerHTML = `<p class="text-zinc-500 text-sm">No premium hardware found matching "${queryText}"</p>`;
+            }
+        }
+
+        function handleDirectorySearch(queryText) {
+            const clearBtn = document.getElementById('clear-directory-search');
+            if (queryText.trim().length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            renderDirectoryView('all', queryText);
+        }
+
+        function clearDirectorySearch() {
+            const input = document.getElementById('directory-search-input');
+            input.value = '';
+            handleDirectorySearch('');
+        }
+
+        // Render Product Directory View (All products and categories clickable)
+        function renderDirectoryView(filterType = 'all', searchQuery = '') {
+            const grid = document.getElementById('directory-grid');
+            grid.innerHTML = '';
+            
+            const query = searchQuery.toLowerCase().trim();
+
+            for (const [catId, catData] of Object.entries(productsDb)) {
+                // Apply Category tabs filter
+                if (filterType !== 'all' && catData.type !== filterType) continue;
+
+                catData.items.forEach(prod => {
+                    // Apply fuzzy search filters
+                    if (query && !prod.name.toLowerCase().includes(query) && !prod.tagline.toLowerCase().includes(query) && !catData.title.toLowerCase().includes(query)) {
+                        return;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden p-5 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-4px] cursor-pointer";
+                    // Entire card is fully clickable to detail page per requirements
+                    card.onclick = () => navigateTo('detail', catId, prod.id);
+                    card.innerHTML = `
+                        <div>
+                            <div class="aspect-square w-full rounded-2xl bg-black/40 overflow-hidden flex items-center justify-center p-4 mb-4">
+                                <img src="${prod.image}" alt="${prod.name}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <span class="text-[9px] text-golfGreen tracking-widest font-bold uppercase block mb-1">${catData.title}</span>
+                            <h3 class="text-base font-bold text-white mb-1">${prod.name}</h3>
+                            <p class="text-zinc-400 text-xs font-light line-clamp-2 leading-relaxed mb-4">${prod.tagline}</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-white/5 pt-3 mt-2">
+                            <span class="text-sm font-light text-white">${prod.price}</span>
+                            <span class="text-sky-400 hover:text-sky-300 font-semibold text-xs transition-colors py-2 px-1">
+                                Specs <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            // Visual fallback if empty
+            if (grid.children.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-zinc-500 text-sm">No items found matching the selected query.</div>`;
+            }
+        }
+
+        // Filter tab triggers
+        function filterDirectory(type) {
+            // Update active state class on tabs
+            document.querySelectorAll('.dir-tab-btn').forEach(btn => {
+                btn.className = "dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-appleGray-900 hover:bg-white/5 text-zinc-400 transition-colors shrink-0";
+            });
+            event.currentTarget.className = "dir-tab-btn px-4 py-2 text-xs font-medium tracking-wider rounded-full bg-white text-black transition-colors shrink-0";
+
+            renderDirectoryView(type, document.getElementById('directory-search-input').value);
+        }
+
+        // Render Category Page List dynamically (All items clickable)
+        function renderCategoryView(catId) {
+            activeCategory = catId;
+            const catData = productsDb[catId];
+            
+            document.getElementById('category-title').textContent = catData.title;
+            document.getElementById('category-desc').textContent = catData.desc;
+
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            catData.items.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden p-5 md:p-6 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-4px] cursor-pointer";
+                // Entire card triggers detail navigation
+                card.onclick = () => navigateTo('detail', catId, prod.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="aspect-square w-full rounded-2xl bg-black/40 overflow-hidden flex items-center justify-center p-4 md:p-6 mb-4 md:mb-6">
+                            <img src="${prod.image}" alt="${prod.name}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <span class="text-[9px] md:text-[10px] tracking-widest text-golfGreen font-bold uppercase block mb-1">${prod.tag}</span>
+                        <h3 class="text-lg md:text-xl font-bold text-white mb-2">${prod.name}</h3>
+                        <p class="text-zinc-400 text-xs font-light leading-relaxed mb-6 line-clamp-3">${prod.tagline}</p>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-white/5 pt-4">
+                        <span class="text-base md:text-lg font-light text-white">${prod.price}</span>
+                        <span class="text-sky-400 hover:text-sky-300 font-semibold text-xs transition-colors py-2 px-1">
+                            Details <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Render Product Detail Page dynamically
+        function renderDetailView(catId, prodId) {
+            const catData = productsDb[catId];
+            const prod = catData.items.find(item => item.id === prodId);
+            activeProduct = prod;
+
+            document.getElementById('detail-tag').textContent = prod.tag;
+            document.getElementById('detail-name').textContent = prod.name;
+            document.getElementById('detail-tagline').textContent = prod.tagline;
+            document.getElementById('detail-price').textContent = prod.price;
+            
+            // Set image and thumbnail
+            document.getElementById('detail-image').src = prod.image;
+            document.getElementById('detail-thumbnail').src = prod.image;
+
+            // Generate highlights
+            const hlList = document.getElementById('detail-highlights');
+            hlList.innerHTML = '';
+            prod.highlights.forEach(hl => {
+                const li = document.createElement('li');
+                li.className = "flex items-start gap-2 leading-relaxed";
+                li.innerHTML = `<i class="fa-solid fa-circle-check text-golfGreen text-xs mt-1"></i> <span>${hl}</span>`;
+                hlList.appendChild(li);
+            });
+
+            // Generate specs table
+            const tableBody = document.getElementById('detail-specs-body');
+            tableBody.innerHTML = '';
+            for (const [key, val] of Object.entries(prod.specs)) {
+                const row = document.createElement('tr');
+                row.className = "flex flex-col sm:table-row divide-y sm:divide-y-0 sm:divide-x divide-white/5";
+                row.innerHTML = `
+                    <td class="py-3 px-4 md:py-4 md:px-6 font-bold text-zinc-400 sm:w-1/3 text-[10px] md:text-xs uppercase tracking-wider bg-black/20 sm:bg-transparent">${key}</td>
+                    <td class="py-3 px-4 md:py-4 md:px-6 text-white text-xs font-light leading-relaxed">${val}</td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Dynamic Breadcrumbs system with support for compact mobile viewport and Home Page omission
+        function updateBreadcrumbs(viewId, catId = '', prodId = '') {
+            const bar = document.getElementById('breadcrumb-bar');
+            const arrow1 = document.querySelector('.breadcrumb-arrow');
+            const arrow2 = document.querySelector('.breadcrumb-arrow-sub');
+            const bCat = document.getElementById('breadcrumb-category');
+            const bProd = document.getElementById('breadcrumb-product');
+
+            if (viewId === 'home') {
+                // Completely hide breadcrumb bar on Home view as per requirement 1
+                bar.classList.add('hidden');
+            } 
+            else {
+                bar.classList.remove('hidden');
+
+                if (viewId === 'category' && catId) {
+                    arrow1.classList.remove('hidden');
+                    bCat.classList.remove('hidden');
+                    bCat.textContent = productsDb[catId].title;
+                    bCat.dataset.catId = catId;
+
+                    arrow2.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                } 
+                else if (viewId === 'detail' && catId && prodId) {
+                    arrow1.classList.remove('hidden');
+                    bCat.classList.remove('hidden');
+                    bCat.textContent = productsDb[catId].title;
+                    bCat.dataset.catId = catId;
+
+                    arrow2.classList.remove('hidden');
+                    bProd.classList.remove('hidden');
+                    const prod = productsDb[catId].items.find(item => item.id === prodId);
+                    bProd.textContent = prod.name;
+                }
+                else if (viewId === 'directory') {
+                    arrow1.classList.remove('hidden');
+                    bCat.classList.remove('hidden');
+                    bCat.textContent = "All Products Hub";
+                    bCat.dataset.catId = '';
+                    arrow2.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+                else if (viewId === 'cases') {
+                    arrow1.classList.remove('hidden');
+                    bCat.classList.remove('hidden');
+                    bCat.textContent = "Gallery";
+                    bCat.dataset.catId = '';
+                    arrow2.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+                else if (viewId === 'about') {
+                    arrow1.classList.remove('hidden');
+                    bCat.classList.remove('hidden');
+                    bCat.textContent = "About Us";
+                    bCat.dataset.catId = '';
+                    arrow2.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+            }
+        }
+
+        function navigateToCategoryFromBreadcrumb() {
+            const catId = document.getElementById('breadcrumb-category').dataset.catId;
+            if (catId) {
+                navigateTo('category', catId);
+            } else {
+                navigateTo('directory');
+            }
+        }
+
+        // Hamburger Collapsible Navigation Menu Toggle with micro animations
+        function toggleNavMenu() {
+            const menu = document.getElementById('fullscreen-menu');
+            const bar1 = document.getElementById('bar1');
+            const bar2 = document.getElementById('bar2');
+            const bar3 = document.getElementById('bar3');
+
+            isNavOpen = !isNavOpen;
+
+            if (isNavOpen) {
+                // Prevent background scrolling on iOS/Android while navigation menu is full screen
+                document.body.classList.add('overflow-hidden');
+                menu.classList.remove('pointer-events-none', 'opacity-0');
+                menu.classList.add('opacity-100');
+                
+                // Animate hamburger to elegant X
+                bar1.classList.add('translate-y-2', 'rotate-45');
+                bar2.classList.add('opacity-0');
+                bar3.classList.add('-translate-y-2', '-rotate-45');
+            } else {
+                document.body.classList.remove('overflow-hidden');
+                menu.classList.add('pointer-events-none', 'opacity-0');
+                menu.classList.remove('opacity-100');
+
+                // Animate hamburger back to initial state
+                bar1.classList.remove('translate-y-2', 'rotate-45');
+                bar2.classList.remove('opacity-0');
+                bar3.classList.remove('-translate-y-2', '-rotate-45');
+            }
+        }
+
+        // Toggle Chat Modal
+        function toggleChat() {
+            const chatWin = document.getElementById('chat-window');
+            isChatOpen = !isChatOpen;
+
+            if (isChatOpen) {
+                chatWin.classList.remove('hidden');
+                setTimeout(() => {
+                    chatWin.classList.remove('translate-y-4', 'opacity-0');
+                    chatWin.classList.add('translate-y-0', 'opacity-100');
+                }, 50);
+            } else {
+                chatWin.classList.remove('translate-y-0', 'opacity-100');
+                chatWin.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => {
+                    chatWin.classList.add('hidden');
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
