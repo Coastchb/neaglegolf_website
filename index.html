@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth h-full">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport-fit=cover supports iPhone safe areas (notch/dynamic island) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NEAGLE GOLF - Luxury Indoor Golf Systems</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        appleGray: {
+                            50: '#f5f5f7',
+                            100: '#e8e8ed',
+                            800: '#1d1d1f',
+                            900: '#161617',
+                        },
+                        golfGreen: '#00e676',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #f5f5f7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Avoid native tap delays on mobile Safari */
+            touch-action: manipulation;
+        }
+        /* Smooth View Transition CSS */
+        .view-section {
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .view-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333336;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #424245;
+        }
+        /* Touch safety adjustments */
+        @supports(padding: max(0px)) {
+            .safe-pt {
+                padding-top: max(3rem, env(safe-area-inset-top));
+            }
+            .safe-pb {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Spec tabs for detailed product view */
+        .spec-tab-btn {
+            font-size: 14px;
+            color: #a1a1aa;
+            background: rgba(24, 24, 27, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .spec-tab-btn:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .spec-tab-btn.active {
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        /* Spec card grid */
+        .spec-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .spec-card {
+            background: rgba(24, 24, 27, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+        .spec-card.highlight {
+            background: rgba(34, 197, 94, 0.05);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+        .spec-card-label {
+            font-size: 12px;
+            color: #71717a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .spec-card.highlight .spec-card-label {
+            color: #22c55e;
+        }
+        .spec-card-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #f4f4f5;
+            line-height: 1.4;
+        }
+        @media (min-width: 768px) {
+            .spec-card-label {
+                font-size: 14px;
+            }
+            .spec-card-value {
+                font-size: 18px;
+            }
+        }
+        .spec-card.highlight .spec-card-value {
+            color: #22c55e;
+        }
+        .spec-card-sub {
+            font-size: 14px;
+            color: #71717a;
+            margin-top: 4px;
+        }
+        .spec-section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #a1a1aa;
+            margin: 16px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .spec-section-title:first-child {
+            margin-top: 0;
+        }
+        
+        /* Thumbnail active state */
+        .detail-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .detail-thumb:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .detail-thumb.active {
+            border-color: #22c55e;
+        }
+        .detail-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         聊天逻辑 — 通过 Firebase Cloud Functions 代理访问 Firestore
+         无需任何 SDK，纯 fetch，完全兼容中国网络环境
+         ⚠️  部署 Cloud Functions 后，将下方 PROXY_BASE 替换为你的函数 URL
+    ════════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ══════════════════════════════════════════════════════════════════
+        //  ⚙️  Firebase Cloud Functions 第二代 API 域名
+        //  已修复：使用第二代域名格式（与 neagle_golf.html 一致）
+        // ══════════════════════════════════════════════════════════════════
+        var PROXY_BASE = "https://chatapi-jbl3p7hx7q-uc.a.run.app";
+
+        // ── 全局状态 ─────────────────────────────────────────────────────
+        var originalPageTitle       = document.title;
+        var tabNotificationInterval = null;
+        var pollInterval            = null;
+        var _lastMsgCount           = 0;
+
+        var guestId = localStorage.getItem('neagle_guest_id')
+            || ('GUEST_' + Math.random().toString(36).substring(2, 9).toUpperCase());
+        localStorage.setItem('neagle_guest_id', guestId);
+
+        function el(id) { return document.getElementById(id); }
+
+        // ── 初始化：显示 guestId，加载历史，启动轮询 ─────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            var badge = el('user-anonymous-id');
+            if (badge) badge.textContent = guestId;
+            loadProfile();
+            startPolling();
+        });
+
+        // ── 拉取消息（每 4 秒轮询）───────────────────────────────────────
+        function startPolling() {
+            fetchMessages();
+            pollInterval = setInterval(fetchMessages, 4000);
+        }
+
+        function fetchMessages() {
+            fetch(PROXY_BASE + "/chatMessages?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var msgs = data.messages || [];
+                    var last   = msgs[msgs.length - 1];
+                    var pingEl = el('chat-ping-unread');
+                    if (msgs.length > _lastMsgCount && last && last.reply && document.hidden) {
+                        triggerTabAlert();
+                        if (pingEl) pingEl.classList.remove('hidden');
+                    }
+                    _lastMsgCount = msgs.length;
+                    renderMessages(msgs);
+                })
+                .catch(function (e) { console.error('fetchMessages error:', e); });
+        }
+
+        // ── 渲染消息气泡 ──────────────────────────────────────────────────
+        function renderMessages(msgs) {
+            var box = el('chat-messages');
+            if (!box) return;
+            box.innerHTML = '';
+            if (msgs.length === 0) {
+                box.innerHTML = '<p class="text-[10px] text-zinc-500 text-center py-6 leading-relaxed">No previous message history found.<br>Leave your questions above.</p>';
+                return;
+            }
+            msgs.forEach(function (msg) {
+                var uWrap = document.createElement('div');
+                uWrap.className = 'flex flex-col mb-3 items-end';
+                var uBubble = document.createElement('div');
+                uBubble.className = 'bg-golfGreen/10 border border-golfGreen/30 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%] text-left';
+                uBubble.textContent = msg.content;
+                uWrap.appendChild(uBubble);
+                box.appendChild(uWrap);
+                if (msg.reply) {
+                    var aWrap = document.createElement('div');
+                    aWrap.className = 'flex flex-col mb-3 items-start';
+                    var aBubble = document.createElement('div');
+                    aBubble.className = 'bg-sky-500/10 border border-sky-400/30 text-sky-200 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%] text-left';
+                    aBubble.textContent = msg.reply;
+                    var tag = document.createElement('span');
+                    tag.className = 'block text-[8px] uppercase tracking-widest text-sky-400 font-bold mt-1';
+                    tag.textContent = '✓ Official Concierge';
+                    aBubble.appendChild(tag);
+                    aWrap.appendChild(aBubble);
+                    box.appendChild(aWrap);
+                }
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ── 发送消息 ──────────────────────────────────────────────────────
+        function sendChatMessage() {
+            var input = el('chat-input');
+            if (!input) return;
+            var text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            fetch(PROXY_BASE + "/chatSend", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, content: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    console.log('✓ 消息已发送');
+                    fetchMessages(); // 立即刷新，不等下次轮询
+                } else {
+                    console.error('发送失败:', data.error);
+                    if (input.value === '') input.value = text;
+                }
+            })
+            .catch(function (e) {
+                console.error('sendChatMessage error:', e);
+                if (input.value === '') input.value = text;
+            });
+        }
+
+        // ── 保存联系方式 ──────────────────────────────────────────────────
+        function saveContactInfo() {
+            var field = el('lead-unified-contact');
+            var label = el('lead-status');
+            if (!field || !label) return;
+            var text = field.value.trim();
+            if (!text) {
+                label.innerHTML = '<span class="text-rose-500">Please enter an email, phone, or WhatsApp number.</span>';
+                return;
+            }
+            label.textContent = 'Securing data...';
+            fetch(PROXY_BASE + "/profileSave", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, contact: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials synced. Thank you!</span>';
+                } else {
+                    label.textContent = 'Failed. Please try again.';
+                }
+            })
+            .catch(function () { label.textContent = 'Failed. Please try again.'; });
+        }
+
+        // ── 加载已保存的联系方式 ──────────────────────────────────────────
+        function loadProfile() {
+            fetch(PROXY_BASE + "/profileGet?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.contact) return;
+                    var field = el('lead-unified-contact');
+                    var label = el('lead-status');
+                    if (field) field.value = data.contact;
+                    if (label) label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials secured on cloud</span>';
+                })
+                .catch(function (e) { console.error('loadProfile error:', e); });
+        }
+
+        // ── Tab 标题闪烁提醒 ──────────────────────────────────────────────
+        function triggerTabAlert() {
+            if (tabNotificationInterval) clearInterval(tabNotificationInterval);
+            var flip = true;
+            tabNotificationInterval = setInterval(function () {
+                document.title = flip ? '【New Message】 NEAGLE GOLF' : originalPageTitle;
+                flip = !flip;
+            }, 1000);
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                if (tabNotificationInterval) { clearInterval(tabNotificationInterval); document.title = originalPageTitle; }
+                var ping = el('chat-ping-unread');
+                if (ping) ping.classList.add('hidden');
+            }
+        });
+    </script>
+</head>
+<body class="overflow-x-hidden font-sans h-full flex flex-col justify-between">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
+        <a href="javascript:void(0)" onclick="navigateTo('home')" class="text-white hover:opacity-80 transition-opacity text-base md:text-lg tracking-wider font-semibold py-2">
+            NEAGLE <span class="text-golfGreen">GOLF</span>
+        </a>
+        
+        <div class="hidden lg:flex items-center space-x-4 text-xs">
+            <a href="https://wa.me/13142242264" target="_blank" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-brands fa-whatsapp text-base"></i>
+                <span>WhatsApp</span>
+            </a>
+            <span class="text-white/30">|</span>
+            <a href="tel:+13142242264" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span>Phone</span>
+            </a>
+            <span class="text-white/30">|</span>
+            <a href="mailto:service@neaglegolf.com" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-solid fa-envelope text-xs"></i>
+                <span>Email</span>
+            </a>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <!-- Global Search Trigger Icon inside Nav Bar -->
+            <button onclick="toggleGlobalSearch()" class="text-white hover:text-golfGreen transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Search Catalog">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
+            
+            <!-- Toggle menu button - optimized tap area for mobile fingers -->
+            <button onclick="toggleNavMenu()" class="text-white hover:opacity-80 transition-opacity p-3 -mr-2 z-50 relative min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Toggle Menu">
+                <div id="menu-btn-icon" class="space-y-1.5 w-5 h-5 flex flex-col justify-center items-center">
+                    <span class="block w-5 h-0.5 bg-white transition-transform duration-300" id="bar1"></span>
+                    <span class="block w-5 h-0.5 bg-white transition-opacity duration-300" id="bar2"></span>
+                    <span class="block w-5 h-0.5 bg-white transition-transform duration-300" id="bar3"></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+
+    <!-- FOLDED FULLSCREEN NAVIGATION MENU -->
+    <div id="fullscreen-menu" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto pt-12 safe-pb">
+        <div class="flex flex-col space-y-5 text-center text-xl md:text-2xl font-light tracking-wide max-w-md w-full px-6">
+            <span class="text-xs tracking-widest text-zinc-500 uppercase mb-1 border-b border-white/10 pb-3">Product Categories</span>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'simulators')" class="text-white hover:text-golfGreen transition-colors py-1 active:text-golfGreen">Golf Simulators</a>
+            <a href="javascript:void(0)" onclick="navigateTo('category', 'dispenserMachines')" class="text-white hover:text-golfGreen transition-colors py-1 active:text-golfGreen">Dispenser Machines</a>
+            <a href="javascript:void(0)" onclick="navigateTo('directory')" class="text-golfGreen hover:underline transition-colors py-2 text-lg font-semibold">Browse Complete Catalog</a>
+        </div>
+    </div>
+
+    <!-- BREADCRUMB BAR (Only shown on sub-pages) -->
+    <div id="breadcrumb-bar" class="fixed top-12 left-0 w-full bg-appleGray-900/90 backdrop-blur border-b border-white/5 py-2 px-4 md:px-12 z-30 text-[11px] md:text-xs text-zinc-400 flex items-center gap-1.5 md:gap-2 select-none overflow-hidden whitespace-nowrap hidden opacity-0 transition-all duration-300">
+        <span class="cursor-pointer hover:text-white transition-colors" onclick="navigateTo('home')">Home</span>
+        <span id="breadcrumb-directory-arrow" class="hidden"><i class="fa-solid fa-chevron-right text-[7px] md:text-[8px]"></i></span>
+        <span id="breadcrumb-directory" class="cursor-pointer hover:text-white transition-colors hidden" onclick="navigateTo('directory')">Directory Hub</span>
+        <span class="breadcrumb-arrow"><i class="fa-solid fa-chevron-right text-[7px] md:text-[8px]"></i></span>
+        <span id="breadcrumb-category" class="cursor-pointer hover:text-white transition-colors truncate max-w-[120px] md:max-w-none" onclick="navigateToCategoryFromBreadcrumb()"></span>
+        <span class="breadcrumb-arrow-sub hidden"><i class="fa-solid fa-chevron-right text-[7px] md:text-[8px]"></i></span>
+        <span id="breadcrumb-product" class="text-white font-medium hidden truncate max-w-[150px] md:max-w-none"></span>
+    </div>
+
+    <!-- GLOBAL SEARCH BLURRED OVERLAY -->
+    <div id="global-search-overlay" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex flex-col justify-start items-center p-6 pt-24 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
+        <!-- Close overlay cross icon -->
+        <button onclick="toggleGlobalSearch()" class="absolute top-6 right-6 w-11 h-11 bg-zinc-900 border border-white/10 hover:border-white/20 text-white rounded-full flex items-center justify-center transition-all active:scale-95" aria-label="Close Search">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div class="max-w-2xl w-full space-y-8">
+            <div class="relative border-b-2 border-zinc-800 focus-within:border-golfGreen transition-colors pb-3">
+                <i class="fa-solid fa-magnifying-glass absolute left-0 bottom-4 text-zinc-500 text-lg"></i>
+                <input type="text" id="global-search-input" placeholder="Search products, technologies, accessories..." class="w-full bg-transparent pl-8 pr-12 text-xl md:text-2xl text-white placeholder-zinc-600 outline-none" oninput="executeGlobalSearch(this.value)">
+                <!-- Clear Button -->
+                <button onclick="clearSearchInput('global-search-input')" class="absolute right-0 bottom-4 text-zinc-500 hover:text-white transition-colors px-2">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Search Results -->
+            <div id="global-search-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                <p class="text-zinc-500 text-sm font-light text-center col-span-2 py-12">Start typing to search the NEAGLE GOLF collection...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: HOME VIEW                          -->
+    <!-- ========================================== -->
+    <section id="view-home" class="view-section safe-pt min-h-screen pb-16 flex-1 flex flex-col justify-between">
+        <div>
+            <!-- Grid starting immediately -->
+            <div class="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-10">
+                
+                <!-- Category 1: Simulators (Hero Card, wide) -->
+                <div onclick="navigateTo('category', 'simulators')" class="md:col-span-2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg');">
+                    <div class="space-y-1 md:space-y-2">
+                        <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Flagship Products</span>
+                        <h2 class="text-2xl md:text-4xl font-bold">Golf Simulators</h2>
+                        <p class="text-zinc-400 text-xs md:text-sm max-w-md line-clamp-2 md:line-clamp-none">Professional golf simulators for every space, venue, and skill level — indoors or out.</p>
+                    </div>
+                    <div class="pt-4">
+                        <span class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                            Explore Collection <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Category 2: Dispenser Machines -->
+                <div onclick="navigateTo('category', 'dispenserMachines')" class="md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/0.jpg');">
+                    <div class="space-y-1 md:space-y-2">
+                        <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Automated Solutions</span>
+                        <h2 class="text-2xl md:text-3xl font-bold">Dispenser Machines</h2>
+                        <p class="text-zinc-400 text-xs md:text-sm max-w-md line-clamp-2">Automated golf ball dispensing and vending solutions for driving ranges and golf facilities.</p>
+                    </div>
+                    <div class="pt-4">
+                        <span class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                            Explore Collection <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Category 3: Case Studies -->
+                <div onclick="navigateTo('cases')" class="md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/user_cases.jpg');">
+                    <div class="space-y-1 md:space-y-2">
+                        <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Success Stories</span>
+                        <h2 class="text-2xl md:text-3xl font-bold">Case Studies</h2>
+                        <p class="text-zinc-400 text-xs md:text-sm max-w-md line-clamp-2">Explore our successful installations and partnerships with golf facilities worldwide.</p>
+                    </div>
+                    <div class="pt-4">
+                        <span class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors text-xs md:text-sm font-semibold tracking-wider gap-1.5 py-2">
+                            View Case Studies <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Home Page Footer Injection -->
+        <div class="w-full mt-auto">
+            <div id="home-footer-container"></div>
+        </div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: CATEGORY VIEW                      -->
+    <!-- ========================================== -->
+    <section id="view-category" class="view-section safe-pt min-h-screen pb-16 view-hidden flex-1 flex flex-col justify-between">
+        <div>
+            <div class="max-w-7xl mx-auto px-4 md:px-6">
+                <!-- Category Title & Description -->
+                <div class="py-8 md:py-12 border-b border-white/5">
+                    <h1 id="category-title" class="text-3xl md:text-5xl font-semibold tracking-tight mb-4">Product Category</h1>
+                    <p id="category-desc" class="text-zinc-400 text-sm md:text-base max-w-2xl font-light leading-relaxed">Loading directory contents...</p>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 py-8 md:py-12">
+                    <!-- Dynamically generated via JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="category-footer-container"></div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: PRODUCT DIRECTORY HUB (All Products)-->
+    <!-- ========================================== -->
+    <section id="view-directory" class="view-section safe-pt min-h-screen pb-16 view-hidden flex-1 flex flex-col justify-between">
+        <div>
+            <div class="max-w-7xl mx-auto px-4 md:px-6">
+                
+                <div class="py-8 md:py-12 border-b border-white/5 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div class="space-y-2">
+                        <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-white">Complete Catalog</h1>
+                        <p class="text-zinc-400 text-xs md:text-sm font-light">Browse all product categories. Click a category to explore its products.</p>
+                    </div>
+
+                    <!-- Apple style search layout matching top search design -->
+                    <div class="relative w-full md:max-w-xs border-b border-zinc-700 focus-within:border-golfGreen transition-colors pb-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-0 bottom-2 text-zinc-500 text-xs"></i>
+                        <input type="text" id="directory-search-input" placeholder="Search entire collection..." class="w-full bg-transparent pl-6 pr-10 py-1 text-sm text-white placeholder-zinc-500 outline-none" oninput="executeDirectoryFilter(this.value)">
+                        <!-- Cancel X button -->
+                        <button id="directory-search-clear" onclick="clearDirectorySearch()" class="absolute right-0 bottom-2 text-zinc-500 hover:text-white transition-colors px-1 hidden">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2 py-6 border-b border-white/5 overflow-x-auto whitespace-nowrap scrollbar-none" id="directory-tabs">
+                    <button onclick="filterDirectory('all')" class="directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-200 bg-white border-white text-black" data-tab-id="all">All</button>
+                    <button onclick="filterDirectory('sims')" class="directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 transition-all duration-200" data-tab-id="sims">Systems</button>
+                    <button onclick="filterDirectory('tech')" class="directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 transition-all duration-200" data-tab-id="tech">Tracking & Hardware</button>
+                    <button onclick="filterDirectory('fittings')" class="directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 transition-all duration-200" data-tab-id="fittings">Acoustics & Fittings</button>
+                    <button onclick="filterDirectory('gear')" class="directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 transition-all duration-200" data-tab-id="gear">Bespoke Accessories & Licenses</button>
+                </div>
+
+                <!-- Directory Grid -->
+                <div id="directory-product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 py-8 md:py-12">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+
+            </div>
+        </div>
+
+        <div id="directory-footer-container"></div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: PRODUCT DETAIL VIEW               -->
+    <!-- ========================================== -->
+    <section id="view-detail" class="view-section safe-pt min-h-screen pb-16 view-hidden flex-1 flex flex-col justify-between">
+        <div>
+            <div class="max-w-7xl mx-auto px-4 md:px-6">
+                
+                <!-- Split Screen Container -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-6 md:py-12">
+                    
+                    <!-- Left Side: Product media gallery -->
+                    <div class="flex flex-col space-y-3">
+                        <!-- Main image display - reduced height for balance -->
+                        <div id="detail-main-media" class="aspect-[4/3] sm:aspect-[4/3] w-full rounded-2xl bg-appleGray-900 border border-white/10 overflow-hidden flex items-center justify-center relative cursor-zoom-in">
+                            <img id="detail-image" src="" alt="Product Shot" class="max-h-full max-w-full object-contain transition-transform duration-500 hover:scale-105" onclick="openLightbox(galleryIndex)">
+                            <!-- Navigation arrows for gallery -->
+                            <button id="gallery-prev" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-0 pointer-events-none" onclick="event.stopPropagation(); navigateGallery(-1)">
+                                <i class="fa-solid fa-chevron-left text-sm"></i>
+                            </button>
+                            <button id="gallery-next" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-0 pointer-events-none" onclick="event.stopPropagation(); navigateGallery(1)">
+                                <i class="fa-solid fa-chevron-right text-sm"></i>
+                            </button>
+                            <!-- Image counter -->
+                            <span id="gallery-counter" class="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-2 py-1 rounded hidden">1 / 11</span>
+                            <!-- Video indicator (shows when on video) -->
+                            <div id="video-indicator" class="absolute inset-0 flex items-center justify-center bg-black/40 hidden">
+                                <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/20 flex items-center justify-center">
+                                    <i class="fa-solid fa-play text-white text-xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Thumbnail strip - Amazon style with fold -->
+                        <div id="detail-thumbnails" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                            <!-- Dynamic thumbnails with video at end -->
+                        </div>
+                        
+                        <!-- Video Section - Separate from images -->
+                        <div id="detail-video-section" class="border-t border-white/10 pt-4 mt-4 hidden">
+                            <h4 class="text-sm uppercase tracking-widest text-zinc-500 mb-3">Product Videos</h4>
+                            <div id="detail-video-list" class="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+                                <!-- Dynamic video thumbnails -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Product configuration specifications -->
+                    <div class="flex flex-col justify-between space-y-6 md:space-y-8">
+                        <div class="space-y-4">
+                            <span id="detail-tag" class="text-xs md:text-sm font-semibold tracking-widest text-golfGreen uppercase"></span>
+                            <h1 id="detail-name" class="text-3xl md:text-4xl font-bold tracking-tight">Product Title</h1>
+                            <p id="detail-tagline" class="text-zinc-400 text-base md:text-lg font-light leading-relaxed"></p>
+
+                            <!-- Highlights list -->
+                            <div class="space-y-3 pt-2">
+                                <h3 class="text-sm md:text-base uppercase tracking-widest text-zinc-400 font-bold">Key Advancements</h3>
+                                <ul id="detail-highlights" class="space-y-2 text-base md:text-lg text-zinc-300">
+                                    <!-- Dynamic items -->
+                                </ul>
+                            </div>
+                            
+                            <!-- Use Cases / Applicable Scenarios -->
+                            <div id="detail-usecases-container" class="space-y-3 pt-4 border-t border-white/10 hidden">
+                                <!-- Space Requirement -->
+                                <div id="detail-space-container" class="mb-2 hidden">
+                                    <span class="text-zinc-400 text-sm md:text-base">Minimum Space (length, width, height): </span>
+                                    <span id="detail-space" class="text-white text-sm md:text-base font-medium"></span>
+                                </div>
+                                <h3 class="text-sm md:text-base uppercase tracking-widest text-zinc-400 font-bold">Applicable Scenarios</h3>
+                                <div id="detail-usecases" class="flex flex-wrap gap-2">
+                                    <!-- Dynamic use case tags -->
+                                </div>
+                                <!-- Price -->
+                                <div class="pt-4 mt-3 border-t border-white/10">
+                                    <span class="text-zinc-500 text-xs md:text-sm uppercase tracking-wider block mb-1">Unit Price <span class="normal-case tracking-normal">(excludes shipping & installation)</span></span>
+                                    <span id="detail-price" class="text-2xl md:text-3xl font-light text-white">$45,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+                <!-- Full Spec Specifications - Standard view -->
+                <div id="detail-specs-standard" class="py-8 md:py-12 border-t border-white/10">
+                    <h2 class="text-2xl md:text-3xl font-bold tracking-tight mb-8">Key Specifications</h2>
+                    <div class="overflow-hidden rounded-2xl border border-white/5">
+                        <table class="w-full text-left text-sm md:text-base text-zinc-300 divide-y divide-white/5">
+                            <tbody id="detail-specs-body" class="divide-y divide-white/5 bg-appleGray-900/50">
+                                <!-- Dynamic specifications generated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Detailed Specs with Tabs (for enhanced products like GOLFPAI S1) -->
+                <div id="detail-specs-tabs" class="py-8 md:py-12 border-t border-white/10 hidden">
+                    <h2 class="text-base md:text-lg font-bold tracking-tight mb-6">Key Specifications</h2>
+                    
+                    <!-- Tab buttons -->
+                    <div class="flex flex-wrap gap-3 mb-6" id="specs-tabs">
+                        <button class="spec-tab-btn active" data-tab="track" onclick="switchSpecTab('track')">
+                            <i class="fa-solid fa-eye text-xs"></i> Tracking
+                        </button>
+                        <button class="spec-tab-btn" data-tab="perf" onclick="switchSpecTab('perf')">
+                            <i class="fa-solid fa-microchip text-xs"></i> Performance
+                        </button>
+                        <button class="spec-tab-btn" data-tab="display" onclick="switchSpecTab('display')">
+                            <i class="fa-solid fa-tv text-xs"></i> Display
+                        </button>
+                        <button class="spec-tab-btn" data-tab="soft" onclick="switchSpecTab('soft')">
+                            <i class="fa-solid fa-gamepad text-xs"></i> Software
+                        </button>
+                        <button class="spec-tab-btn" data-tab="hw" onclick="switchSpecTab('hw')">
+                            <i class="fa-solid fa-wrench text-xs"></i> Hardware
+                        </button>
+                        <button class="spec-tab-btn" data-tab="svc" onclick="switchSpecTab('svc')">
+                            <i class="fa-solid fa-headset text-xs"></i> Service
+                        </button>
+                    </div>
+                    
+                    <!-- Tab content container -->
+                    <div id="specs-tab-content" class="bg-appleGray-900/30 rounded-2xl border border-white/5 p-4 md:p-6">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="detail-footer-container"></div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- IMAGE LIGHTBOX (Fullscreen Gallery)       -->
+    <!-- ========================================== -->
+    <div id="lightbox-overlay" class="fixed inset-0 z-[100] bg-black flex flex-col opacity-0 pointer-events-none transition-opacity duration-300">
+        <!-- Hidden fullscreen trigger video for iOS (1x1 pixel, black) -->
+        <video id="fullscreen-trigger-video" src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAA" playsinline webkit-playsinline class="absolute w-1 h-1 opacity-0 pointer-events-none"></video>
+        <!-- Main image container - absolute to fill entire screen -->
+        <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <!-- Loading indicator for video -->
+            <div id="lightbox-loading" class="hidden absolute inset-0 flex items-center justify-center z-20">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span class="text-white text-lg font-medium">Loading video...</span>
+                </div>
+            </div>
+            <img id="lightbox-image" src="" alt="Full size image" class="h-full w-full object-contain transition-transform duration-300">
+            <!-- Video player (hidden by default) -->
+            <video id="lightbox-video" src="" playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true" preload="auto" class="hidden h-full w-full object-contain cursor-pointer" style="background: #000;"></video>
+        </div>
+        
+        <!-- Close button - floats above image -->
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 md:top-6 md:right-6 w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors z-30">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+        
+        <!-- Navigation arrows (hidden in video mode) -->
+        <button id="lightbox-nav-left" onclick="navigateLightbox(-1)" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors z-30">
+            <i class="fa-solid fa-chevron-left text-xl"></i>
+        </button>
+        <button id="lightbox-nav-right" onclick="navigateLightbox(1)" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors z-30">
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+        </button>
+        
+        <!-- Bottom bar: counter only (hidden in video mode) -->
+        <div id="lightbox-bottom-bar" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent pt-8 pb-4 px-4 z-30">
+            <div class="flex items-center justify-center gap-4">
+                <span id="lightbox-counter" class="text-base md:text-lg text-white font-medium">1 / 11</span>
+                <div class="w-px h-4 bg-zinc-700"></div>
+                <span class="text-xs md:text-sm text-zinc-400">Press <kbd class="px-1.5 py-0.5 bg-zinc-800 rounded text-zinc-300">ESC</kbd> to close</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: REAL CASES VIEW                    -->
+    <!-- ========================================== -->
+    <section id="view-cases" class="view-section safe-pt min-h-screen pb-16 view-hidden flex-1 flex flex-col justify-between">
+        <div class="flex-1 flex flex-col">
+            <div class="max-w-7xl mx-auto px-4 md:px-6 w-full">
+                <div class="text-center py-10 md:py-12 max-w-2xl mx-auto">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">Case Studies</h1>
+                    <p class="text-zinc-400 text-xs md:text-sm font-light leading-relaxed">Explore our successful installations and partnerships with golf facilities worldwide.</p>
+                </div>
+
+                <!-- Carousel Container -->
+                <div class="relative py-8 md:py-12">
+                    <!-- Carousel Wrapper -->
+                    <div id="cases-carousel" class="relative flex items-center justify-center gap-4 md:gap-6 min-h-[400px] md:min-h-[500px]">
+                        <!-- Cards will be rendered by JS -->
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    <button onclick="casesCarouselPrev()" class="absolute left-0 md:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95">
+                        <i class="fa-solid fa-chevron-left text-lg"></i>
+                    </button>
+                    <button onclick="casesCarouselNext()" class="absolute right-0 md:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95">
+                        <i class="fa-solid fa-chevron-right text-lg"></i>
+                    </button>
+
+                    <!-- Dots Indicator -->
+                    <div id="cases-dots" class="flex justify-center gap-2 mt-6 md:mt-8">
+                        <!-- Dots will be rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cases-footer-container"></div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 6: ABOUT US VIEW                      -->
+    <!-- ========================================== -->
+    <section id="view-about" class="view-section safe-pt min-h-screen pb-16 view-hidden flex-1 flex flex-col justify-between">
+        <div>
+            <div class="max-w-4xl mx-auto px-4 md:px-6">
+                
+                <div class="py-10 md:py-16 border-b border-white/10 space-y-4 md:space-y-6">
+                    <span class="text-[10px] md:text-xs uppercase tracking-widest text-golfGreen font-bold">ABOUT NEAGLE LAB</span>
+                    <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">Engineering Physical Authenticity Indoors.</h1>
+                    <p class="text-zinc-300 text-sm md:text-lg leading-relaxed font-light">
+                        Formed by a collective of aerospace radar developers, acoustic research physicists, and competitive touring professionals, NEAGLE GOLF targets the absolute apex of indoor simulation science. We do not manufacture projection toys; we craft sub-millimetric golf installations that translate true outdoor ball aerodynamics into micro-level indoor metrics.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 py-8 md:py-12">
+                    <div class="space-y-2">
+                        <h3 class="text-base md:text-lg font-bold text-white">99.9% Trajectory Precision</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            Every single micro-Doppler radar array undergoes stringent testing utilizing custom pneumatic launchers, performing over 100,000 strikes to map dynamic spin vectors across extreme launch windows.
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-base md:text-lg font-bold text-white">Cloud-Connected Longevity</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">
+                            All NEAGLE frameworks support seamless over-the-air firmware upgrades. Our high-performance processing hardware guarantees continuous algorithms, features, and new LiDAR course releases.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Global Concierge banner -->
+                <div class="p-8 md:p-12 rounded-3xl bg-gradient-to-tr from-zinc-950 to-zinc-900 border border-white/5 text-center space-y-6">
+                    <h3 class="text-lg md:text-xl font-bold text-white">The NEAGLE Concierge Service</h3>
+                    <p class="text-xs text-zinc-400 max-w-md mx-auto leading-relaxed">
+                        From custom framing and structural sound isolation to adaptive air-flow design, our team handles all installation steps to guarantee a flawless finished sporting asset.
+                    </p>
+                    <div class="pt-2">
+                        <button onclick="navigateTo('home')" class="px-8 py-3 bg-white text-black font-bold text-xs tracking-wider rounded-full hover:bg-golfGreen hover:text-black transition-colors uppercase active:scale-95">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="about-footer-container"></div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- TEMPLATE DEFINITION FOR SHARED FOOTER      -->
+    <!-- ========================================== -->
+    <template id="global-footer-template">
+        <footer class="py-12 border-t border-white/5 bg-black text-xs text-zinc-400 px-4 md:px-12">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
+                <!-- Brand Info -->
+                <div class="space-y-2 max-w-sm">
+                    <span class="text-base font-bold text-white tracking-widest font-luxury uppercase">NEAGLE <span class="text-golfGreen">GOLF</span></span>
+                </div>
+                
+                <!-- Contact Direct Link Rows -->
+                <div class="space-y-3">
+                    <span class="text-xs font-semibold text-white tracking-wider block uppercase">Direct Concierge Contact</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8">
+                        <a href="tel:+13142242264" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone text-golfGreen"></i> +1 (314) 224-2264
+                        </a>
+                        <a href="https://wa.me/13142242264" target="_blank" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                            <i class="fa-brands fa-whatsapp text-golfGreen"></i> +1 (314) 224-2264
+                        </a>
+                        <a href="mailto:service@neaglegolf.com" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-envelope text-golfGreen"></i> service@neaglegolf.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto border-t border-white/5 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-zinc-500">© 2026 NEAGLE GOLFING SYSTEMS. All rights reserved.</p>
+            </div>
+        </footer>
+    </template>
+
+
+    <!-- ========================================== -->
+    <!-- FIREBASE AND REALTIME ENGINE CONNECTIONS   -->
+    <!-- ========================================== -->
+
+
+    <!-- ========================================== -->
+    <!-- COMPACT SITE INTERACTIVE RENDERING LOGIC  -->
+    <!-- ========================================== -->
+    <script>
+        // Catalog DB
+        const catalogDb = {
+            simulators: {
+                title: "Golf Simulators",
+                desc: "Professional golf simulators for every space, venue, and skill level — indoors or out.",
+                items: [
+                    // GOLFPAI S1
+                    {
+                        id: "golfpai-s1",
+                        name: "GOLFPAI S1 Indoor Golf Simulator",
+                        tagline: "Premium indoor golf simulator with 6,000 FPS vision tracking, 4K laser projection, and 110+ photorealistic courses.",
+                        price: "$42,516.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg",
+                        // Multi-image gallery support
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/1.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/2.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/3.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/4.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/5.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/6.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/7.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/8.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/9.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/10.jpg"
+                        ],
+                        // Video support (lazy load on click)
+                        videos: ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/S1_intro.mp4"],
+                        highlights: [
+                            "6,000 FPS dual-camera stereo vision, ≥99.9% ball & clubhead recognition",
+                            "8ms ultra-low latency — 37× faster than a human blink",
+                            "4K UHD, 6,000 lm laser projection on 200\" impact screen",
+                            "110+ world-famous courses with 4K real-scene modeling",
+                            "3-zone mat — fairway, rough & bunker — with Korean imported turf",
+                            "32GB RAM + 1TB M.2 SSD — built for demanding, high-traffic environments"
+                        ],
+                        useCases: [
+                            "Private Villas",
+                            "Premium Clubs",
+                            "Corporate Showrooms",
+                            "Elite Clubs",
+                            "Luxury Hotels"
+                        ],
+                        spaceRequired: "6.0 × 3.8 × 2.8 meters",
+                        specs: {
+                            "Tracking System": "6,000 FPS dual-camera stereo vision, ≥99.9% ball & club recognition",
+                            "Display": "4K UHD laser projector, 6,000 ANSI lumens, 3,000,000:1 contrast",
+                            "Performance": "Intel i5-12400, NVIDIA RTX 4060Ti, 32GB DDR4, 1TB SSD",
+                            "Courses": "110+ world-famous courses with 4K photorealistic modeling"
+                        },
+                        // Flag to enable enhanced detail view with tabs
+                        hasDetailedSpecs: true
+                    },
+                    // GOLFPAI A1
+                    {
+                        id: "golfpai-a1",
+                        name: "GOLFPAI A1 All-in-One Golf Simulator",
+                        tagline: "All-in-one indoor golf simulator with integrated touchscreen, 4K DLP laser projection, and 80+ world-class courses.",
+                        price: "$23,325.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/0.jpg",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/0.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/1.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/2.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/3.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/4.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/5.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/6.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/7.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/8.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/9.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/10.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/A1/11.jpg"
+                        ],
+                        videos: ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/A1_intro_4k.mp4",
+                                    "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/A1_tech.mp4"],
+                        highlights: [
+                            "6,000 FPS dual-camera stereo vision, ≥99.9% ball & clubhead recognition",
+                            "Integrated all-in-one unit with built-in 24\" touchscreen",
+                            "4K DLP laser projection, 0.65″ DMD chip, ≥30,000-hr light source",
+                            "80+ world-famous courses with AI caddie & kids' cartoon mode",
+                            "Cinema, KTV & meeting modes — full multi-use entertainment suite",
+                            "Compact footprint — ideal for homes, apartments & boutique studios"
+                        ],
+                        specs: {
+                            "Tracking System": "6,000 FPS dual-camera stereo vision, ≥99.9% ball & club recognition",
+                            "Display": "4K DLP laser projection, 0.65″ DMD chip, ≥30,000-hr light source",
+                            "Performance": "Intel i5-12400F, NVIDIA RTX 4060Ti, 16GB DDR4",
+                            "Courses": "80+ world-famous courses with 4K modeling"
+                        },
+                        hasDetailedSpecs: true,
+                        spaceRequired: "5.5 × 3.5 × 2.8 meters",
+                        useCases: ["Business Entertainment", "Golf Education", "Lifestyle Experiences", "Leisure Activities"]
+                    },
+                    // GOLFPAI X1
+                    {
+                        id: "golfpai-x1",
+                        name: "GOLFPAI X1 Smart Golf Simulator",
+                        tagline: "Smart driving range simulator with world-first radar + vision dual-engine tracking and self-evolving AI ballistics.",
+                        price: "$8,829.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/0.jpg",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/0.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/1.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/2.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/3.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/4.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/5.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/6.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/7.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/8.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/X1/9.jpg"
+                        ],
+                        videos: ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/X1_intro_4k.mp4",
+                                "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/X1_tech.mp4"],
+                        highlights: [
+                            "World-first radar + vision dual-engine ballistics — up to 99.99% accuracy",
+                            "Self-evolving AI: learns from every shot, accuracy improves over time",
+                            "43\" high-brightness sunlight touchscreen — clear in any ambient light",
+                            "50+ courses, 6-player remote multiplayer with live video call",
+                            "No custom ball needed — works with any standard golf ball"
+                        ],
+                        specs: {
+                            "Tracking System": "Radar + vision dual-engine, up to 99.99% accuracy",
+                            "Display": "43\" high-brightness sunlight touchscreen",
+                            "Performance": "Intel i5-12400F, NVIDIA RTX 4060Ti, 16GB DDR4",
+                            "Courses": "50+ world-famous courses"
+                        },
+                        hasDetailedSpecs: true,
+                        spaceRequired: "5.5 × 3.5 × 2.8 meters",
+                        useCases: ["Professional Driving Ranges", "Indoor Golf Centers", "Rooftop Venues", "Shopping Malls", "Private Clubs", "Villas"]
+                    },
+                    // RG (Ruge)
+                    {
+                        id: "rg-ruge",
+                        name: "Ruge Golf Simulator",
+                        tagline: "Tournament-proven golf simulator with triple-lens Eagle Eye tracking, UE5-powered 4K visuals, and 180+ real-world courses.",
+                        price: "$31,464.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/1.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/2.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/3.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/4.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/5.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/6.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/7.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/8.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/9.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/10.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/11.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/12.jpg"
+                        ],
+                        videos: ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/RG_intro.mp4"],
+                        highlights: [
+                            "Official simulator of Volvo China Open, Buick LPGA & China PGA Tour",
+                            "Eagle Eye III triple-lens sensor — zero-delay ball flight with full 3D data",
+                            "UE5 engine, 2K/4K display, 180+ 1:1 real-scene 3D courses",
+                            "AIGOLF swing analysis across 6 practice modules",
+                            "Year-round online tournaments — club, team & solo events",
+                            "7×24 hr support, 2-year core hardware warranty"
+                        ],
+                        specs: {
+                            "Tracking System": "Eagle Eye III triple-lens ultra-high-speed sensor",
+                            "Display": "UE5 engine, 2K/4K display, 180+ 1:1 real-scene 3D courses",
+                            "Customization": "Fully customizable to your space",
+                            "Integration": "AIGOLF swing analysis, 6 practice modules"
+                        },
+                        hasDetailedSpecs: true,
+                        space: "Fully customizable to your space",
+                        useCases: ["Private Villas", "Premium Clubs", "Corporate Showrooms", "Elite Clubs", "Luxury Hotels"]
+                    },
+                    // FAYA Motion
+                    {
+                        id: "faya-motion",
+                        name: "FAYA Motion Golf Simulator",
+                        tagline: "Professional dual-sensor golf simulator with full-spectrum shot data, 100+ HD real-world courses, and seamless one-touch switching between golf, cinema, and KTV.",
+                        price: "$9,384.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/1.png",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/2.png",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/3.png"
+                        ],
+                        highlights: [
+                            "IDS dual-sensor core — high-speed camera + precision rotation sensor",
+                            "Full professional data — ball speed, launch angle, backspin, sidespin",
+                            "100+ real 18-hole international courses with 64GBit 3D engine",
+                            "Golf · Cinema · KTV one-touch switching with Dolby Atmos 7.2",
+                            "No space restrictions — fully customized to any venue",
+                            "Lifetime free course upgrades & after-sales service"
+                        ],
+                        specs: {
+                            "Tracking System": "IDS dual high-speed camera + precision rotation sensor",
+                            "Display": "Full HD 2K, Epson professional projector",
+                            "Installation": "Fully customizable to any venue",
+                            "Courses": "100+ international courses with 64GBit 3D engine"
+                        },
+                        hasDetailedSpecs: true,
+                        space: "Fully customizable to your space",
+                        useCases: ["Private Villas", "Luxury Clubs", "Corporate Showrooms", "Hotels", "Golf Training Academies", "Shopping Malls", "Entertainment Complexes"]
+                    }
+                ]
+            },
+            dispenserMachines: {
+                title: "Dispenser Machines",
+                desc: "Automated golf ball dispensing and vending solutions for driving ranges and golf facilities.",
+                items: [
+                    {
+                        id: "dispenser-machine",
+                        name: "Automatic Golf Ball Dispenser",
+                        tagline: "Hands-free automatic ball dispenser with dual feeding modes, 100+ ball capacity, and wide-voltage compatibility — so you stay focused on your swing, not on picking up balls.",
+                        price: "$342.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/0.jpg",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/0.jpg",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/1.jpg"
+                        ],
+                        videos: ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/Dispenser_operation.mp4"],
+                        highlights: [
+                            "Fully automatic mode — detects when tee is empty and feeds next ball instantly",
+                            "Semi-auto foot-pedal mode — one press, one ball for controlled practice",
+                            "Flexible ball placement — feeds onto tee or hitting mat, no modification needed",
+                            "100+ ball capacity — fewer refills, longer practice sessions",
+                            "20 balls/min continuous output — high-efficiency feeding",
+                            "Wide voltage 110V–220V — runs stably in any environment"
+                        ],
+                        specs: {
+                            "Capacity": "100+ balls",
+                            "Output Speed": "20 balls/min",
+                            "Feeding Modes": "Auto + Semi-Auto (Foot-Pedal)",
+                            "Power": "110V–220V AC",
+                            "Dimensions": "0.6 × 0.2 × 0.3 m"
+                        },
+                        hasDetailedSpecs: true,
+                        specsFile: "assets/golf_ball_dispenser_specs_20260608093100733.html",
+                        space: "0.6 × 0.2 × 0.3 meters",
+                        useCases: [
+                            "Golf Driving Ranges"
+                        ]
+                    },
+                    {
+                        id: "vending-machine",
+                        name: "Automatic Golf Ball Vending Machine",
+                        tagline: "High-capacity self-service ball vending machine with triple payment options and dynamic smart pricing — fully automated 24/7 operation that cuts labor costs and maximizes driving range revenue.",
+                        price: "$4,830.00",
+                        tag: "",
+                        image: "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Vending_Machine/0.png",
+                        images: [
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Vending_Machine/0.png",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Vending_Machine/1.png",
+                            "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Vending_Machine/2.png"
+                        ],
+                        highlights: [
+                            "10,000–20,000 ball capacity with 100-ball-per-dispense output",
+                            "Three-in-one smart payment — QR code, membership card, facial recognition",
+                            "Flexible smart pricing — member/guest rates, peak/off-peak dynamic pricing",
+                            "24/7 unmanned operation — no ticketing staff, no attendants",
+                            "Zero human error — fully automated payment & dispensing",
+                            "Instant smart upgrade for any driving range"
+                        ],
+                        specs: {
+                            "Capacity": "10,000–20,000 balls",
+                            "Payment Options": "QR Code, Card Swipe, Face Recognition",
+                            "Output per Dispense": "100 balls",
+                            "Operation": "24/7 Unmanned",
+                            "Dimensions": "1.3 × 1.2 × 1.65 m"
+                        },
+                        hasDetailedSpecs: true,
+                        specsFile: "assets/golf_ball_vending_specs_20260608093051553.html",
+                        space: "1.3 × 1.2 × 1.65 meters",
+                        useCases: [
+                            "Golf Driving Ranges",
+                            "Self-Service Golf Facilities"
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Case Studies Data
+        const caseStudies = [
+            {
+                id: 'lincoln-4s',
+                title: 'Lincoln 4S Dealership │ Smart Simulator Empowers Customer Experience',
+                description: 'General Manager of a Lincoln 4S dealership leverages the Golfpai smart golf simulator to extend customer stay, enhance the test-driving experience, and turn idle space into an effective conversion booster.',
+                keywords: 'Auto Dealership // Smart Golf Retention',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/Lincoln_4s.png'
+            },
+            {
+                id: 'automatives',
+                title: 'GOLFPAI × Automotive Industry │ Innovation Scenarios & Win-Win Ecosystem',
+                description: 'This case explores the strategic cooperation between GOLFPAI and the automotive industry, creating a win-win innovation ecosystem that transforms dealership spaces into immersive sports-experience hubs and enhances brand value and customer retention.',
+                keywords: 'Automotive Dealership │ Showroom Experience Ecosystem',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/automatives.png'
+            },
+            {
+                id: 'in-house',
+                title: 'Courtyard Estate // Simulated Fairway Retreat',
+                description: 'This traditional Chinese courtyard villa integrates a state-of-the-art golf simulator into its private leisure wing, blending ancient architectural elegance with modern sports technology for year-round indoor practice and family entertainment.',
+                keywords: 'Chinese Mansion // Basement Golf Studio',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/in_house.png'
+            },
+            {
+                id: 'jp-rest',
+                title: 'Sushi Omakase // Swings & Sake',
+                description: 'This Japanese restaurant transforms its after-hours space into a premium golf simulator lounge — elevating a traditional omakase dining concept into an immersive sports-entertainment hybrid that serves both the discerning golfer and the high-end diner.',
+                keywords: 'Restaurant // High-End Hospitality Golf Integration',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/jp_rest.png'
+            },
+            {
+                id: 'shanghai-g-town',
+                title: 'Jitang Club: Seaside Swing, Elevated by Golfpai S1',
+                description: 'Jitang Club adopts the Golfpai S1 simulator with a curved screen that precisely captures swing trajectories and delicately restores green undulations and grass textures. Members have commented, "The green feedback is excellent, and the realism is extremely high."',
+                keywords: 'Clubhouse // Coastal Golf & Dining',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/shanghai_g_town.jpeg'
+            },
+            {
+                id: 'clubhouse',
+                title: "Clubhouse Indoor Golf // From Lease Takeover to Greater Vancouver's Most Capable Simulator Venue",
+                description: "Clubhouse Indoor Golf took over a struggling Richmond simulator space, completed a full renovation with six RG Eagleye III bays and three private VIP rooms offering 180+ real 4K courses, and turned it into the Greater Vancouver Area's most capable indoor golf destination — where laggy, inconsistent tracking was replaced by accurate ball flight, zero perceptible delay, and members who once visited return as regulars.",
+                keywords: 'Indoor Golf Center // RG Eagleye III Simulator Fleet',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/clubhouse.jpg'
+            },
+            {
+                id: 'oclock',
+                title: "Ground-Up Entertainment Venue // Golf Meets the Bar Scene",
+                description: "From a raw commercial shell in Regina, the team built a ground-up golf bar featuring nine RG Eagleye III bays—including two private VIP rooms—with a full-service bar and lounge seating, creating a venue where golfers and non-golfers can play a world-class course and order a cocktail between holes.",
+                keywords: 'Entertainment Venue // RG Eagleye III Fleet',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/o\'clock.jpg'
+            },
+            {
+                id: 'toroto-house',
+                title: 'Sun Room Conversion // Multi-Entertainment Suite',
+                description: 'A Toronto homeowner transformed an underused sun room with vaulted wood ceilings and skylights into a multi-functional entertainment suite, anchored by an RG Eagleye III simulator with Auto Tee, alongside optional karaoke and home theatre add-ons.',
+                keywords: 'Sun Room Conversion // Multi-Entertainment Suite',
+                image: 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/case_studies/toronto_house.jpg'
+            }
+        ];
+
+        // Cases Carousel State
+        let casesCarouselIndex = 0;
+
+        function renderCasesCarousel() {
+            const container = document.getElementById('cases-carousel');
+            const dotsContainer = document.getElementById('cases-dots');
+            if (!container || !dotsContainer) return;
+
+            const total = caseStudies.length;
+            const prevIndex = (casesCarouselIndex - 1 + total) % total;
+            const nextIndex = (casesCarouselIndex + 1) % total;
+
+            // Render dots
+            dotsContainer.innerHTML = caseStudies.map((_, i) => `
+                <button onclick="casesCarouselGoTo(${i})" 
+                    class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ${i === casesCarouselIndex ? 'bg-golfGreen w-6 md:w-8' : 'bg-zinc-600 hover:bg-zinc-400'}">
+                </button>
+            `).join('');
+
+            // Render cards - previous, current, next
+            const positions = [
+                { idx: prevIndex, pos: 'prev' },
+                { idx: casesCarouselIndex, pos: 'current' },
+                { idx: nextIndex, pos: 'next' }
+            ];
+
+            container.innerHTML = positions.map(({ idx, pos }) => {
+                const case_ = caseStudies[idx];
+                const isCurrent = pos === 'current';
+                const isPrev = pos === 'prev';
+                const isNext = pos === 'next';
+
+                // Card dimensions and opacity based on position
+                const baseClasses = `
+                    flex-shrink-0 overflow-hidden rounded-2xl md:rounded-3xl 
+                    bg-appleGray-900 border border-white/10 
+                    transition-all duration-500 ease-out cursor-pointer
+                    ${isCurrent 
+                        ? 'w-[85%] md:w-[55%] opacity-100 scale-100 z-10 shadow-2xl shadow-black/50' 
+                        : 'w-[60%] md:w-[25%] opacity-40 scale-75 blur-[1px] hover:opacity-60 hover:scale-80 hover:blur-0'}
+                `;
+
+                return `
+                    <div class="${baseClasses}" 
+                         onclick="${isPrev ? 'casesCarouselPrev()' : isNext ? 'casesCarouselNext()' : ''}"
+                         style="transform-origin: ${isPrev ? 'right center' : isNext ? 'left center' : 'center center'}">
+                        <div class="aspect-video overflow-hidden bg-zinc-950">
+                            <img src="${case_.image}" 
+                                 class="w-full h-full object-cover transition-transform duration-700 ${isCurrent ? '' : ''}" 
+                                 alt="${case_.title}"
+                                 loading="lazy">
+                        </div>
+                        <div class="p-4 md:p-6 ${isCurrent ? '' : 'hidden md:block'}">
+                            <span class="text-[8px] md:text-[9px] uppercase tracking-widest text-golfGreen font-bold">${case_.keywords}</span>
+                            <h3 class="text-sm md:text-lg font-bold text-white mt-1 line-clamp-2 ${isCurrent ? '' : 'text-xs'}">${case_.title}</h3>
+                            ${isCurrent ? `<p class="text-xs text-zinc-400 mt-2 leading-relaxed line-clamp-3">${case_.description}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function casesCarouselPrev() {
+            casesCarouselIndex = (casesCarouselIndex - 1 + caseStudies.length) % caseStudies.length;
+            renderCasesCarousel();
+        }
+
+        function casesCarouselNext() {
+            casesCarouselIndex = (casesCarouselIndex + 1) % caseStudies.length;
+            renderCasesCarousel();
+        }
+
+        function casesCarouselGoTo(index) {
+            casesCarouselIndex = index;
+            renderCasesCarousel();
+        }
+
+        // Routing State Machine
+        let currentView = 'home';
+        let activeCategory = '';
+        let activeProduct = null;
+        let isNavOpen = false;
+        let isGlobalSearchOpen = false;
+        let directoryFilterType = 'all';
+        let cameFromDirectory = false;  // Track if user navigated from Directory Hub
+
+        // Universal Navigation Handler
+        function navigateTo(viewId, categoryId = '', productId = '') {
+            if (isNavOpen) toggleNavMenu();
+
+            const currentActiveSection = document.querySelector('.view-section:not(.view-hidden)');
+            const nextActiveSection = document.getElementById(`view-${viewId}`);
+
+            // Reset scrolling position instantly
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // Specific page data bindings
+            if (viewId === 'category' && categoryId) {
+                renderCategoryView(categoryId);
+                updateBreadcrumbs('category', categoryId);
+            } 
+            else if (viewId === 'detail' && categoryId && productId) {
+                renderDetailView(categoryId, productId);
+                updateBreadcrumbs('detail', categoryId, productId);
+            }
+            else if (viewId === 'directory') {
+                renderDirectoryHub();
+                updateBreadcrumbs('directory');
+            }
+            else if (viewId === 'cases') {
+                renderCasesCarousel();
+                updateBreadcrumbs('cases');
+            }
+            else {
+                updateBreadcrumbs(viewId);
+            }
+
+            // Crossfade section visibility transition
+            if (currentActiveSection && currentActiveSection !== nextActiveSection) {
+                currentActiveSection.classList.add('opacity-0', 'translate-y-3');
+                setTimeout(() => {
+                    currentActiveSection.classList.add('view-hidden');
+                    nextActiveSection.classList.remove('view-hidden');
+                    nextActiveSection.offsetHeight; // force paint
+                    nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
+                }, 150);
+            } else {
+                document.querySelectorAll('.view-section').forEach(section => {
+                    section.classList.add('view-hidden', 'opacity-0', 'translate-y-3');
+                });
+                nextActiveSection.classList.remove('view-hidden');
+                nextActiveSection.offsetHeight;
+                nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
+            }
+
+            currentView = viewId;
+            
+            // Update URL hash for page refresh persistence
+            let hash = '';
+            if (viewId === 'category' && categoryId) {
+                hash = `#category/${categoryId}`;
+            } else if (viewId === 'detail' && categoryId && productId) {
+                hash = `#detail/${categoryId}/${productId}`;
+            } else if (viewId !== 'home') {
+                hash = `#${viewId}`;
+            }
+            history.pushState({ viewId, categoryId, productId }, '', hash || window.location.pathname);
+        }
+
+        // Render Category Page dynamically
+        function renderCategoryView(catId) {
+            activeCategory = catId;
+            const catData = catalogDb[catId];
+            
+            document.getElementById('category-title').textContent = catData.title;
+            document.getElementById('category-desc').textContent = catData.desc;
+
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+
+            catData.items.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden p-6 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-4px] cursor-pointer";
+                card.setAttribute('onclick', `navigateTo('detail', '${catId}', '${prod.id}')`);
+                card.innerHTML = `
+                    <div>
+                        <div class="aspect-square w-full rounded-2xl overflow-hidden mb-6">
+                            <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <span class="text-[10px] tracking-widest text-golfGreen font-bold uppercase block mb-1">${prod.tag}</span>
+                        <h3 class="text-xl font-bold text-white mb-2">${prod.name}</h3>
+                        <p class="text-zinc-400 text-xs font-light leading-relaxed mb-6 line-clamp-3">${prod.tagline}</p>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-white/5 pt-4">
+                        <span class="text-lg font-light text-white">${prod.price}</span>
+                        <span class="text-sky-400 hover:text-sky-300 font-semibold text-xs transition-colors py-2 px-1">
+                            Details <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Render Product Detail Page dynamically
+        // Gallery state
+        let galleryImages = [];
+        let galleryIndex = 0;
+        const maxVisibleThumbs = 4; // Max thumbnails to show before fold
+
+        function renderDetailView(catId, prodId) {
+            const catData = catalogDb[catId];
+            const prod = catData.items.find(item => item.id === prodId);
+            activeProduct = prod;
+
+            document.getElementById('detail-tag').textContent = prod.tag;
+            document.getElementById('detail-name').textContent = prod.name;
+            document.getElementById('detail-tagline').textContent = prod.tagline;
+            document.getElementById('detail-price').textContent = prod.price;
+
+            // Handle multi-image gallery
+            const images = prod.images || [prod.image];
+            galleryImages = images;
+            galleryIndex = 0;
+            
+            document.getElementById('detail-image').src = images[0];
+            
+            // Setup thumbnails - Dynamic count based on container width
+            const thumbContainer = document.getElementById('detail-thumbnails');
+            thumbContainer.innerHTML = '';
+            
+            const thumbWidth = 48; // w-12 = 48px
+            const thumbGap = 8; // gap-2 = 8px
+            const mainImgContainer = document.getElementById('detail-main-image');
+            const containerWidth = mainImgContainer ? mainImgContainer.offsetWidth : 400;
+            const maxThumbnails = Math.floor((containerWidth + thumbGap) / (thumbWidth + thumbGap));
+            const maxVisibleThumbs = Math.max(4, Math.min(images.length, maxThumbnails)); // At least 4, or all if fits
+            const videos = prod.videos || (prod.video ? [prod.video] : []);
+            const hasVideo = videos.length > 0;
+            
+            if (images.length > 1) {
+                // Add image thumbnails
+                const thumbsToShow = Math.min(images.length, maxVisibleThumbs);
+                for (let idx = 0; idx < thumbsToShow; idx++) {
+                    const thumb = document.createElement('div');
+                    thumb.className = `detail-thumb ${idx === 0 ? 'active' : ''}`;
+                    thumb.innerHTML = `<img src="${images[idx]}" alt="Thumbnail ${idx + 1}" loading="lazy">`;
+                    thumb.onclick = () => setGalleryImage(idx);
+                    thumbContainer.appendChild(thumb);
+                }
+                
+                // Add "+" fold button if more images exist
+                if (images.length > maxVisibleThumbs) {
+                    const foldBtn = document.createElement('button');
+                    foldBtn.className = 'flex-shrink-0 w-12 h-12 rounded-lg border-2 border-white/10 bg-zinc-900/50 flex items-center justify-center text-white text-sm font-medium hover:border-white/30 transition-colors overflow-hidden';
+                    foldBtn.innerHTML = `<span class="text-sm font-bold">+${images.length - maxVisibleThumbs}</span>`;
+                    foldBtn.onclick = () => openLightbox(maxVisibleThumbs);
+                    thumbContainer.appendChild(foldBtn);
+                }
+                
+                // Show gallery controls
+                document.getElementById('gallery-prev').classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById('gallery-next').classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById('gallery-counter').classList.remove('hidden');
+                document.getElementById('gallery-counter').textContent = `1 / ${images.length}`;
+                
+                // Preload all images immediately (including folded ones)
+                images.forEach((src) => {
+                    const img = new Image();
+                    img.src = src;
+                });
+                
+                // Preload all videos
+                if (hasVideo) {
+                    videos.forEach((src) => {
+                        const vid = document.createElement('video');
+                        vid.preload = 'auto';
+                        vid.src = src;
+                    });
+                }
+            } else {
+                // Single image - hide gallery controls
+                document.getElementById('gallery-prev').classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById('gallery-next').classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById('gallery-counter').classList.add('hidden');
+            }
+            
+            // Video Section - Separate from images
+            const videoSection = document.getElementById('detail-video-section');
+            const videoList = document.getElementById('detail-video-list');
+            if (hasVideo) {
+                videoSection.classList.remove('hidden');
+                videoList.innerHTML = '';
+                
+                // Create video thumbnails for each video
+                videos.forEach((videoSrc, vIdx) => {
+                    const videoThumb = document.createElement('div');
+                    videoThumb.className = 'flex-shrink-0 w-48 h-28 sm:w-56 sm:h-32 rounded-lg border border-white/10 bg-zinc-900/50 overflow-hidden cursor-pointer hover:border-white/30 transition-colors relative';
+                    
+                    // Use video element to capture first frame as cover
+                    const tempVideo = document.createElement('video');
+                    tempVideo.src = videoSrc;
+                    tempVideo.crossOrigin = 'anonymous';
+                    tempVideo.muted = true;
+                    tempVideo.preload = 'metadata';
+                    
+                    const coverImg = document.createElement('img');
+                    coverImg.className = 'w-full h-full object-cover';
+                    coverImg.alt = 'Video cover';
+                    // Fallback to first product image initially
+                    coverImg.src = images[0];
+                    
+                    tempVideo.onloadeddata = function() {
+                        // Seek to a frame
+                        tempVideo.currentTime = 0.5;
+                    };
+                    
+                    tempVideo.onseeked = function() {
+                        // Capture frame to canvas
+                        const canvas = document.createElement('canvas');
+                        canvas.width = tempVideo.videoWidth || 320;
+                        canvas.height = tempVideo.videoHeight || 180;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+                        coverImg.src = canvas.toDataURL('image/jpeg', 0.8);
+                    };
+                    
+                    tempVideo.onerror = function() {
+                        // Keep fallback image
+                        console.log('Video preview load failed, using fallback');
+                    };
+                    
+                    videoThumb.appendChild(coverImg);
+                    
+                    // Play button overlay
+                    const overlay = document.createElement('div');
+                    overlay.className = 'absolute inset-0 bg-black/40 flex items-center justify-center';
+                    overlay.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                            <i class="fa-solid fa-play text-zinc-900 text-base ml-0.5"></i>
+                        </div>
+                    `;
+                    videoThumb.appendChild(overlay);
+                    
+                    // Label - derive from video filename
+                    const label = document.createElement('span');
+                    label.className = 'absolute bottom-2 right-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded';
+                    // Extract label from filename (e.g., "A1_introduction.mp4" -> "Intro", "A1_tech.mp4" -> "Tech")
+                    const fileName = videoSrc.split('/').pop().replace(/\.[^/.]+$/, '');
+                    const labelMap = { 'intro': 'Intro', 'introduction': 'Intro', 'tech': 'Tech', 'demo': 'Demo', 'overview': 'Overview' };
+                    const labelKey = Object.keys(labelMap).find(k => fileName.toLowerCase().includes(k));
+                    label.textContent = labelMap[labelKey] || (videos.length > 1 ? `Video ${vIdx + 1}` : 'Intro');
+                    videoThumb.appendChild(label);
+                    
+                    videoThumb.onclick = function() { openVideoLightbox(videoSrc); };
+                    videoList.appendChild(videoThumb);
+                });
+            } else {
+                videoSection.classList.add('hidden');
+            }
+
+            // Highlights
+            const hlList = document.getElementById('detail-highlights');
+            hlList.innerHTML = '';
+            prod.highlights.forEach(hl => {
+                const li = document.createElement('li');
+                li.className = "flex items-start gap-2 leading-relaxed";
+                li.innerHTML = `<i class="fa-solid fa-circle-check text-golfGreen text-sm mt-1"></i> <span>${hl}</span>`;
+                hlList.appendChild(li);
+            });
+
+            // Use Cases / Applicable Scenarios
+            const useCasesContainer = document.getElementById('detail-usecases-container');
+            const useCasesList = document.getElementById('detail-usecases');
+            const spaceContainer = document.getElementById('detail-space-container');
+            const spaceText = document.getElementById('detail-space');
+            
+            if (prod.useCases && prod.useCases.length > 0) {
+                useCasesContainer.classList.remove('hidden');
+                
+                // Space requirement (check both space and spaceRequired for compatibility)
+                const spaceValue = prod.space || prod.spaceRequired;
+                if (spaceValue) {
+                    spaceContainer.classList.remove('hidden');
+                    spaceText.textContent = spaceValue;
+                } else {
+                    spaceContainer.classList.add('hidden');
+                }
+                
+                useCasesList.innerHTML = '';
+                prod.useCases.forEach(uc => {
+                    const tag = document.createElement('span');
+                    tag.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800/80 border border-white/10 text-base md:text-lg text-zinc-300";
+                    tag.innerHTML = `<i class="fa-solid fa-check text-golfGreen text-xs"></i>${uc}`;
+                    useCasesList.appendChild(tag);
+                });
+            } else {
+                useCasesContainer.classList.add('hidden');
+            }
+
+            // Handle specs display - standard vs tabs
+            const specsStandard = document.getElementById('detail-specs-standard');
+            const specsTabs = document.getElementById('detail-specs-tabs');
+            
+            if (prod.hasDetailedSpecs) {
+                // Use tabbed view for enhanced products
+                specsStandard.classList.add('hidden');
+                specsTabs.classList.remove('hidden');
+                
+                // Determine product type and get appropriate tab definitions
+                let productType = 'simulator';
+                let firstTab = 'track';
+                if (prod.id === 'dispenser-machine') {
+                    productType = 'dispenser';
+                    firstTab = 'performance';
+                } else if (prod.id === 'vending-machine') {
+                    productType = 'vending';
+                    firstTab = 'capacity';
+                } else if (prod.id === 'rg') {
+                    productType = 'rg';
+                    firstTab = 'track';
+                } else if (prod.id === 'faya-motion') {
+                    productType = 'faya';
+                    firstTab = 'track';
+                } else if (prod.id === 'golfpai-x1') {
+                    productType = 'x1';
+                    firstTab = 'track';
+                }
+                
+                // Generate tab buttons dynamically
+                const tabsContainer = document.getElementById('specs-tabs');
+                const tabDefs = specTabDefs[productType];
+                tabsContainer.innerHTML = tabDefs.map((tab, idx) => `
+                    <button class="spec-tab-btn ${idx === 0 ? 'active' : ''}" data-tab="${tab.id}" onclick="switchSpecTab('${tab.id}')">
+                        <i class="fa-solid ${tab.icon} text-xs"></i> ${tab.label}
+                    </button>
+                `).join('');
+                
+                switchSpecTab(firstTab); // Default to first tab
+            } else {
+                // Use standard table view
+                specsStandard.classList.remove('hidden');
+                specsTabs.classList.add('hidden');
+                
+                const tableBody = document.getElementById('detail-specs-body');
+                tableBody.innerHTML = '';
+                for (const [key, val] of Object.entries(prod.specs)) {
+                    const row = document.createElement('tr');
+                    row.className = "flex flex-col sm:table-row divide-y sm:divide-y-0 sm:divide-x divide-white/5";
+                    row.innerHTML = `
+                        <td class="py-4 px-6 font-bold text-zinc-400 sm:w-1/3 text-[10px] uppercase tracking-wider bg-black/20 sm:bg-transparent">${key}</td>
+                        <td class="py-4 px-6 text-white text-xs font-light leading-relaxed">${val}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            }
+        }
+
+        // Gallery navigation
+        function setGalleryImage(idx) {
+            galleryIndex = idx;
+            const mainImg = document.getElementById('detail-image');
+            const videoIndicator = document.getElementById('video-indicator');
+            const counter = document.getElementById('gallery-counter');
+            const totalMedia = galleryImages.length + (activeProduct && activeProduct.video ? 1 : 0);
+            
+            if (idx < galleryImages.length) {
+                // Show image
+                mainImg.src = galleryImages[idx];
+                mainImg.classList.remove('hidden');
+                videoIndicator.classList.add('hidden');
+                mainImg.onclick = () => openLightbox(idx);
+            } else {
+                // Show video placeholder - use last image as cover (closer to video content)
+                const coverImg = galleryImages[galleryImages.length - 1] || galleryImages[0];
+                mainImg.src = coverImg;
+                mainImg.classList.remove('hidden');
+                videoIndicator.classList.remove('hidden');
+                mainImg.onclick = () => openLightbox(idx);
+            }
+            
+            counter.textContent = `${idx + 1} / ${totalMedia}`;
+            
+            // Update thumbnail active state
+            document.querySelectorAll('.detail-thumb').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === idx || (i >= maxVisibleThumbs && idx >= maxVisibleThumbs));
+            });
+        }
+
+        function navigateGallery(dir) {
+            const newIdx = (galleryIndex + dir + galleryImages.length) % galleryImages.length;
+            setGalleryImage(newIdx);
+        }
+
+        // Video Lightbox - Full screen video player with loading indicator
+        function openVideoLightbox(videoSrc) {
+            lightboxOpen = true; // Enable keyboard handler
+            const overlay = document.getElementById('lightbox-overlay');
+            const img = document.getElementById('lightbox-image');
+            const video = document.getElementById('lightbox-video');
+            const counter = document.getElementById('lightbox-counter');
+            const loading = document.getElementById('lightbox-loading');
+            const navLeft = document.getElementById('lightbox-nav-left');
+            const navRight = document.getElementById('lightbox-nav-right');
+            const bottomBar = document.getElementById('lightbox-bottom-bar');
+            
+            // Hide navigation and bottom bar for video mode
+            navLeft.classList.add('hidden');
+            navRight.classList.add('hidden');
+            bottomBar.classList.add('hidden');
+            
+            // Immediately show lightbox with loading indicator
+            overlay.classList.remove('hidden');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            img.classList.add('hidden');
+            video.classList.add('hidden');
+            loading.classList.remove('hidden'); // Show loading
+            
+            // Reset video
+            video.removeAttribute('src');
+            video.load();
+            
+            // Set video source
+            video.src = videoSrc;
+            video.load();
+            
+            counter.textContent = 'Loading video...';
+            
+            // Hide loading and show video when ready
+            video.onloadeddata = function() {
+                console.log('Video data loaded:', videoSrc);
+                loading.classList.add('hidden'); // Hide loading
+                video.classList.remove('hidden'); // Show video
+                counter.textContent = 'Video';
+                video.currentTime = 0;
+                // Delay 1 second before auto-play
+                setTimeout(function() {
+                    video.play().then(function() {
+                        // Try to enter fullscreen after play starts
+                        if (video.requestFullscreen) {
+                            video.requestFullscreen().catch(function(e) {
+                                console.log('Fullscreen not supported or denied');
+                            });
+                        } else if (video.webkitRequestFullscreen) {
+                            video.webkitRequestFullscreen();
+                        } else if (video.webkitEnterFullscreen) {
+                            video.webkitEnterFullscreen(); // iOS Safari
+                        }
+                    }).catch(function(e) { 
+                        console.log('Video play error:', e);
+                        video.controls = true;
+                    });
+                }, 1000);
+            };
+            
+            video.onloadedmetadata = function() {
+                console.log('Video metadata:', videoSrc, 'Duration:', video.duration, 'Size:', video.videoWidth, 'x', video.videoHeight);
+            };
+            
+            video.onerror = function(e) {
+                console.log('Video load error:', e, 'for', videoSrc);
+                loading.classList.add('hidden');
+                counter.textContent = 'Video failed to load';
+            };
+            
+            // Timeout fallback - if video doesn't load in 10s, show controls
+            setTimeout(function() {
+                if (!loading.classList.contains('hidden')) {
+                    console.log('Video loading timeout, showing controls');
+                    loading.classList.add('hidden');
+                    video.classList.remove('hidden');
+                    counter.textContent = 'Video';
+                }
+            }, 10000);
+            document.body.style.overflow = '';
+            document.body.classList.add('overflow-hidden');
+        }
+
+        // Lightbox functions
+        let lightboxOpen = false;
+
+        function openLightbox(idx) {
+            if (galleryImages.length === 0) return;
+            
+            lightboxOpen = true;
+            galleryIndex = idx;
+            
+            const overlay = document.getElementById('lightbox-overlay');
+            const img = document.getElementById('lightbox-image');
+            const video = document.getElementById('lightbox-video');
+            const counter = document.getElementById('lightbox-counter');
+            const triggerVideo = document.getElementById('fullscreen-trigger-video');
+            
+            // Show image only
+            img.classList.remove('hidden');
+            video.classList.add('hidden');
+            video.pause();
+            img.src = galleryImages[idx];
+            counter.textContent = `${idx + 1} / ${galleryImages.length}`;
+            
+            // Show overlay
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.classList.add('overflow-hidden');
+            
+            // Detect iOS
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            // Request fullscreen
+            if (isIOS) {
+                // iOS: use video element to trigger fullscreen
+                if (triggerVideo && triggerVideo.webkitEnterFullscreen) {
+                    try {
+                        triggerVideo.webkitEnterFullscreen();
+                    } catch(e) {}
+                }
+            } else {
+                // Non-iOS: use standard Fullscreen API
+                if (overlay.requestFullscreen) {
+                    overlay.requestFullscreen().catch(() => {});
+                } else if (overlay.webkitRequestFullscreen) {
+                    overlay.webkitRequestFullscreen();
+                } else if (overlay.msRequestFullscreen) {
+                    overlay.msRequestFullscreen();
+                }
+            }
+        }
+
+        function closeLightbox() {
+            lightboxOpen = false;
+            const overlay = document.getElementById('lightbox-overlay');
+            const video = document.getElementById('lightbox-video');
+            const loading = document.getElementById('lightbox-loading');
+            const navLeft = document.getElementById('lightbox-nav-left');
+            const navRight = document.getElementById('lightbox-nav-right');
+            const bottomBar = document.getElementById('lightbox-bottom-bar');
+            
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            video.pause();
+            video.src = '';
+            video.classList.add('hidden');
+            if (loading) loading.classList.add('hidden');
+            
+            // Restore navigation and bottom bar for image mode
+            navLeft.classList.remove('hidden');
+            navRight.classList.remove('hidden');
+            bottomBar.classList.remove('hidden');
+            
+            document.body.classList.remove('overflow-hidden');
+            document.body.style.overflow = '';
+            
+            // Exit fullscreen if in fullscreen mode
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        function navigateLightbox(dir) {
+            const newIdx = (galleryIndex + dir + galleryImages.length) % galleryImages.length;
+            galleryIndex = newIdx;
+            
+            const img = document.getElementById('lightbox-image');
+            const counter = document.getElementById('lightbox-counter');
+            
+            img.src = galleryImages[newIdx];
+            counter.textContent = `${newIdx + 1} / ${galleryImages.length}`;
+        }
+
+        // Keyboard handler for lightbox
+        document.addEventListener('keydown', (e) => {
+            if (!lightboxOpen) return;
+            
+            if (e.key === 'Escape') closeLightbox();
+            else if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            else if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+        // Handle fullscreen change (when user exits fullscreen via ESC or browser UI)
+        document.addEventListener('fullscreenchange', () => {
+            if (lightboxOpen && !document.fullscreenElement) {
+                closeLightbox();
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (lightboxOpen && !document.webkitFullscreenElement) {
+                closeLightbox();
+            }
+        });
+
+        // Touch swipe handler for lightbox (mobile)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const swipeThreshold = 50; // Minimum swipe distance
+
+        document.getElementById('lightbox-overlay').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.getElementById('lightbox-overlay').addEventListener('touchend', (e) => {
+            if (!lightboxOpen) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            // Determine swipe direction
+            if (Math.abs(swipeDistance) > swipeThreshold) {
+                if (swipeDistance < 0) {
+                    // Swipe left → next image
+                    navigateLightbox(1);
+                } else {
+                    // Swipe right → previous image
+                    navigateLightbox(-1);
+                }
+            }
+        }, { passive: true });
+
+        // Video lazy load
+        function loadDetailVideo() {
+            if (!activeProduct || !activeProduct.video) return;
+            
+            const videoLoadBtn = document.getElementById('video-load-btn');
+            const videoContainer = document.getElementById('video-container');
+            const videoEl = document.getElementById('detail-video');
+            
+            videoLoadBtn.classList.add('hidden');
+            videoContainer.classList.remove('hidden');
+            videoEl.src = activeProduct.video;
+            videoEl.play();
+        }
+
+        // Spec tabs for GOLFPAI S1
+        // Dispenser Machine Specs Data
+        const dispenserSpecsData = {
+            performance: [
+                { section: 'Output & Capacity', cards: [
+                    { label: 'Output Speed', value: '20 balls / min', sub: 'Auto continuous mode', icon: 'fa-gauge-high' },
+                    { label: 'Hopper Capacity', value: '100+ balls', sub: 'Large hopper, fewer refills needed', icon: 'fa-box' },
+                    { label: 'Auto Detection', value: 'Tee-Empty Sensor', sub: 'Detects vacated tee and feeds next ball instantly', icon: 'fa-sensor' },
+                    { label: 'Jam Resistance', value: 'Smooth & Reliable', sub: 'Stable feeding under long-term, high-frequency use', icon: 'fa-check-circle' }
+                ]}
+            ],
+            modes: [
+                { section: 'Feeding Modes', cards: [
+                    { label: 'Fully Automatic Mode', value: 'Hands-Free Continuous Feed', sub: 'Loads ball onto tee automatically after each shot — no bending, no manual placing', icon: 'fa-robot' },
+                    { label: 'Semi-Auto Mode', value: 'Foot-Pedal Triggered', sub: 'One press = one ball; full control over your own pace and rhythm', icon: 'fa-shoe-prints' }
+                ]},
+                { section: 'Ball Placement', cards: [
+                    { label: 'Tee Feed', value: 'Direct onto Tee', sub: 'Standard setup for full swing practice', icon: 'fa-golf-ball-tee' },
+                    { label: 'Mat Feed', value: 'Direct onto Hitting Mat', sub: 'No venue modification required', icon: 'fa-layer-group' }
+                ]}
+            ],
+            build: [
+                { section: 'Power', cards: [
+                    { label: 'Voltage', value: '110V – 220V AC', sub: 'Wide voltage — no converter needed for home, range, indoor or outdoor use', highlight: false, icon: 'fa-bolt' },
+                    { label: 'Compatible Environments', value: 'Home · Range · Indoor · Outdoor', icon: 'fa-building' }
+                ]},
+                { section: 'Construction', cards: [
+                    { label: 'Material', value: 'Galvanized Steel', sub: 'Durable, corrosion-resistant frame', icon: 'fa-cube' },
+                    { label: 'Finish', value: 'Electrostatic Powder Coating', sub: 'Smooth, even finish with long-term wear resistance', icon: 'fa-paint-roller' }
+                ]}
+            ],
+            'disp-svc': [
+                { section: 'After-Sales Support', highlight: true, cards: [
+                    { label: 'Customer Support', value: '7×24 Hours', sub: 'Round-the-clock after-sales service, any time you need us', icon: 'fa-headset' },
+                    { label: 'Warranty', value: '1-Year Warranty', sub: 'Full coverage on parts and workmanship for one year from delivery', icon: 'fa-shield-check' },
+                    { label: 'Repair Service', value: 'Lifetime Repair', sub: 'Ongoing repair support for the life of the product', icon: 'fa-wrench' }
+                ]},
+                { section: 'Shipping & Installation', cards: [
+                    { label: 'Worldwide Shipping', value: 'Global Delivery Available', icon: 'fa-globe' },
+                    { label: 'Lead Time', value: '7 Days', sub: 'Stock preparation after order confirmation', icon: 'fa-clock' },
+                    { label: 'Sea Freight', value: '~45 Days', icon: 'fa-ship' },
+                    { label: 'Express Sea', value: '~30 Days', icon: 'fa-truck-fast' },
+                    { label: 'Air Freight', value: '~7 Days', icon: 'fa-plane' },
+                    { label: 'Remote Installation', value: 'Floor Plans + Video Guidance', sub: 'Standard for all orders', icon: 'fa-video' },
+                    { label: 'On-site Installation', value: 'By Arrangement', sub: 'Available upon separate request', icon: 'fa-user-check' }
+                ]}
+            ]
+        };
+
+        // Vending Machine Specs Data
+        const vendingSpecsData = {
+            capacity: [
+                { section: 'Ball Storage & Dispensing', cards: [
+                    { label: 'Max Ball Capacity', value: '10,000 – 20,000 balls', sub: 'Load once, run for extended periods with minimal refills', icon: 'fa-warehouse' },
+                    { label: 'Output per Dispense', value: '100 balls', sub: 'Smooth, jam-free delivery every time', icon: 'fa-boxes-stacked' },
+                    { label: 'Use Frequency', value: 'High-Frequency, High-Intensity', sub: 'Built for continuous driving range operation', icon: 'fa-chart-line' },
+                    { label: 'Suitable Venues', value: 'Golf Range · Self-Service Facility', icon: 'fa-location-dot' }
+                ]}
+            ],
+            payment: [
+                { section: 'Payment Methods', cards: [
+                    { label: 'QR Code Payment', value: 'Scan & Pay', sub: 'Instant access for walk-in guests, no account needed', icon: 'fa-qrcode' },
+                    { label: 'Membership Card', value: 'Card Swipe', sub: 'Fast checkout for registered members', icon: 'fa-id-card' },
+                    { label: 'Facial Recognition', value: 'Face Pay', sub: 'Hands-free, seamless entry for frequent visitors', icon: 'fa-face-smile' }
+                ]},
+                { section: 'Self-Service Experience', cards: [
+                    { label: 'Staff Required', value: 'Zero', sub: 'Fully self-service — no ticket sales, no manual ball issuing', icon: 'fa-user-slash' },
+                    { label: 'User Coverage', value: 'All Visitor Types', sub: 'Walk-ins, members, and regulars all accommodated', icon: 'fa-users' }
+                ]}
+            ],
+            pricing: [
+                { section: 'Dynamic Pricing System', cards: [
+                    { label: 'Tiered Pricing', value: 'Member Price / Guest Price', sub: 'Separate rates configured per customer group', icon: 'fa-layer-group' },
+                    { label: 'Time-Based Pricing', value: 'Peak / Off-Peak Rates', sub: 'Maximize revenue during busy hours, drive traffic during quiet periods', icon: 'fa-clock' },
+                    { label: 'Promotions', value: 'Packages · Discounts · Campaigns', sub: 'Flexible marketing tools to boost spend and loyalty', icon: 'fa-tags' },
+                    { label: 'Revenue Impact', value: 'Higher Per-Visit Spend', sub: 'Pricing flexibility increases average transaction value', icon: 'fa-arrow-trend-up' }
+                ]}
+            ],
+            operation: [
+                { section: 'Unmanned Operation', cards: [
+                    { label: 'Operating Hours', value: '24 / 7 Continuous', sub: 'Nights, early mornings, public holidays — all covered', icon: 'fa-clock' },
+                    { label: 'Staff Required', value: 'Zero On-Site Staff', sub: 'Fully automated payment, verification, and dispensing', highlight: false, icon: 'fa-user-xmark' },
+                    { label: 'Error Rate', value: 'Zero Manual Errors', sub: 'No missed transactions, no pricing disputes, no leakage', icon: 'fa-check-double' },
+                    { label: 'Management', value: 'Fully System-Automated', sub: 'Every transaction logged and traceable', icon: 'fa-chart-pie' },
+                    { label: 'Facility Upgrade', value: 'Traditional → Smart Self-Service', sub: 'Elevates professional image and competitiveness', icon: 'fa-arrow-right-arrow-left' }
+                ]}
+            ],
+            'vend-svc': [
+                { section: 'After-Sales Support', highlight: true, cards: [
+                    { label: 'Customer Support', value: '7×24 Hours', sub: 'Round-the-clock after-sales service, any time you need us', icon: 'fa-headset' },
+                    { label: 'Warranty', value: '1-Year Warranty', sub: 'Full coverage on parts and workmanship for one year from delivery', icon: 'fa-shield-check' },
+                    { label: 'Repair Service', value: 'Lifetime Repair', sub: 'Ongoing repair support for the life of the product', icon: 'fa-wrench' }
+                ]},
+                { section: 'Shipping & Installation', cards: [
+                    { label: 'Worldwide Shipping', value: 'Global Delivery Available', icon: 'fa-globe' },
+                    { label: 'Lead Time', value: '7 Days', sub: 'Stock preparation after order confirmation', icon: 'fa-clock' },
+                    { label: 'Sea Freight', value: '~45 Days', icon: 'fa-ship' },
+                    { label: 'Express Sea', value: '~30 Days', icon: 'fa-truck-fast' },
+                    { label: 'Air Freight', value: '~7 Days', icon: 'fa-plane' },
+                    { label: 'Remote Installation', value: 'Floor Plans + Video Guidance', sub: 'Standard for all orders', icon: 'fa-video' },
+                    { label: 'On-site Installation', value: 'By Arrangement', sub: 'Available upon separate request', icon: 'fa-user-check' }
+                ]}
+            ]
+        };
+
+        // Tab definitions for each product type
+        const specTabDefs = {
+            simulator: [
+                { id: 'track', label: 'Tracking', icon: 'fa-eye' },
+                { id: 'perf', label: 'Performance', icon: 'fa-microchip' },
+                { id: 'display', label: 'Display', icon: 'fa-tv' },
+                { id: 'soft', label: 'Software', icon: 'fa-gamepad' },
+                { id: 'hw', label: 'Hardware', icon: 'fa-wrench' },
+                { id: 'svc', label: 'Service', icon: 'fa-headset' }
+            ],
+            rg: [
+                { id: 'track', label: 'Tracking', icon: 'fa-eye' },
+                { id: 'display', label: 'Display', icon: 'fa-tv' },
+                { id: 'soft', label: 'Software', icon: 'fa-gamepad' },
+                { id: 'svc', label: 'Service', icon: 'fa-headset' }
+            ],
+            faya: [
+                { id: 'track', label: 'Tracking', icon: 'fa-eye' },
+                { id: 'display', label: 'Display', icon: 'fa-tv' },
+                { id: 'soft', label: 'Software', icon: 'fa-gamepad' },
+                { id: 'entertain', label: 'Entertainment', icon: 'fa-music' },
+                { id: 'solution', label: 'Solution', icon: 'fa-box' },
+                { id: 'svc', label: 'Service', icon: 'fa-headset' }
+            ],
+            x1: [
+                { id: 'track', label: 'Tracking', icon: 'fa-eye' },
+                { id: 'perf', label: 'Performance', icon: 'fa-microchip' },
+                { id: 'soft', label: 'Software', icon: 'fa-gamepad' },
+                { id: 'svc', label: 'Service', icon: 'fa-headset' }
+            ],
+            dispenser: [
+                { id: 'performance', label: 'Performance', icon: 'fa-gauge-high' },
+                { id: 'modes', label: 'Feeding Modes', icon: 'fa-sliders' },
+                { id: 'build', label: 'Build & Power', icon: 'fa-bolt' },
+                { id: 'disp-svc', label: 'Service', icon: 'fa-headset' }
+            ],
+            vending: [
+                { id: 'capacity', label: 'Capacity & Output', icon: 'fa-boxes-stacked' },
+                { id: 'payment', label: 'Payment', icon: 'fa-credit-card' },
+                { id: 'pricing', label: 'Smart Pricing', icon: 'fa-tags' },
+                { id: 'operation', label: 'Operation', icon: 'fa-clock' },
+                { id: 'vend-svc', label: 'Service', icon: 'fa-headset' }
+            ]
+        };
+
+        const s1SpecsData = {
+            track: [
+                { section: 'Core Tracking', cards: [
+                    { label: 'Capture Speed', value: '6,000 FPS', sub: 'Dual-camera stereo vision', highlight: false, icon: 'fa-camera' },
+                    { label: 'Ball Recognition', value: '≥ 99.9%', sub: 'Clubhead recognition same accuracy', highlight: false, icon: 'fa-bullseye' },
+                    { label: 'System Latency', value: '8 ms', sub: 'Human blink ≈ 300 ms', highlight: false, icon: 'fa-bolt' },
+                    { label: 'Scene Recognition', value: '≥ 99.9%', sub: 'Bunkers, rough, rain & fog', icon: 'fa-flag' },
+                    { label: 'Handedness', value: 'Left / Right auto-detect', icon: 'fa-arrows-left-right' },
+                    { label: 'Club Compatibility', value: '99% mainstream clubs', icon: 'fa-baseball' },
+                    { label: 'Shot Shape', value: '12 shot types', sub: 'Draw, fade, chip, lob & more', icon: 'fa-chart-line' },
+                    { label: 'Swing Analysis', value: 'AI swing analysis', sub: 'Multi-angle video replay', icon: 'fa-rotate' }
+                ]}
+            ],
+            perf: [
+                { section: 'Hardware Specs', cards: [
+                    { label: 'CPU', value: 'Intel i5-12400', sub: 'Or equivalent', icon: 'fa-microchip' },
+                    { label: 'GPU', value: 'NVIDIA RTX 4060Ti', icon: 'fa-display' },
+                    { label: 'Memory', value: '32 GB DDR4', icon: 'fa-server' },
+                    { label: 'Storage', value: '1 TB M.2 SSD', icon: 'fa-database' }
+                ]},
+                { section: 'Performance Metrics', cards: [
+                    { label: 'Response Latency', value: '8 ms real-time', highlight: false, icon: 'fa-bolt' },
+                    { label: 'Render Frame Rate', value: '240 FPS', sub: 'Extreme weather scenes', highlight: false, icon: 'fa-play' },
+                    { label: 'Course Load Time', value: 'As fast as 0.03 s', sub: 'Full 18-hole course', icon: 'fa-clock' }
+                ]}
+            ],
+            display: [
+                { section: 'Projection & Display', cards: [
+                    { label: 'Resolution', value: '4K UHD', sub: 'Laser projector', highlight: false, icon: 'fa-expand' },
+                    { label: 'Brightness', value: '6,000 ANSI Lumens', highlight: false, icon: 'fa-sun' },
+                    { label: 'Contrast Ratio', value: '3,000,000 : 1', icon: 'fa-circle-half-stroke' },
+                    { label: 'Light Source Life', value: '≥ 20,000 hrs', icon: 'fa-clock' },
+                    { label: 'Lens', value: 'Motorized + zoom', icon: 'fa-sliders' },
+                    { label: 'Impact Screen', value: '~200 inches', sub: 'Dual-layer impact-absorbing', icon: 'fa-expand' }
+                ]}
+            ],
+            soft: [
+                { section: 'Courses & Environment', cards: [
+                    { label: 'Course Library', value: '110+ world courses', sub: 'Augusta, Yanqi Lake & more', highlight: false, icon: 'fa-map' },
+                    { label: 'Course Quality', value: '4K photorealistic', icon: 'fa-image' },
+                    { label: 'Environment Sim', value: 'Wind, weather, temp', sub: 'Humidity & altitude', icon: 'fa-cloud' }
+                ]},
+                { section: 'Game Modes', cards: [
+                    { label: 'Practice Mode', value: 'Driver, iron, chip, putt', sub: 'Targeted drills', icon: 'fa-graduation-cap' },
+                    { label: 'Online Play', value: 'Tournaments + multiplayer', icon: 'fa-globe' },
+                    { label: 'Data Sync', value: 'Cloud score history', sub: 'Mobile app sync', icon: 'fa-cloud-arrow-up' },
+                    { label: 'Entertainment', value: 'Metaverse game island', sub: 'Cinema, KTV, meeting', icon: 'fa-gamepad' },
+                    { label: 'Kids Mode', value: 'Cartoon course mode', icon: 'fa-child' },
+                    { label: 'AI Caddie', value: 'Shot recommendation', sub: 'Hole difficulty analysis', icon: 'fa-robot' }
+                ]}
+            ],
+            hw: [
+                { section: 'Smart Accessories', cards: [
+                    { label: 'Auto Tee System', value: 'Auto tee-up', sub: 'Height memory', icon: 'fa-golf-ball-tee' },
+                    { label: 'Control Pad', value: 'One-touch control', sub: 'Tee, angle & view', icon: 'fa-hand-pointer' }
+                ]},
+                { section: 'Mat & Turf', cards: [
+                    { label: 'Hitting Mat', value: '3D shock-absorbing', sub: 'Fairway, rough, bunker', icon: 'fa-layer-group' },
+                    { label: 'Fairway Turf', value: 'Korean curled grass', sub: '16 mm high-density', icon: 'fa-leaf' },
+                    { label: 'Stance Turf', value: 'High-durability nylon', sub: '15 mm', icon: 'fa-leaf' },
+                    { label: 'Ambient Turf', value: '75,600 stitches/m²', sub: '16 mm pile', icon: 'fa-grip' }
+                ]},
+                { section: 'Included Gifts', cards: [
+                    { label: 'Custom Golf Balls', value: '100 balls', icon: 'fa-gift', badge: 'Free' },
+                    { label: 'Club Rack', value: '1 unit', icon: 'fa-gift', badge: 'Free' }
+                ]}
+            ],
+            svc: [
+                { section: 'After-Sales Support', highlight: true, cards: [
+                    { label: 'Customer Support', value: '7×24 Hours', sub: 'Round-the-clock after-sales service, any time you need us', icon: 'fa-headset' },
+                    { label: 'Warranty', value: '1-Year Warranty', sub: 'Full coverage on parts and workmanship for one year from delivery', icon: 'fa-shield-check' },
+                    { label: 'Repair Service', value: 'Lifetime Repair', sub: 'Ongoing repair support for the life of the product', icon: 'fa-wrench' }
+                ]},
+                { section: 'Shipping & Installation', cards: [
+                    { label: 'Worldwide Shipping', value: 'Global Delivery Available', icon: 'fa-globe' },
+                    { label: 'Lead Time', value: '7 Days', sub: 'Stock preparation after order confirmation', icon: 'fa-clock' },
+                    { label: 'Sea Freight', value: '~45 Days', icon: 'fa-ship' },
+                    { label: 'Express Sea', value: '~30 Days', icon: 'fa-truck-fast' },
+                    { label: 'Air Freight', value: '~7 Days', icon: 'fa-plane' },
+                    { label: 'Remote Installation', value: 'Floor Plans + Video Guidance', sub: 'Standard for all orders', icon: 'fa-video' },
+                    { label: 'On-site Installation', value: 'By Arrangement', sub: 'Available upon separate request', icon: 'fa-user-check' }
+                ]}
+            ]
+        };
+
+        // A1 规格数据
+        const a1SpecsData = {
+            track: [
+                { section: 'Core Tracking', cards: [
+                    { label: 'Capture Speed', value: '6,000 FPS', sub: 'Binocular high-speed vision', icon: 'fa-camera' },
+                    { label: 'Ball Recognition', value: '≥ 99.9%', sub: 'Clubhead recognition same accuracy', icon: 'fa-bullseye' },
+                    { label: 'Scene Recognition', value: '≥ 99.9%', sub: 'Bunkers, rough, rain & fog', icon: 'fa-flag' },
+                    { label: 'Handedness', value: 'Left / Right auto-detect', icon: 'fa-arrows-left-right' },
+                    { label: 'Club Compatibility', value: '99% mainstream clubs', icon: 'fa-baseball' },
+                    { label: 'Shot Shape', value: '12 shot types', sub: 'Draw, fade, chip, lob & more', icon: 'fa-chart-line' },
+                    { label: 'Swing Analysis', value: 'AI swing analysis', sub: 'Multi-angle video replay', icon: 'fa-rotate' }
+                ]}
+            ],
+            perf: [
+                { section: 'Integrated Machine Specs', cards: [
+                    { label: 'CPU', value: 'Intel i5-12400F', sub: '12 threads, up to 4.4GHz boost', icon: 'fa-microchip' },
+                    { label: 'GPU', value: 'NVIDIA RTX 4060Ti', sub: '8GB VRAM, 4608 CUDA cores', icon: 'fa-display' },
+                    { label: 'Memory', value: '16 GB DDR4 Dual-Channel', icon: 'fa-server' },
+                    { label: 'Built-in Touchscreen', value: '24 inches', sub: 'Integrated touch display', icon: 'fa-desktop' },
+                    { label: 'Motherboard', value: 'Industrial Control Board', sub: 'Custom BIOS, high stability', icon: 'fa-microchip' }
+                ]}
+            ],
+            display: [
+                { section: 'Projection & Display', cards: [
+                    { label: 'Resolution', value: '4K UHD', sub: 'DLP laser projector', icon: 'fa-expand' },
+                    { label: 'Brightness', value: '5,200 lm (center)', icon: 'fa-sun' },
+                    { label: 'Light Source Life', value: '≥ 30,000 hrs', icon: 'fa-clock' },
+                    { label: 'DMD Chip', value: '0.65" DMD', sub: 'Modular design, compact', icon: 'fa-microchip' },
+                    { label: 'Impact Screen', value: '~200 inches', sub: 'Dual-layer impact-absorbing', icon: 'fa-expand' }
+                ]}
+            ],
+            soft: [
+                { section: 'Courses & Environment', cards: [
+                    { label: 'Course Library', value: '80+ world courses', sub: 'Augusta, Yanqi Lake & more', icon: 'fa-map' },
+                    { label: 'Course Quality', value: '4K photorealistic', icon: 'fa-image' },
+                    { label: 'Environment Sim', value: 'Wind, weather, temp', sub: 'Humidity & altitude', icon: 'fa-cloud' }
+                ]},
+                { section: 'Game Modes', cards: [
+                    { label: 'Practice Mode', value: 'Swing, chip, putt', sub: 'Integrated three-discipline', icon: 'fa-graduation-cap' },
+                    { label: 'Online Play', value: 'Tournaments + multiplayer', icon: 'fa-globe' },
+                    { label: 'Data Sync', value: 'Cloud score history', sub: 'Mobile app sync', icon: 'fa-cloud-arrow-up' },
+                    { label: 'Entertainment', value: 'Metaverse game island', sub: 'Cinema, KTV, meeting', icon: 'fa-gamepad' },
+                    { label: 'Kids Mode', value: 'Cartoon course mode', icon: 'fa-child' },
+                    { label: 'AI Caddie', value: 'Shot recommendation', sub: 'Hole difficulty analysis', icon: 'fa-robot' }
+                ]}
+            ],
+            hw: [
+                { section: 'Smart Accessories', cards: [
+                    { label: 'Auto Tee System', value: 'Auto tee-up', sub: 'Height memory', icon: 'fa-golf-ball-tee' },
+                    { label: 'Control Pad', value: 'One-touch control', sub: 'Tee, angle & view', icon: 'fa-hand-pointer' }
+                ]},
+                { section: 'Mat & Turf', cards: [
+                    { label: 'Hitting Mat', value: '3D shock-absorbing', sub: 'Fairway & stance zones', icon: 'fa-layer-group' },
+                    { label: 'Fairway Turf', value: 'Korean curled grass', sub: '16 mm high-density', icon: 'fa-leaf' },
+                    { label: 'Stance Turf', value: 'High-durability nylon', sub: '15 mm', icon: 'fa-leaf' },
+                    { label: 'Ambient Turf', value: '75,600 stitches/m²', sub: '16 mm pile', icon: 'fa-grip' }
+                ]},
+                { section: 'Included Gifts', cards: [
+                    { label: 'Custom Golf Balls', value: '100 balls', icon: 'fa-gift', badge: 'Free' },
+                    { label: 'Club Rack', value: '1 unit', icon: 'fa-gift', badge: 'Free' }
+                ]}
+            ],
+            svc: s1SpecsData.svc
+        };
+
+        // X1 规格数据
+        const x1SpecsData = {
+            track: [
+                { section: 'Radar + Vision Dual Engine', cards: [
+                    { label: 'Technology', value: 'Radar + High-Speed Vision', sub: "World's first dual-sensor system", icon: 'fa-radar' },
+                    { label: 'Theoretical Accuracy', value: 'Up to 99.99%', sub: 'AI ballistic self-evolving', icon: 'fa-bullseye' },
+                    { label: 'Radar Module', value: 'High-Freq Doppler Radar', sub: 'Standard ball compatible', icon: 'fa-wave-square' },
+                    { label: 'Vision Capture', value: '6,000 FPS', sub: 'Dual industrial cameras', icon: 'fa-camera' }
+                ]},
+                { section: 'Vision Sensor Details', cards: [
+                    { label: 'Vision Recognition', value: '≥ 99%', sub: 'Proprietary image engine', icon: 'fa-bullseye' },
+                    { label: 'Zone Auto-Detection', value: 'Rough, bunker, fairway, tee', icon: 'fa-flag' },
+                    { label: 'Shot Shape', value: 'Draw, fade, chip, lob & more', icon: 'fa-chart-line' },
+                    { label: 'Club Compatibility', value: 'All club types & colors', icon: 'fa-baseball' },
+                    { label: 'Handedness', value: 'Left / Right auto-switch', icon: 'fa-arrows-left-right' },
+                    { label: 'Shot Replay', value: 'High-frame replay', sub: 'Frame-by-frame review', icon: 'fa-rotate' }
+                ]}
+            ],
+            perf: [
+                { section: 'Integrated Machine (Windows 10)', cards: [
+                    { label: 'CPU', value: 'Intel i5-12400F', sub: '12 threads, up to 4.4GHz boost', icon: 'fa-microchip' },
+                    { label: 'GPU', value: 'NVIDIA RTX 4060Ti', sub: '8GB VRAM, 4608 CUDA cores', icon: 'fa-display' },
+                    { label: 'Memory', value: '16 GB DDR4 Dual-Channel', icon: 'fa-server' },
+                    { label: 'Built-in Display', value: '43 inches', sub: 'High-brightness outdoor touchscreen', icon: 'fa-desktop' },
+                    { label: 'Motherboard', value: 'Industrial Control Board', sub: 'Custom BIOS, high stability', icon: 'fa-microchip' }
+                ]}
+            ],
+            soft: [
+                { section: 'Courses & Modes', cards: [
+                    { label: 'Course Library', value: '50+ world courses', icon: 'fa-map' },
+                    { label: 'Environment Sim', value: 'Wind, weather, altitude', sub: 'PhysX engine support', icon: 'fa-cloud' },
+                    { label: 'Practice Mode', value: 'Swing, chip, putt', sub: 'Bunker & water hazard modes', icon: 'fa-graduation-cap' },
+                    { label: 'Remote Multiplayer', value: 'Up to 6 players online', sub: 'Live video call during play', icon: 'fa-globe' },
+                    { label: 'Tournament Mode', value: 'Regular, Tour, Long Drive', sub: 'Custom event creation', icon: 'fa-trophy' },
+                    { label: 'Metaverse', value: '5 game modes', sub: 'Cyberpunk City, Floating Island', icon: 'fa-gamepad' },
+                    { label: 'Kids Mode', value: 'Cartoon course mode', icon: 'fa-child' },
+                    { label: 'AI Caddie', value: 'Shot recommendation', sub: 'Hole difficulty analysis', icon: 'fa-robot' },
+                    { label: 'Data Sync', value: 'Cloud score history', sub: 'Mobile app sync', icon: 'fa-cloud-arrow-up' }
+                ]},
+                { section: 'Signature Content', cards: [
+                    { label: 'Chinese Heritage Course', value: '"A Thousand Miles of Rivers"', sub: 'Eastern aesthetic meets golf', icon: 'fa-palette' },
+                    { label: 'Blossom Range', value: 'Cherry Blossom Theme', sub: 'Interactive surprises', icon: 'fa-fan' }
+                ]}
+            ],
+            svc: s1SpecsData.svc
+        };
+
+        // RG 规格数据
+        const rgSpecsData = {
+            track: [
+                { section: 'Eagle Eye III Sensor', cards: [
+                    { label: 'Sensor Type', value: 'Triple-Lens Ultra-High-Speed', sub: 'Front, top, full-view capture', icon: 'fa-camera' },
+                    { label: 'Data Output', value: 'Ball · Club · Player 3D', sub: 'Multi-dimensional detection', icon: 'fa-cube' },
+                    { label: 'Ball Flight Latency', value: 'Zero Delay', sub: 'Instant ballistic restoration', icon: 'fa-bolt' }
+                ]},
+                { section: 'Detection Range & Precision', cards: [
+                    { label: 'Ball Speed', value: '1.0 – 200.0 MPH', sub: '± 0.5 MPH', icon: 'fa-baseball' },
+                    { label: 'Club Head Speed', value: '1.6 – 160.0 MPH', sub: '± 0.5 MPH', icon: 'fa-golf-ball-tee' },
+                    { label: 'Carry Distance', value: '2 – 430 Yards', sub: '± 2.0 Yards', icon: 'fa-ruler' },
+                    { label: 'Launch Angle', value: '0 – 72°', sub: '± 1.0°', icon: 'fa-angle-up' }
+                ]}
+            ],
+            display: [
+                { section: 'Visual System', cards: [
+                    { label: 'Render Engine', value: 'Unreal Engine 5 (UE5)', sub: 'Industry-leading 3D rendering', icon: 'fa-gamepad' },
+                    { label: 'Resolution', value: '2K / 4K HD', sub: 'Selectable based on setup', icon: 'fa-expand' },
+                    { label: 'Course Reproduction', value: '1:1 Real-Scene 3D', sub: 'Photorealistic fairways', icon: 'fa-image' },
+                    { label: 'Course Library', value: '180+ courses', sub: 'Domestic & international venues', icon: 'fa-map' }
+                ]}
+            ],
+            soft: [
+                { section: 'AI Coaching', cards: [
+                    { label: 'Swing Analysis', value: 'AIGOLF Full-Swing AI', sub: 'Auto detects flaws, correction', icon: 'fa-robot' },
+                    { label: 'Practice Modules', value: '6 dedicated modules', sub: 'Video replay for each session', icon: 'fa-graduation-cap' }
+                ]},
+                { section: 'Tournament System', cards: [
+                    { label: 'Event Formats', value: 'Multi-level, Multi-format', sub: 'Year-round competition calendar', icon: 'fa-trophy' },
+                    { label: 'Signature Format', value: '4-Ball Team Match', sub: "World-first 4-player team format", icon: 'fa-users' },
+                    { label: 'Remote Play', value: 'Real-time online matches', sub: '15-hole 3v3 team competition', icon: 'fa-globe' },
+                    { label: 'Event Management', value: 'Club / Team / Individual', sub: 'Mini-program leaderboard', icon: 'fa-list-check' }
+                ]}
+            ],
+            svc: s1SpecsData.svc
+        };
+
+        // FAYA Motion 规格数据
+        const fayaSpecsData = {
+            track: [
+                { section: 'Dual-Sensor Core', cards: [
+                    { label: 'Sensor Architecture', value: 'IDS Dual Camera + Rotation Sensor', sub: 'Exceeds single-sensor standard', icon: 'fa-camera' },
+                    { label: 'Detection Coverage', value: 'Full 360° No Dead Zone', sub: 'Ball spin, trajectory, clubhead', icon: 'fa-circle-notch' },
+                    { label: 'High-Loft Detection', value: '60°+ Launch Angle', sub: 'High-loft & specialty shots', icon: 'fa-angle-up' },
+                    { label: 'False Trigger Protection', value: 'Practice Swing Safe', sub: 'No erroneous detection', icon: 'fa-shield' }
+                ]},
+                { section: 'Professional Data Output', cards: [
+                    { label: 'Ball Data', value: 'Speed · Launch · Backspin · Sidespin', icon: 'fa-baseball' },
+                    { label: 'Club Data', value: 'Face Angle · Landing Point', icon: 'fa-golf-ball-tee' },
+                    { label: 'Video Tools', value: 'Replay · Slow Motion · Compare', sub: 'Precise posture correction', icon: 'fa-video' },
+                    { label: 'Handedness', value: 'Left / Right · Free Stance', sub: 'No fixed position required', icon: 'fa-arrows-left-right' }
+                ]}
+            ],
+            display: [
+                { section: 'Projection System', cards: [
+                    { label: 'Projector', value: 'Epson Professional', sub: '3,500+ lumens standard', icon: 'fa-video' },
+                    { label: 'Resolution', value: 'Full HD 2K', sub: '1920 × 1200P, vivid color', icon: 'fa-expand' },
+                    { label: 'Lens Features', value: 'Lens Shift + Dust Filter', sub: 'Flexible installation', icon: 'fa-sliders' },
+                    { label: 'Signal Transmission', value: 'HDBaseT', sub: 'Long-distance, lossless', icon: 'fa-wifi' },
+                    { label: 'Ambient Light', value: 'Bright-Environment Ready', sub: 'Clear under strong light', icon: 'fa-sun' }
+                ]},
+                { section: 'Impact Screen', cards: [
+                    { label: 'Screen Type', value: 'Anti-Impact Acoustic Screen', sub: 'Withstands repeated impact', icon: 'fa-expand' },
+                    { label: 'Multi-Use', value: 'Golf · Cinema · KTV', sub: 'Acoustic transparency', icon: 'fa-music' }
+                ]}
+            ],
+            soft: [
+                { section: 'Courses & Engine', cards: [
+                    { label: 'Course Library', value: '100+ international courses', sub: 'Full 18-hole venues', icon: 'fa-map' },
+                    { label: 'Game Engine', value: '64GBit 3D Engine', sub: 'Full HD realistic visuals', icon: 'fa-gamepad' },
+                    { label: 'Rules', value: 'Full Official Golf Rules', sub: 'Real competition operation', icon: 'fa-book' },
+                    { label: 'Course Selection', value: 'Fully customizable', sub: 'Free course & hole selection', icon: 'fa-sliders' },
+                    { label: 'Environment', value: 'Weather · Wind · Speed', sub: 'Freely adjustable', icon: 'fa-cloud' },
+                    { label: 'Languages', value: 'CN · JP · KR · EN', icon: 'fa-language' }
+                ]},
+                { section: 'Game & Practice', cards: [
+                    { label: 'Competition Mode', value: '1–8 players simultaneous', sub: 'Stroke & match play', icon: 'fa-users' },
+                    { label: 'Practice Mode', value: 'Drive · Approach · Chip · Putt', sub: 'Full skill-chain training', icon: 'fa-graduation-cap' },
+                    { label: 'Upgrades', value: 'Free — Courses & Software', sub: 'Lifetime updates', icon: 'fa-gift', badge: 'Free' }
+                ]}
+            ],
+            entertain: [
+                { section: 'All-in-One Modes', cards: [
+                    { label: 'Integrated Modes', value: 'Golf · Cinema · KTV', sub: 'One-touch seamless switching', icon: 'fa-toggle-on' },
+                    { label: 'Audio System', value: 'Dolby 7.2 Surround', sub: 'Denon 7.2-channel AV receiver', icon: 'fa-music' }
+                ]},
+                { section: 'Audio / Video Formats', cards: [
+                    { label: 'Surround Formats', value: 'Dolby Atmos · DTS:X', icon: 'fa-volume-high' },
+                    { label: 'Video Passthrough', value: '8K/60Hz · HDR · HLG', icon: 'fa-video' },
+                    { label: 'Ease of Use', value: 'Senior & Child Friendly', sub: 'One-key switching', icon: 'fa-hand-pointer' },
+                    { label: 'Suitable Venues', value: 'Villa · Club · Showroom', icon: 'fa-building' }
+                ]}
+            ],
+            solution: [
+                { section: 'Complete Package', cards: [
+                    { label: 'Scope', value: 'Full Turnkey Solution', sub: 'Simulator, projector, AV included', icon: 'fa-box' },
+                    { label: 'Accessories', value: 'IR Server · 3D Mat · EU Turf', sub: 'Video cable, mount, stabilizer', icon: 'fa-tools' },
+                    { label: 'Space Flexibility', value: 'No strict size requirement', sub: 'Customized to site', icon: 'fa-expand' },
+                    { label: 'Suitable Venues', value: 'Villa · Club · Hotel · Showroom', icon: 'fa-building' }
+                ]},
+                { section: 'After-Sales', cards: [
+                    { label: 'Warranty', value: 'Lifetime After-Sales', sub: 'Install, maintenance, repair', icon: 'fa-shield', badge: 'Lifetime' },
+                    { label: 'Software Updates', value: 'Free Lifetime Upgrades', sub: 'Courses & system updates', icon: 'fa-gift' }
+                ]}
+            ],
+            svc: s1SpecsData.svc
+        };
+
+        function switchSpecTab(tabId) {
+            // Update tab button states
+            document.querySelectorAll('.spec-tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabId);
+            });
+            
+            // Render tab content
+            const content = document.getElementById('specs-tab-content');
+            
+            // Determine which data to use based on active product
+            let data = null;
+            if (activeProduct) {
+                if (activeProduct.id === 'dispenser-machine') {
+                    data = dispenserSpecsData[tabId];
+                } else if (activeProduct.id === 'vending-machine') {
+                    data = vendingSpecsData[tabId];
+                } else if (activeProduct.id === 'golfpai-a1') {
+                    data = a1SpecsData[tabId];
+                } else if (activeProduct.id === 'golfpai-x1') {
+                    data = x1SpecsData[tabId];
+                } else if (activeProduct.id === 'rg') {
+                    data = rgSpecsData[tabId];
+                } else if (activeProduct.id === 'faya-motion') {
+                    data = fayaSpecsData[tabId] || a1SpecsData[tabId];
+                } else {
+                    data = s1SpecsData[tabId];
+                }
+            } else {
+                data = s1SpecsData[tabId];
+            }
+            
+            if (!data) return;
+            
+            content.innerHTML = data.map(section => `
+                <p class="spec-section-title">${section.section}</p>
+                <div class="spec-card-grid">
+                    ${section.cards.map(card => `
+                        <div class="spec-card ${card.highlight ? 'highlight' : ''}">
+                            <div class="spec-card-label">
+                                <i class="fa-solid ${card.icon || 'fa-info'}"></i> ${card.label}
+                            </div>
+                            <div class="spec-card-value">${card.value}</div>
+                            ${card.sub ? `<div class="spec-card-sub">${card.sub}</div>` : ''}
+                            ${card.badge ? `<span class="inline-block mt-2 text-[10px] px-2 py-0.5 rounded bg-golfGreen/20 text-golfGreen">${card.badge}</span>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        // Render entire directory hub (Category List)
+        function renderDirectoryHub() {
+            const grid = document.getElementById('directory-product-grid');
+            grid.innerHTML = '';
+
+            for (const [catKey, catVal] of Object.entries(catalogDb)) {
+                
+                // Segment groupings
+                let groupType = 'accessories';
+                if (catKey === 'simulators') groupType = 'sims';
+                else if (catKey === 'dispenserMachines') groupType = 'dispensers';
+
+                // Skip filtering if active
+                if (directoryFilterType !== 'all' && directoryFilterType !== groupType) continue;
+
+                // Use first product image as category representative
+                const representativeImage = catVal.items.length > 0 ? catVal.items[0].image : '';
+
+                const card = document.createElement('div');
+                card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 transform hover:translate-y-[-2px] cursor-pointer";
+                card.setAttribute('onclick', `navigateTo('category', '${catKey}')`);
+                card.innerHTML = `
+                    <div class="aspect-[4/3] w-full bg-black/30 overflow-hidden flex items-center justify-center">
+                        <img src="${representativeImage}" alt="${catVal.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-white mb-2">${catVal.title}</h3>
+                            <p class="text-zinc-400 text-[10px] font-light leading-relaxed line-clamp-2 mb-3">${catVal.desc}</p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                            <span class="text-[10px] text-zinc-500">${catVal.items.length} product${catVal.items.length > 1 ? 's' : ''}</span>
+                            <span class="text-sky-400 text-[10px] font-semibold">View Category <i class="fa-solid fa-chevron-right text-[8px]"></i></span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+
+            if (grid.children.length === 0) {
+                grid.innerHTML = `<p class="text-zinc-500 text-xs font-light text-center col-span-4 py-16">No categories found matching active filter.</p>`;
+            }
+        }
+
+        // Directory Tabs filter action
+        function filterDirectory(tabId) {
+            directoryFilterType = tabId;
+            
+            document.querySelectorAll('.directory-tab-btn').forEach(btn => {
+                btn.className = "directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border border-white/10 text-zinc-400 hover:text-white hover:border-white/30 transition-all duration-200";
+            });
+
+            const activeBtn = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.className = "directory-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-200 bg-white border-white text-black";
+            }
+
+            renderDirectoryHub();
+        }
+
+        // Directory Instant Filtering matching layout
+        function executeDirectoryFilter(keyword) {
+            const clearBtn = document.getElementById('directory-search-clear');
+            if (keyword.trim()) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const grid = document.getElementById('directory-product-grid');
+            grid.innerHTML = '';
+            const cleanKey = keyword.toLowerCase().trim();
+
+            for (const [catKey, catVal] of Object.entries(catalogDb)) {
+                catVal.items.forEach(prod => {
+                    const matchName = prod.name.toLowerCase().includes(cleanKey);
+                    const matchTagline = prod.tagline.toLowerCase().includes(cleanKey);
+                    const matchHighlights = prod.highlights.some(hl => hl.toLowerCase().includes(cleanKey));
+                    const matchCategory = catVal.title.toLowerCase().includes(cleanKey);
+
+                    if (matchName || matchTagline || matchHighlights || matchCategory) {
+                        const card = document.createElement('div');
+                        card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden p-4 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-2px] cursor-pointer";
+                        card.setAttribute('onclick', `navigateTo('detail', '${catKey}', '${prod.id}')`);
+                        card.innerHTML = `
+                            <div>
+                                <div class="aspect-square w-full rounded-xl bg-black/30 overflow-hidden flex items-center justify-center p-4 mb-4">
+                                    <img src="${prod.image}" alt="${prod.name}" class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-103">
+                                </div>
+                                <span class="text-[8px] tracking-widest text-zinc-500 font-bold uppercase block mb-1">${catVal.title}</span>
+                                <h3 class="text-sm font-semibold text-white mb-1 truncate">${prod.name}</h3>
+                                <p class="text-zinc-400 text-[10px] font-light leading-relaxed mb-4 line-clamp-2">${prod.tagline}</p>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                                <span class="text-xs text-white font-light">${prod.price}</span>
+                                <span class="text-sky-400 text-[10px] font-semibold">View</span>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    }
+                });
+            }
+
+            if (grid.children.length === 0) {
+                grid.innerHTML = `<p class="text-zinc-500 text-xs font-light text-center col-span-4 py-16">No products matching "${keyword}" found.</p>`;
+            }
+        }
+
+        function clearDirectorySearch() {
+            const input = document.getElementById('directory-search-input');
+            input.value = '';
+            document.getElementById('directory-search-clear').classList.add('hidden');
+            renderDirectoryHub();
+        }
+
+        // Global Search execution matching styles
+        function executeGlobalSearch(val) {
+            const resultsBox = document.getElementById('global-search-results');
+            resultsBox.innerHTML = '';
+            const key = val.toLowerCase().trim();
+
+            if (!key) {
+                resultsBox.innerHTML = `<p class="text-zinc-500 text-sm font-light text-center col-span-2 py-12">Start typing to search the NEAGLE GOLF collection...</p>`;
+                return;
+            }
+
+            let foundCount = 0;
+            for (const [catKey, catVal] of Object.entries(catalogDb)) {
+                catVal.items.forEach(prod => {
+                    const matchName = prod.name.toLowerCase().includes(key);
+                    const matchTagline = prod.tagline.toLowerCase().includes(key);
+                    const matchHighlights = prod.highlights.some(hl => hl.toLowerCase().includes(key));
+                    const matchCategory = catVal.title.toLowerCase().includes(key);
+
+                    if (matchName || matchTagline || matchHighlights || matchCategory) {
+                        foundCount++;
+                        const matchCard = document.createElement('div');
+                        matchCard.className = "bg-zinc-900 border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors flex items-center gap-4 cursor-pointer";
+                        matchCard.setAttribute('onclick', `toggleGlobalSearch(); navigateTo('detail', '${catKey}', '${prod.id}')`);
+                        matchCard.innerHTML = `
+                            <div class="w-16 h-16 bg-black/40 rounded-xl overflow-hidden flex items-center justify-center p-2 flex-shrink-0">
+                                <img src="${prod.image}" class="max-h-full max-w-full object-contain">
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="text-[8px] font-semibold text-zinc-500 uppercase block">${catVal.title}</span>
+                                <h4 class="text-xs font-bold text-white truncate">${prod.name}</h4>
+                                <p class="text-[10px] text-zinc-400 truncate">${prod.tagline}</p>
+                            </div>
+                        `;
+                        resultsBox.appendChild(matchCard);
+                    }
+                });
+            }
+
+            if (foundCount === 0) {
+                resultsBox.innerHTML = `<p class="text-zinc-500 text-xs font-light text-center col-span-2 py-12">No products matching "${val}" found.</p>`;
+            }
+        }
+
+        function clearSearchInput(id) {
+            document.getElementById(id).value = '';
+            if (id === 'global-search-input') {
+                executeGlobalSearch('');
+            }
+        }
+
+        // Toggle Global Search view overlay
+        function toggleGlobalSearch() {
+            const overlay = document.getElementById('global-search-overlay');
+            const input = document.getElementById('global-search-input');
+            isGlobalSearchOpen = !isGlobalSearchOpen;
+
+            if (isGlobalSearchOpen) {
+                document.body.classList.add('overflow-hidden');
+                overlay.classList.remove('pointer-events-none', 'opacity-0');
+                overlay.classList.add('opacity-100');
+                setTimeout(() => input.focus(), 100);
+            } else {
+                document.body.classList.remove('overflow-hidden');
+                overlay.classList.add('pointer-events-none', 'opacity-0');
+                overlay.classList.remove('opacity-100');
+                input.value = '';
+                executeGlobalSearch('');
+            }
+        }
+
+        // Collapsible Dynamic Hamburger Navigation drawer
+        function toggleNavMenu() {
+            const menu = document.getElementById('fullscreen-menu');
+            const bar1 = document.getElementById('bar1');
+            const bar2 = document.getElementById('bar2');
+            const bar3 = document.getElementById('bar3');
+            isNavOpen = !isNavOpen;
+
+            if (isNavOpen) {
+                document.body.classList.add('overflow-hidden');
+                menu.classList.remove('pointer-events-none', 'opacity-0');
+                menu.classList.add('opacity-100');
+                bar1.classList.add('translate-y-2', 'rotate-45');
+                bar2.classList.add('opacity-0');
+                bar3.classList.add('-translate-y-2', '-rotate-45');
+            } else {
+                document.body.classList.remove('overflow-hidden');
+                menu.classList.add('pointer-events-none', 'opacity-0');
+                menu.classList.remove('opacity-100');
+                bar1.classList.remove('translate-y-2', 'rotate-45');
+                bar2.classList.remove('opacity-0');
+                bar3.classList.remove('-translate-y-2', '-rotate-45');
+            }
+        }
+
+        // Toggle Floating Chat box panel
+        let isChatOpen = false;
+        function toggleChat(forceOpen = false) {
+            const chatWin = document.getElementById('chat-window');
+            
+            if (forceOpen) isChatOpen = false; // force transition reset
+            isChatOpen = !isChatOpen;
+
+            if (isChatOpen) {
+                chatWin.classList.remove('hidden');
+                setTimeout(() => {
+                    chatWin.classList.remove('translate-y-4', 'opacity-0');
+                    chatWin.classList.add('translate-y-0', 'opacity-100');
+                }, 50);
+            } else {
+                chatWin.classList.remove('translate-y-0', 'opacity-100');
+                chatWin.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => {
+                    chatWin.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Breadcrumbs system helpers
+        function updateBreadcrumbs(viewId, catId = '', prodId = '') {
+            const bar = document.getElementById('breadcrumb-bar');
+            const arrowSub = document.querySelector('.breadcrumb-arrow-sub');
+            const bCat = document.getElementById('breadcrumb-category');
+            const bProd = document.getElementById('breadcrumb-product');
+            const bDir = document.getElementById('breadcrumb-directory');
+            const bDirArrow = document.getElementById('breadcrumb-directory-arrow');
+
+            // Reset directory hub visibility
+            bDir.classList.add('hidden');
+            bDirArrow.classList.add('hidden');
+
+            if (viewId === 'home') {
+                cameFromDirectory = false;  // Reset when going home
+                bar.classList.add('opacity-0');
+                setTimeout(() => bar.classList.add('hidden'), 300);
+            } 
+            else {
+                bar.classList.remove('hidden');
+                bar.offsetHeight; // repaint
+                bar.classList.remove('opacity-0');
+
+                if (viewId === 'category' && catId) {
+                    // Show Directory Hub if came from directory
+                    if (cameFromDirectory) {
+                        bDir.classList.remove('hidden');
+                        bDirArrow.classList.remove('hidden');
+                    }
+                    bCat.textContent = catalogDb[catId].title;
+                    bCat.dataset.catId = catId;
+                    arrowSub.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+                else if (viewId === 'detail' && catId && prodId) {
+                    // Show Directory Hub if came from directory
+                    if (cameFromDirectory) {
+                        bDir.classList.remove('hidden');
+                        bDirArrow.classList.remove('hidden');
+                    }
+                    bCat.textContent = catalogDb[catId].title;
+                    bCat.dataset.catId = catId;
+                    arrowSub.classList.remove('hidden');
+                    bProd.classList.remove('hidden');
+                    bProd.textContent = catalogDb[catId].items.find(i => i.id === prodId).name;
+                }
+                else if (viewId === 'directory') {
+                    cameFromDirectory = true;  // Mark that user is in directory
+                    bCat.textContent = "Directory Hub";
+                    bCat.dataset.catId = '';
+                    arrowSub.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+                else if (viewId === 'cases') {
+                    cameFromDirectory = false;
+                    bCat.textContent = "Case Studies";
+                    bCat.dataset.catId = '';
+                    arrowSub.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+                else if (viewId === 'about') {
+                    cameFromDirectory = false;
+                    bCat.textContent = "Engineering Core";
+                    bCat.dataset.catId = '';
+                    arrowSub.classList.add('hidden');
+                    bProd.classList.add('hidden');
+                }
+            }
+        }
+
+        function navigateToCategoryFromBreadcrumb() {
+            const catId = document.getElementById('breadcrumb-category').dataset.catId;
+            if (catId) {
+                navigateTo('category', catId);
+            } else {
+                navigateTo('home');
+            }
+        }
+
+        // Global shared template injection on load to guarantee robust footer sits in correct locations
+        window.addEventListener('load', () => {
+            const template = document.getElementById('global-footer-template');
+            
+            // Map injection containers
+            const targets = [
+                'home-footer-container',
+                'category-footer-container',
+                'directory-footer-container',
+                'detail-footer-container',
+                'cases-footer-container',
+                'about-footer-container'
+            ];
+
+            targets.forEach(targetId => {
+                const container = document.getElementById(targetId);
+                if (container) {
+                    const clone = template.content.cloneNode(true);
+                    container.appendChild(clone);
+                }
+            });
+        });
+
+        // Explicitly expose all onclick-used functions to window scope.
+        // Necessary for sandboxed / strict-mode environments where function
+        // declarations in <script> blocks are not automatically global.
+        window.navigateTo                       = navigateTo;
+        window.navigateToCategoryFromBreadcrumb = navigateToCategoryFromBreadcrumb;
+        window.toggleNavMenu                    = toggleNavMenu;
+        window.toggleGlobalSearch               = toggleGlobalSearch;
+        window.toggleChat                       = toggleChat;
+        window.filterDirectory                  = filterDirectory;
+        window.executeDirectoryFilter           = executeDirectoryFilter;
+        window.clearDirectorySearch             = clearDirectorySearch;
+        window.executeGlobalSearch              = executeGlobalSearch;
+        window.clearSearchInput                 = clearSearchInput;
+        // head script 里定义的函数也需要显式挂到 window
+        window.sendChatMessage                  = sendChatMessage;
+        window.saveContactInfo                  = saveContactInfo;
+        // Gallery and video functions
+        window.navigateGallery                  = navigateGallery;
+        window.setGalleryImage                  = setGalleryImage;
+        window.loadDetailVideo                  = loadDetailVideo;
+        window.switchSpecTab                    = switchSpecTab;
+        // Lightbox functions
+        window.openLightbox                     = openLightbox;
+        window.closeLightbox                    = closeLightbox;
+        window.navigateLightbox                 = navigateLightbox;
+        window.openVideoLightbox                = openVideoLightbox;
+
+        // Page refresh persistence: parse URL hash and restore view
+        function handleHashNavigation() {
+            const hash = window.location.hash;
+            if (!hash || hash === '#') return;
+            
+            const parts = hash.slice(1).split('/');
+            const viewId = parts[0];
+            
+            if (viewId === 'category' && parts[1]) {
+                navigateTo('category', parts[1]);
+            } else if (viewId === 'detail' && parts[1] && parts[2]) {
+                navigateTo('detail', parts[1], parts[2]);
+            } else if (viewId && ['directory', 'cases', 'about'].includes(viewId)) {
+                navigateTo(viewId);
+            }
+        }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state) {
+                const { viewId, categoryId, productId } = event.state;
+                if (viewId) {
+                    // Directly set view without pushing to history
+                    const nextActiveSection = document.getElementById(`view-${viewId}`);
+                    document.querySelectorAll('.view-section').forEach(section => {
+                        section.classList.add('view-hidden', 'opacity-0', 'translate-y-3');
+                    });
+                    if (nextActiveSection) {
+                        nextActiveSection.classList.remove('view-hidden');
+                        nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
+                    }
+                    
+                    if (viewId === 'category' && categoryId) {
+                        renderCategoryView(categoryId);
+                        updateBreadcrumbs('category', categoryId);
+                    } else if (viewId === 'detail' && categoryId && productId) {
+                        renderDetailView(categoryId, productId);
+                        updateBreadcrumbs('detail', categoryId, productId);
+                    } else if (viewId === 'directory') {
+                        renderDirectoryHub();
+                        updateBreadcrumbs('directory');
+                    } else if (viewId === 'cases') {
+                        renderCasesCarousel();
+                        updateBreadcrumbs('cases');
+                    } else {
+                        updateBreadcrumbs(viewId);
+                    }
+                    currentView = viewId;
+                }
+            } else {
+                // Go back to home
+                document.querySelectorAll('.view-section').forEach(section => {
+                    section.classList.add('view-hidden', 'opacity-0', 'translate-y-3');
+                });
+                const homeSection = document.getElementById('view-home');
+                if (homeSection) {
+                    homeSection.classList.remove('view-hidden');
+                    homeSection.classList.remove('opacity-0', 'translate-y-3');
+                }
+                currentView = 'home';
+                updateBreadcrumbs('home');
+            }
+        });
+        
+        // Handle hash on page load
+        handleHashNavigation();
+
+    </script>
+</body>
+</html>

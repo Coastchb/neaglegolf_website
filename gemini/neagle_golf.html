@@ -71,6 +71,184 @@
             }
         }
     </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         聊天逻辑 — 通过 Firebase Cloud Functions 代理访问 Firestore
+         无需任何 SDK，纯 fetch，完全兼容中国网络环境
+         ⚠️  部署 Cloud Functions 后，将下方 PROXY_BASE 替换为你的函数 URL
+    ════════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ══════════════════════════════════════════════════════════════════
+        //  ⚙️  Firebase Cloud Functions 第二代 API 域名
+        //  已修复：使用第二代域名格式（与 neagle_golf.html 一致）
+        // ══════════════════════════════════════════════════════════════════
+        var PROXY_BASE = "https://chatapi-jbl3p7hx7q-uc.a.run.app";
+
+        // ── 全局状态 ─────────────────────────────────────────────────────
+        var originalPageTitle       = document.title;
+        var tabNotificationInterval = null;
+        var pollInterval            = null;
+        var _lastMsgCount           = 0;
+
+        var guestId = localStorage.getItem('neagle_guest_id')
+            || ('GUEST_' + Math.random().toString(36).substring(2, 9).toUpperCase());
+        localStorage.setItem('neagle_guest_id', guestId);
+
+        function el(id) { return document.getElementById(id); }
+
+        // ── 初始化：显示 guestId，加载历史，启动轮询 ─────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            var badge = el('user-anonymous-id');
+            if (badge) badge.textContent = guestId;
+            loadProfile();
+            startPolling();
+        });
+
+        // ── 拉取消息（每 4 秒轮询）───────────────────────────────────────
+        function startPolling() {
+            fetchMessages();
+            pollInterval = setInterval(fetchMessages, 4000);
+        }
+
+        function fetchMessages() {
+            fetch(PROXY_BASE + "/chatMessages?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var msgs = data.messages || [];
+                    var last   = msgs[msgs.length - 1];
+                    var pingEl = el('chat-ping-unread');
+                    if (msgs.length > _lastMsgCount && last && last.reply && document.hidden) {
+                        triggerTabAlert();
+                        if (pingEl) pingEl.classList.remove('hidden');
+                    }
+                    _lastMsgCount = msgs.length;
+                    renderMessages(msgs);
+                })
+                .catch(function (e) { console.error('fetchMessages error:', e); });
+        }
+
+        // ── 渲染消息气泡 ──────────────────────────────────────────────────
+        function renderMessages(msgs) {
+            var box = el('chat-messages');
+            if (!box) return;
+            box.innerHTML = '';
+            if (msgs.length === 0) {
+                box.innerHTML = '<p class="text-[10px] text-zinc-500 text-center py-6 leading-relaxed">No previous message history found.<br>Leave your questions above.</p>';
+                return;
+            }
+            msgs.forEach(function (msg) {
+                var uWrap = document.createElement('div');
+                uWrap.className = 'flex flex-col mb-3 items-end';
+                var uBubble = document.createElement('div');
+                uBubble.className = 'bg-golfGreen/10 border border-golfGreen/30 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%] text-left';
+                uBubble.textContent = msg.content;
+                uWrap.appendChild(uBubble);
+                box.appendChild(uWrap);
+                if (msg.reply) {
+                    var aWrap = document.createElement('div');
+                    aWrap.className = 'flex flex-col mb-3 items-start';
+                    var aBubble = document.createElement('div');
+                    aBubble.className = 'bg-sky-500/10 border border-sky-400/30 text-sky-200 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%] text-left';
+                    aBubble.textContent = msg.reply;
+                    var tag = document.createElement('span');
+                    tag.className = 'block text-[8px] uppercase tracking-widest text-sky-400 font-bold mt-1';
+                    tag.textContent = '✓ Official Concierge';
+                    aBubble.appendChild(tag);
+                    aWrap.appendChild(aBubble);
+                    box.appendChild(aWrap);
+                }
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ── 发送消息 ──────────────────────────────────────────────────────
+        function sendChatMessage() {
+            var input = el('chat-input');
+            if (!input) return;
+            var text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            fetch(PROXY_BASE + "/chatSend", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, content: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    console.log('✓ 消息已发送');
+                    fetchMessages(); // 立即刷新，不等下次轮询
+                } else {
+                    console.error('发送失败:', data.error);
+                    if (input.value === '') input.value = text;
+                }
+            })
+            .catch(function (e) {
+                console.error('sendChatMessage error:', e);
+                if (input.value === '') input.value = text;
+            });
+        }
+
+        // ── 保存联系方式 ──────────────────────────────────────────────────
+        function saveContactInfo() {
+            var field = el('lead-unified-contact');
+            var label = el('lead-status');
+            if (!field || !label) return;
+            var text = field.value.trim();
+            if (!text) {
+                label.innerHTML = '<span class="text-rose-500">Please enter an email, phone, or WhatsApp number.</span>';
+                return;
+            }
+            label.textContent = 'Securing data...';
+            fetch(PROXY_BASE + "/profileSave", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, contact: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials synced. Thank you!</span>';
+                } else {
+                    label.textContent = 'Failed. Please try again.';
+                }
+            })
+            .catch(function () { label.textContent = 'Failed. Please try again.'; });
+        }
+
+        // ── 加载已保存的联系方式 ──────────────────────────────────────────
+        function loadProfile() {
+            fetch(PROXY_BASE + "/profileGet?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.contact) return;
+                    var field = el('lead-unified-contact');
+                    var label = el('lead-status');
+                    if (field) field.value = data.contact;
+                    if (label) label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials secured on cloud</span>';
+                })
+                .catch(function (e) { console.error('loadProfile error:', e); });
+        }
+
+        // ── Tab 标题闪烁提醒 ──────────────────────────────────────────────
+        function triggerTabAlert() {
+            if (tabNotificationInterval) clearInterval(tabNotificationInterval);
+            var flip = true;
+            tabNotificationInterval = setInterval(function () {
+                document.title = flip ? '【New Message】 NEAGLE GOLF' : originalPageTitle;
+                flip = !flip;
+            }, 1000);
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                if (tabNotificationInterval) { clearInterval(tabNotificationInterval); document.title = originalPageTitle; }
+                var ping = el('chat-ping-unread');
+                if (ping) ping.classList.add('hidden');
+            }
+        });
+    </script>
 </head>
 <body class="overflow-x-hidden font-sans h-full flex flex-col justify-between">
 
@@ -79,6 +257,23 @@
         <a href="javascript:void(0)" onclick="navigateTo('home')" class="text-white hover:opacity-80 transition-opacity text-base md:text-lg tracking-wider font-semibold py-2">
             NEAGLE <span class="text-golfGreen">GOLF</span>
         </a>
+        
+        <div class="hidden lg:flex items-center space-x-4 text-xs">
+            <a href="https://wa.me/13142242264" target="_blank" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-brands fa-whatsapp text-base"></i>
+                <span>WhatsApp</span>
+            </a>
+            <span class="text-white/30">|</span>
+            <a href="tel:+13142242264" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-solid fa-phone text-xs"></i>
+                <span>Phone</span>
+            </a>
+            <span class="text-white/30">|</span>
+            <a href="mailto:coast0623@gmail.com" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-solid fa-envelope text-xs"></i>
+                <span>Email</span>
+            </a>
+        </div>
         
         <div class="flex items-center space-x-2">
             <!-- Global Search Trigger Icon inside Nav Bar -->
@@ -97,8 +292,9 @@
         </div>
     </nav>
 
+
     <!-- FOLDED FULLSCREEN NAVIGATION MENU -->
-    <div id="fullscreen-menu" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto pt-16 safe-pb">
+    <div id="fullscreen-menu" class="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto pt-12 safe-pb">
         <div class="flex flex-col space-y-5 text-center text-xl md:text-2xl font-light tracking-wide max-w-md w-full px-6">
             <span class="text-xs tracking-widest text-zinc-500 uppercase mb-1 border-b border-white/10 pb-3">Product Categories</span>
             <a href="javascript:void(0)" onclick="navigateTo('category', 'simulators')" class="text-white hover:text-golfGreen transition-colors py-1 active:text-golfGreen">Active Simulators</a>
@@ -345,17 +541,7 @@
                             </div>
                         </div>
 
-                        <!-- Private Consultation Card (Triggers the floating chat) -->
-                        <div class="p-5 md:p-6 rounded-2xl bg-appleGray-900 border border-white/5 space-y-4">
-                            <h4 class="text-xs md:text-sm font-semibold text-white">Exclusive 1-on-1 Spatial Consultation</h4>
-                            <p class="text-[11px] md:text-xs text-zinc-400 leading-relaxed">Let our spatial acoustics and hardware alignment engineers map out your virtual golf footprint. Connect with our dedicated concierge support immediately.</p>
-                            
-                            <div class="pt-2">
-                                <button onclick="toggleChat(true)" class="w-full bg-white hover:bg-golfGreen hover:text-black text-black font-semibold text-xs tracking-wider rounded-xl transition-colors py-3 px-6 min-h-[44px] flex items-center justify-center gap-2 active:scale-95">
-                                    <i class="fa-solid fa-comments"></i> Contact Us
-                                </button>
-                            </div>
-                        </div>
+
 
                     </div>
 
@@ -513,357 +699,8 @@
 
 
     <!-- ========================================== -->
-    <!-- PRIVACY-FOCUSED CHAT COMPONENT             -->
+    <!-- FIREBASE AND REALTIME ENGINE CONNECTIONS   -->
     <!-- ========================================== -->
-    
-    <!-- Floating Chat Trigger Button -->
-    <button onclick="toggleChat()" class="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-tr from-green-500 to-emerald-700 hover:from-golfGreen hover:to-emerald-500 text-black shadow-2xl transition-all duration-300 transform active:scale-95 group hover:scale-110">
-        <div class="relative">
-            <!-- Ping indicator for active chat -->
-            <span id="chat-ping-unread" class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900 animate-pulse hidden"></span>
-            <i class="fa-solid fa-comments text-xl group-hover:rotate-12 transition-transform"></i>
-        </div>
-    </button>
-
-    <!-- Floating Chat Window -->
-    <div id="chat-window" class="fixed bottom-24 right-6 w-[92vw] sm:w-[420px] h-[600px] z-50 rounded-3xl glass-panel shadow-2xl border border-white/10 hidden flex-col overflow-hidden transition-all duration-300 translate-y-4 opacity-0" style="background: rgba(10, 11, 15, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);">
-        
-        <!-- Chat Header -->
-        <div class="p-5 bg-gradient-to-b from-slate-950/80 to-slate-900/40 border-b border-white/5 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="relative">
-                    <div class="w-10 h-10 rounded-full bg-golfGreen/10 border border-golfGreen/30 flex items-center justify-center text-golfGreen font-bold">
-                        <i class="fa-solid fa-golf-club"></i>
-                    </div>
-                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-golfGreen border-2 border-slate-900 rounded-full animate-pulse"></span>
-                </div>
-                <div>
-                    <h3 class="font-bold text-sm tracking-wide text-white">NEAGLE Concierge</h3>
-                    <div class="flex items-center space-x-1 mt-0.5">
-                        <span class="text-[9px] font-semibold text-zinc-500 uppercase">Private ID:</span>
-                        <span id="user-anonymous-id" class="px-1.5 py-0.5 bg-white/5 border border-white/10 text-[9px] font-mono font-bold text-golfGreen rounded uppercase">Loading...</span>
-                    </div>
-                </div>
-            </div>
-            <button onclick="toggleChat()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
-
-        <!-- Scrollable Main Container -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-5 scrollbar-thin">
-
-            <!-- Section Header Banner -->
-            <div class="bg-zinc-950/60 border border-white/5 rounded-2xl p-4 text-center">
-                <p class="text-[11px] font-medium text-golfGreen">
-                    <i class="fa-solid fa-shield-halved mr-1"></i> You can reach us in any of the three secure ways below:
-                </p>
-            </div>
-
-            <!-- (1) LEAVE A MESSAGE AREA -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-center px-1">
-                    <span class="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">1. Leave a Message</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-golfGreen"></span>
-                </div>
-                
-                <!-- Inner messages viewport -->
-                <div id="chat-messages" class="h-44 bg-black/40 border border-white/5 rounded-2xl p-3 overflow-y-auto space-y-3 text-xs leading-relaxed">
-                    <!-- Dynamic chat thread logs -->
-                </div>
-
-                <!-- Input box for Message -->
-                <div class="flex gap-2">
-                    <input type="text" id="chat-input" placeholder="Enter your inquiry here..." class="flex-1 bg-white/[0.03] border border-white/10 focus:border-golfGreen/50 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none transition-colors" onkeydown="if(event.key === 'Enter') sendChatMessage()">
-                    <button onclick="sendChatMessage()" class="px-4 rounded-xl bg-white text-black hover:bg-golfGreen hover:text-black font-semibold text-xs transition-colors flex items-center justify-center">
-                        Send
-                    </button>
-                </div>
-            </div>
-
-            <!-- (2) OUR DIRECT CONTACT INFO -->
-            <div class="space-y-3 pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-zinc-500 uppercase px-1 block">2. Our Contact Channels</span>
-                <div class="grid grid-cols-1 gap-2">
-                    <a href="https://wa.me/13142242264" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-golfGreen/30 hover:bg-golfGreen/[0.02] transition-all">
-                        <span class="text-xs text-zinc-300 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-emerald-500 text-sm"></i> WhatsApp Message</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-zinc-600"></i>
-                    </a>
-                    <a href="tel:+13142242264" class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-golfGreen/30 hover:bg-golfGreen/[0.02] transition-all">
-                        <span class="text-xs text-zinc-300 flex items-center gap-2"><i class="fa-solid fa-phone text-zinc-400"></i> Phone Call</span>
-                        <span class="text-[10px] font-mono text-zinc-500">+1 (314) 224-2264</span>
-                    </a>
-                    <a href="mailto:coast0623@gmail.com" class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-golfGreen/30 hover:bg-golfGreen/[0.02] transition-all">
-                        <span class="text-xs text-zinc-300 flex items-center gap-2"><i class="fa-solid fa-envelope text-zinc-400"></i> Corporate Email</span>
-                        <span class="text-[10px] font-mono text-zinc-500">coast0623@gmail.com</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- (3) USER LEAVE CONTACT CREDENTIALS -->
-            <div class="space-y-3 pt-2 pb-2 border-b border-white/5">
-                <span class="text-[10px] font-bold tracking-widest text-zinc-500 uppercase px-1 block">3. Leave Your Contacts (Optional)</span>
-                <div class="space-y-2">
-                    <input type="text" id="lead-unified-contact" placeholder="Email / WhatsApp / Phone" class="w-full bg-white/[0.03] border border-white/10 focus:border-golfGreen/50 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 outline-none transition-colors">
-                    <button onclick="saveContactInfo()" class="w-full py-2.5 bg-zinc-900 border border-white/10 hover:bg-white hover:text-black font-semibold text-xs tracking-wide rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-circle-check text-[10px]"></i> Submit Contacts
-                    </button>
-                    <span id="lead-status" class="text-[10px] text-zinc-500 text-center block font-light leading-relaxed">Secure data link connected.</span>
-                </div>
-            </div>
-
-            <!-- Privacy statement relocated to the bottom of the chat panel -->
-            <div class="text-[10px] text-zinc-600 text-center font-light leading-relaxed px-2 pt-2">
-                <i class="fa-solid fa-user-shield text-golfGreen mr-1"></i> Privacy Agreement: All communication is managed over secure, private channels. We protect your architectural privacy.
-            </div>
-
-        </div>
-    </div>
-
-
-    <!-- ======================================================== -->
-    <!-- FIREBASE AND REALTIME ENGINE CONNECTIONS (🌟深度移植)      -->
-    <!-- ======================================================== -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-
-        // 配置项目网页凭证 (请在部署上线前替换为你的 neaglegolfbot 凭证)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyYOUR_ACTUAL_API_KEY_HERE",
-                authDomain: "neaglegolfbot.firebaseapp.com",
-                projectId: "neaglegolfbot",
-                storageBucket: "neaglegolfbot.appspot.com",
-                messagingSenderId: "1234567890",
-                appId: "1:12345:web:abcd1234"
-            };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let messagesUnsubscribe = null;
-        let originalPageTitle = document.title;
-        let tabNotificationInterval = null;
-
-        // 获取或生成用户的唯一临时匿名 ID (存入 localStorage 防止刷新时丢失)
-        const guestId = localStorage.getItem('neagle_guest_id') 
-            || ('GUEST_' + Math.random().toString(36).substring(2, 9).toUpperCase());
-        localStorage.setItem('neagle_guest_id', guestId);
-
-        // UI 节点绑定
-        const userAnonIdBadge = document.getElementById('user-anonymous-id');
-        const unifiedContactField = document.getElementById('lead-unified-contact');
-        const leadStatusLabel = document.getElementById('lead-status');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInputField = document.getElementById('chat-input');
-        const chatPingAlert = document.getElementById('chat-ping-unread');
-
-        // 异步建立 Firebase 安全匿名会话
-        const establishAuthSession = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.error("Firebase auth initialization failed: ", err);
-            }
-        };
-
-        establishAuthSession();
-
-        // 侦听用户状态并启动消息监听
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                userAnonIdBadge.textContent = guestId;
-
-                // 异步还原历史留资信息
-                try {
-                    const profileRef = doc(db, 'artifacts', 'neagle_golf', 'users', guestId);
-                    const profileSnap = await getDoc(profileRef);
-                    if (profileSnap.exists()) {
-                        const data = profileSnap.data();
-                        if (data.contact) {
-                            unifiedContactField.value = data.contact;
-                            leadStatusLabel.innerHTML = "<span class='text-golfGreen'><i class='fa-solid fa-circle-check'></i> Credentials secured on cloud</span>";
-                        }
-                    }
-                } catch (e) {
-                    console.error("Details profile restoration error: ", e);
-                }
-
-                // 挂载消息监听器
-                bindMessagesListener(guestId);
-            }
-        });
-
-        // 🌟 Firestore 无索引报错侦听核心 (Rule 2: 内存检索与排序)
-        const bindMessagesListener = (gId) => {
-            if (messagesUnsubscribe) messagesUnsubscribe();
-
-            // 定位至云函数监听的绝对路径 artifacts/neagle_golf/messages
-            const messagesQuery = collection(db, 'artifacts', 'neagle_golf', 'messages');
-
-            messagesUnsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-                const fetchedMessages = [];
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    // 在内存中过滤访客 ID (免除复合索引配置需求)
-                    if (data.userId === gId) {
-                        fetchedMessages.push(data);
-                    }
-                });
-
-                // 按时间戳正序排序
-                fetchedMessages.sort((a, b) => {
-                    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
-                });
-
-                // 新消息到达后在后台状态下闪烁顶导标题
-                if (fetchedMessages.length > 0) {
-                    const lastMsg = fetchedMessages[fetchedMessages.length - 1];
-                    if (lastMsg.reply && document.hidden) {
-                        triggerTabAlert();
-                        chatPingAlert.classList.remove('hidden');
-                    }
-                }
-
-                renderMessages(fetchedMessages);
-            }, (err) => {
-                console.error("Firestore message channel sync failed: ", err);
-            });
-        };
-
-        // 实时渲染历史对话气泡
-        const renderMessages = (msgs) => {
-            chatMessages.innerHTML = '';
-
-            if (msgs.length === 0) {
-                chatMessages.innerHTML = `
-                    <p class="text-[10px] text-zinc-500 text-center py-6 leading-relaxed">
-                        No previous message history found.<br>Leave your questions above.
-                    </p>
-                `;
-                return;
-            }
-
-            msgs.forEach((msg) => {
-                // 1. 渲染用户消息 (右侧绿泡)
-                const userContainer = document.createElement('div');
-                userContainer.className = "flex flex-col mb-3 items-end";
-                
-                const userBubble = document.createElement('div');
-                userBubble.className = "bg-golfGreen/10 border border-golfGreen/30 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%] text-left";
-                
-                const userTextSpan = document.createElement('span');
-                userTextSpan.textContent = msg.content;
-                userBubble.appendChild(userTextSpan);
-                userContainer.appendChild(userBubble);
-                chatMessages.appendChild(userContainer);
-
-                // 2. 实时渲染飞书后台的回复 (左侧蓝泡)
-                if (msg.reply) {
-                    const adminContainer = document.createElement('div');
-                    adminContainer.className = "flex flex-col mb-3 items-start";
-
-                    const adminBubble = document.createElement('div');
-                    adminBubble.className = "bg-sky-500/10 border border-sky-400/30 text-sky-200 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%] text-left";
-
-                    const adminTextSpan = document.createElement('span');
-                    adminTextSpan.textContent = msg.reply;
-                    adminBubble.appendChild(adminTextSpan);
-
-                    const roleTag = document.createElement('span');
-                    roleTag.className = "block text-[8px] uppercase tracking-widest text-sky-400 font-bold mt-1";
-                    roleTag.textContent = "✓ Official Concierge";
-                    adminBubble.appendChild(roleTag);
-
-                    adminContainer.appendChild(adminBubble);
-                    chatMessages.appendChild(adminContainer);
-                }
-            });
-
-            // 自动滚动视窗置底
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        };
-
-        // 异步保存用户联系凭证到云端
-        window.saveContactInfo = async () => {
-            if (!currentUser) return;
-            const contactText = unifiedContactField.value.trim();
-            if (!contactText) {
-                leadStatusLabel.innerHTML = "<span class='text-rose-500'>Please enter an email, phone, or WhatsApp number.</span>";
-                return;
-            }
-
-            leadStatusLabel.textContent = "Securing data...";
-
-            try {
-                const profileDocRef = doc(db, 'artifacts', 'neagle_golf', 'users', guestId);
-                await setDoc(profileDocRef, {
-                    contact: contactText,
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-
-                leadStatusLabel.innerHTML = "<span class='text-golfGreen'><i class='fa-solid fa-circle-check'></i> Credentials synced. Thank you!</span>";
-            } catch (err) {
-                console.error("Save contacts profile error: ", err);
-                leadStatusLabel.textContent = "Failed. Saving locally.";
-            }
-        };
-
-        // 访客端发送新消息到 Firestore (自动唤醒飞书 Callback 卡片推送)
-        window.sendChatMessage = async () => {
-            if (!currentUser) return;
-            const messageText = chatInputField.value.trim();
-            if (!messageText) return;
-
-            chatInputField.value = '';
-
-            const userMsgObj = {
-                userId: guestId,      // 对齐云函数UserId解析键名
-                content: messageText, // 对齐云函数Content解析键名
-                reply: "",            // 初始化回复区
-                timestamp: new Date().toISOString()
-            };
-
-            try {
-                const messagesColl = collection(db, 'artifacts', 'neagle_golf', 'messages');
-                await addDoc(messagesColl, userMsgObj);
-                console.log("前端数据成功打入 artifacts/neagle_golf/messages");
-            } catch (err) {
-                console.error("Message processing error: ", err);
-            }
-        };
-
-        // 标题栏闪烁通知
-        const triggerTabAlert = () => {
-            if (tabNotificationInterval) clearInterval(tabNotificationInterval);
-            let showUnread = true;
-            tabNotificationInterval = setInterval(() => {
-                document.title = showUnread ? "【New Message】 NEAGLE GOLF" : originalPageTitle;
-                showUnread = !showUnread;
-            }, 1000);
-        };
-
-        // 聚焦页面时清除未读小红点和标题闪烁
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                if (tabNotificationInterval) {
-                    clearInterval(tabNotificationInterval);
-                    document.title = originalPageTitle;
-                }
-                chatPingAlert.classList.add('hidden');
-            }
-        });
-    </script>
 
 
     <!-- ========================================== -->
@@ -1158,8 +995,10 @@
             const currentActiveSection = document.querySelector('.view-section:not(.view-hidden)');
             const nextActiveSection = document.getElementById(`view-${viewId}`);
 
+            // Reset scrolling position instantly
             window.scrollTo({ top: 0, behavior: 'instant' });
 
+            // Specific page data bindings
             if (viewId === 'category' && categoryId) {
                 renderCategoryView(categoryId);
                 updateBreadcrumbs('category', categoryId);
@@ -1176,12 +1015,13 @@
                 updateBreadcrumbs(viewId);
             }
 
+            // Crossfade section visibility transition
             if (currentActiveSection && currentActiveSection !== nextActiveSection) {
                 currentActiveSection.classList.add('opacity-0', 'translate-y-3');
                 setTimeout(() => {
                     currentActiveSection.classList.add('view-hidden');
                     nextActiveSection.classList.remove('view-hidden');
-                    nextActiveSection.offsetHeight; 
+                    nextActiveSection.offsetHeight; // force paint
                     nextActiveSection.classList.remove('opacity-0', 'translate-y-3');
                 }, 150);
             } else {
@@ -1196,6 +1036,7 @@
             currentView = viewId;
         }
 
+        // Render Category Page dynamically
         function renderCategoryView(catId) {
             activeCategory = catId;
             const catData = catalogDb[catId];
@@ -1209,7 +1050,7 @@
             catData.items.forEach(prod => {
                 const card = document.createElement('div');
                 card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden p-6 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-4px] cursor-pointer";
-                card.setAttribute('onclick', `MapsTo('detail', '${catId}', '${prod.id}')`);
+                card.setAttribute('onclick', `navigateTo('detail', '${catId}', '${prod.id}')`);
                 card.innerHTML = `
                     <div>
                         <div class="aspect-square w-full rounded-2xl bg-black/40 overflow-hidden flex items-center justify-center p-6 mb-6">
@@ -1230,6 +1071,7 @@
             });
         }
 
+        // Render Product Detail Page dynamically
         function renderDetailView(catId, prodId) {
             const catData = catalogDb[catId];
             const prod = catData.items.find(item => item.id === prodId);
@@ -1265,23 +1107,27 @@
             }
         }
 
+        // Render entire directory hub (10 Categories map)
         function renderDirectoryHub() {
             const grid = document.getElementById('directory-product-grid');
             grid.innerHTML = '';
 
             for (const [catKey, catVal] of Object.entries(catalogDb)) {
+                
+                // Segment groupings
                 let groupType = 'accessories';
                 if (['simulators', 'enclosures', 'servers'].includes(catKey)) groupType = 'sims';
                 else if (['launchers', 'greens'].includes(catKey)) groupType = 'tech';
                 else if (['acoustic', 'mats'].includes(catKey)) groupType = 'fittings';
                 else groupType = 'gear';
 
+                // Skip filtering if active
                 if (directoryFilterType !== 'all' && directoryFilterType !== groupType) continue;
 
                 catVal.items.forEach(prod => {
                     const card = document.createElement('div');
                     card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden p-4 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-2px] cursor-pointer";
-                    card.setAttribute('onclick', `MapsTo('detail', '${catKey}', '${prod.id}')`);
+                    card.setAttribute('onclick', `navigateTo('detail', '${catKey}', '${prod.id}')`);
                     card.innerHTML = `
                         <div>
                             <div class="aspect-square w-full rounded-xl bg-black/30 overflow-hidden flex items-center justify-center p-4 mb-4">
@@ -1305,6 +1151,7 @@
             }
         }
 
+        // Directory Tabs filter action
         function filterDirectory(tabId) {
             directoryFilterType = tabId;
             
@@ -1320,6 +1167,7 @@
             renderDirectoryHub();
         }
 
+        // Directory Instant Filtering matching layout
         function executeDirectoryFilter(keyword) {
             const clearBtn = document.getElementById('directory-search-clear');
             if (keyword.trim()) {
@@ -1341,7 +1189,7 @@
                     if (matchName || matchTagline || matchHighlights) {
                         const card = document.createElement('div');
                         card.className = "group bg-appleGray-800 border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden p-4 flex flex-col justify-between transition-all duration-300 transform hover:translate-y-[-2px] cursor-pointer";
-                        card.setAttribute('onclick', `MapsTo('detail', '${catKey}', '${prod.id}')`);
+                        card.setAttribute('onclick', `navigateTo('detail', '${catKey}', '${prod.id}')`);
                         card.innerHTML = `
                             <div>
                                 <div class="aspect-square w-full rounded-xl bg-black/30 overflow-hidden flex items-center justify-center p-4 mb-4">
@@ -1373,6 +1221,7 @@
             renderDirectoryHub();
         }
 
+        // Global Search execution matching styles
         function executeGlobalSearch(val) {
             const resultsBox = document.getElementById('global-search-results');
             resultsBox.innerHTML = '';
@@ -1418,6 +1267,7 @@
             }
         }
 
+        // Toggle Global Search view overlay
         function toggleGlobalSearch() {
             const overlay = document.getElementById('global-search-overlay');
             const input = document.getElementById('global-search-input');
@@ -1437,6 +1287,7 @@
             }
         }
 
+        // Collapsible Dynamic Hamburger Navigation drawer
         function toggleNavMenu() {
             const menu = document.getElementById('fullscreen-menu');
             const bar1 = document.getElementById('bar1');
@@ -1461,11 +1312,12 @@
             }
         }
 
+        // Toggle Floating Chat box panel
         let isChatOpen = false;
         function toggleChat(forceOpen = false) {
             const chatWin = document.getElementById('chat-window');
             
-            if (forceOpen) isChatOpen = false; 
+            if (forceOpen) isChatOpen = false; // force transition reset
             isChatOpen = !isChatOpen;
 
             if (isChatOpen) {
@@ -1483,6 +1335,7 @@
             }
         }
 
+        // Breadcrumbs system helpers
         function updateBreadcrumbs(viewId, catId = '', prodId = '') {
             const bar = document.getElementById('breadcrumb-bar');
             const arrowSub = document.querySelector('.breadcrumb-arrow-sub');
@@ -1495,7 +1348,7 @@
             } 
             else {
                 bar.classList.remove('hidden');
-                bar.offsetHeight; 
+                bar.offsetHeight; // repaint
                 bar.classList.remove('opacity-0');
 
                 if (viewId === 'category' && catId) {
@@ -1541,9 +1394,11 @@
             }
         }
 
+        // Global shared template injection on load to guarantee robust footer sits in correct locations
         window.addEventListener('load', () => {
             const template = document.getElementById('global-footer-template');
             
+            // Map injection containers
             const targets = [
                 'home-footer-container',
                 'category-footer-container',
@@ -1562,7 +1417,9 @@
             });
         });
 
-        // 显式挂载 onclick 调用函数到 window 作用域中，保证沙箱环境顺利访问
+        // Explicitly expose all onclick-used functions to window scope.
+        // Necessary for sandboxed / strict-mode environments where function
+        // declarations in <script> blocks are not automatically global.
         window.navigateTo                       = navigateTo;
         window.navigateToCategoryFromBreadcrumb = navigateToCategoryFromBreadcrumb;
         window.toggleNavMenu                    = toggleNavMenu;
@@ -1573,6 +1430,7 @@
         window.clearDirectorySearch             = clearDirectorySearch;
         window.executeGlobalSearch              = executeGlobalSearch;
         window.clearSearchInput                 = clearSearchInput;
+        // head script 里定义的函数也需要显式挂到 window
         window.sendChatMessage                  = sendChatMessage;
         window.saveContactInfo                  = saveContactInfo;
 
