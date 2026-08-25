@@ -1,0 +1,21 @@
+# Cloudflare Pages configuration
+# Docs: https://developers.cloudflare.com/pages/
+
+name = "neagle-golf"
+compatibility_date = "2025-08-25"
+
+# Build settings (used by Cloudflare Pages Git integration & `wrangler pages deploy`)
+# - Build command:  node build.mjs
+# - Build output:   dist
+
+# Optional: redirect old SPA-style hash URLs to the new clean static URLs.
+# Uncomment if you previously linked to #category/... / #detail/... anywhere.
+# [[redirects]]
+# from = "/#category/simulators"
+# to = "/golf-simulators/"
+# status = 301
+#
+# [[redirects]]
+# from = "/#cases"
+# to = "/case-studies/"
+# status = 301

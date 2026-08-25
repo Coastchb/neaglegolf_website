@@ -4,7 +4,62 @@
     <meta charset="UTF-8">
     <!-- viewport-fit=cover supports iPhone safe areas (notch/dynamic island) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>NEAGLE GOLF - Luxury Indoor Golf Systems</title>
+    <title>NEAGLE GOLF — Golf Simulators, Launch Monitors &amp; Ball Dispensers | NEAGLE</title>
+    <meta name="description" content="NEAGLE GOLF designs tour-grade golf simulators, launch monitors, 4K golf simulation systems, and automated ball dispensing machines for clubs, ranges, and home studios. Trusted worldwide with 24/7 concierge support.">
+    <meta name="keywords" content="golf simulator, indoor golf simulator, launch monitor, golf launch monitor, golf simulation system, 4K golf simulator, golf ball dispenser, automated ball dispenser, golf range equipment, commercial golf simulator, home golf simulator, NEAGLE GOLF">
+    <meta name="author" content="NEAGLE GOLF">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://www.neaglegolf.com/">
+
+    <!-- Open Graph (social & LLM-friendly) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NEAGLE GOLF">
+    <meta property="og:title" content="NEAGLE GOLF — Golf Simulators, Launch Monitors &amp; Ball Dispensers">
+    <meta property="og:description" content="Tour-grade golf simulators, launch monitors, 4K simulation systems, and automated ball dispensers for clubs, ranges, and home studios.">
+    <meta property="og:url" content="https://www.neaglegolf.com/">
+    <meta property="og:image" content="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NEAGLE GOLF — Golf Simulators, Launch Monitors &amp; Ball Dispensers">
+    <meta name="twitter:description" content="Tour-grade golf simulators, launch monitors, 4K simulation systems, and automated ball dispensers.">
+    <meta name="twitter:image" content="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg">
+
+    <!-- JSON-LD structured data (Organization + WebSite + Search) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.neaglegolf.com/#organization",
+          "name": "NEAGLE GOLF",
+          "url": "https://www.neaglegolf.com/",
+          "logo": "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg",
+          "description": "Designer and supplier of tour-grade golf simulators, launch monitors, 4K golf simulation systems, and automated ball dispensing machines for clubs, ranges, and home studios.",
+          "email": "service@neaglegolf.com",
+          "sameAs": [
+            "https://api.whatsapp.com/send?phone=13142242264"
+          ],
+          "areaServed": "Worldwide"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.neaglegolf.com/#website",
+          "url": "https://www.neaglegolf.com/",
+          "name": "NEAGLE GOLF",
+          "publisher": { "@id": "https://www.neaglegolf.com/#organization" },
+          "inLanguage": "en",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.neaglegolf.com/#directory?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -71,6 +126,112 @@
             }
         }
         
+        /* ── Tech / Premium Visual System ───────────────────────────── */
+        /* Animated radial glow background for hero */
+        .hero-glow {
+            background:
+                radial-gradient(60% 50% at 50% 0%, rgba(0,230,118,0.18), transparent 70%),
+                radial-gradient(40% 40% at 85% 20%, rgba(56,189,248,0.12), transparent 70%),
+                #000000;
+        }
+        /* Subtle technical grid texture overlay */
+        .tech-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+        }
+        /* Glassmorphism card */
+        .glass {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glass:hover {
+            border-color: rgba(0,230,118,0.35);
+            box-shadow: 0 0 0 1px rgba(0,230,118,0.15), 0 20px 50px -20px rgba(0,230,118,0.25);
+        }
+        /* Neon gradient text */
+        .text-gradient {
+            background: linear-gradient(100deg, #ffffff 0%, #b9f6ca 40%, #00e676 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .text-gradient-cyan {
+            background: linear-gradient(100deg, #7dd3fc 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        /* Primary CTA button with glow */
+        .btn-glow {
+            background: linear-gradient(100deg, #00e676, #00c853);
+            color: #04130a;
+            box-shadow: 0 10px 30px -10px rgba(0,230,118,0.6);
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 45px -12px rgba(0,230,118,0.75);
+            filter: brightness(1.05);
+        }
+        /* Ghost / outline button */
+        .btn-ghost {
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+            transition: border-color .25s ease, background .25s ease, color .25s ease;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(0,230,118,0.6);
+            background: rgba(0,230,118,0.08);
+            color: #fff;
+        }
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s cubic-bezier(.25,1,.5,1), transform .7s cubic-bezier(.25,1,.5,1);
+        }
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; }
+        }
+        /* Slow floating pulse for hero orb */
+        @keyframes floatOrb {
+            0%,100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-18px) scale(1.04); }
+        }
+        .float-orb { animation: floatOrb 7s ease-in-out infinite; }
+        /* Marquee for partner logos */
+        @keyframes slideLeft {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .marquee-track { animation: slideLeft 28s linear infinite; }
+        /* Category card hover glow */
+        .card-glow { transition: transform .35s cubic-bezier(.25,1,.5,1), box-shadow .35s ease, border-color .35s ease; border: 1px solid rgba(255,255,255,0.08); }
+        .card-glow:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0,230,118,0.4);
+            box-shadow: 0 24px 60px -24px rgba(0,230,118,0.45);
+        }
+        .marquee-track:hover { animation-play-state: paused; }
+        /* Reveal stagger delays */
+        .reveal-delay-1 { transition-delay: .1s; }
+        .reveal-delay-2 { transition-delay: .2s; }
+        .reveal-delay-3 { transition-delay: .3s; }
+        /* Fade mask for marquee edges */
+        .mask-fade {
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
         /* Spec tabs for detailed product view */
         .spec-tab-btn {
             font-size: 14px;
@@ -366,14 +527,9 @@
         </a>
         
         <div class="hidden lg:flex items-center space-x-4 text-xs">
-            <a href="https://wa.me/13142242264" target="_blank" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+            <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
                 <i class="fa-brands fa-whatsapp text-base"></i>
                 <span>WhatsApp</span>
-            </a>
-            <span class="text-white/30">|</span>
-            <a href="tel:+13142242264" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
-                <i class="fa-solid fa-phone text-xs"></i>
-                <span>Phone</span>
             </a>
             <span class="text-white/30">|</span>
             <a href="mailto:service@neaglegolf.com" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
@@ -451,11 +607,175 @@
     <!-- ========================================== -->
     <section id="view-home" class="view-section safe-pt min-h-screen pb-16 flex-1 flex flex-col justify-between">
         <div>
+            <!-- ═══════════ HERO (Tech / Premium) ═══════════ -->
+            <header class="hero-glow relative overflow-hidden">
+                <div class="absolute inset-0 tech-grid pointer-events-none"></div>
+                <!-- Floating glow orbs -->
+                <div class="absolute -top-24 -right-16 w-80 h-80 rounded-full float-orb pointer-events-none"
+                     style="background: radial-gradient(circle, rgba(0,230,118,0.22), transparent 65%);"></div>
+                <div class="absolute top-1/3 -left-24 w-96 h-96 rounded-full float-orb pointer-events-none"
+                     style="background: radial-gradient(circle, rgba(56,189,248,0.14), transparent 65%); animation-delay: -3s;"></div>
+
+                <div class="relative max-w-7xl mx-auto px-5 md:px-12 pt-20 md:pt-28 pb-16 md:pb-24 text-center">
+                    <span class="reveal inline-flex items-center gap-2 text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen glass rounded-full px-4 py-1.5 mb-6">
+                        <i class="fa-solid fa-microchip"></i> Next-Gen Golf Technology
+                    </span>
+                    <h1 class="reveal text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-6">
+                        <span class="text-gradient">Precision Golf</span><br>
+                        <span class="text-gradient-cyan">Simulation, Redefined</span>
+                    </h1>
+                    <p class="reveal reveal-delay-1 mx-auto max-w-2xl text-base md:text-lg text-zinc-400 leading-relaxed mb-9">
+                        Tour-grade launch monitors, immersive simulators, and fully automated dispensing systems —
+                        engineered for clubs, venues, and serious players who demand the best.
+                    </p>
+                    <div class="reveal reveal-delay-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="javascript:void(0)" onclick="navigateTo('category','simulators')"
+                           class="btn-glow w-full sm:w-auto rounded-full px-8 py-3.5 text-sm md:text-base font-semibold tracking-wide flex items-center justify-center gap-2">
+                            Explore Simulators <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank"
+                           class="btn-ghost w-full sm:w-auto rounded-full px-8 py-3.5 text-sm md:text-base font-semibold tracking-wide flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-golfGreen"></i> Talk to an Expert
+                        </a>
+                    </div>
+
+                    <!-- Stats strip -->
+                    <div class="reveal reveal-delay-3 mt-16 grid grid-cols-2 md:grid-cols-4 gap-px rounded-2xl overflow-hidden glass max-w-4xl mx-auto">
+                        <div class="px-4 py-6 text-center bg-black/30">
+                            <div class="text-2xl md:text-3xl font-bold text-white">99.9%</div>
+                            <div class="text-[11px] md:text-xs text-zinc-500 mt-1 uppercase tracking-wider">Shot Accuracy</div>
+                        </div>
+                        <div class="px-4 py-6 text-center bg-black/30">
+                            <div class="text-2xl md:text-3xl font-bold text-white">4K+</div>
+                            <div class="text-[11px] md:text-xs text-zinc-500 mt-1 uppercase tracking-wider">Visual Clarity</div>
+                        </div>
+                        <div class="px-4 py-6 text-center bg-black/30">
+                            <div class="text-2xl md:text-3xl font-bold text-white">200+</div>
+                            <div class="text-[11px] md:text-xs text-zinc-500 mt-1 uppercase tracking-wider">Global Installations</div>
+                        </div>
+                        <div class="px-4 py-6 text-center bg-black/30">
+                            <div class="text-2xl md:text-3xl font-bold text-white">24/7</div>
+                            <div class="text-[11px] md:text-xs text-zinc-500 mt-1 uppercase tracking-wider">Concierge Support</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Trusted-by marquee -->
+            <div class="border-y border-white/5 py-5 mt-2 overflow-hidden">
+                <p class="text-center text-[10px] md:text-xs uppercase tracking-[0.3em] text-zinc-600 mb-4">Trusted by leading clubs &amp; facilities worldwide</p>
+                <div class="relative flex overflow-hidden mask-fade">
+                    <div class="marquee-track flex shrink-0 items-center gap-12 md:gap-20 px-6 text-zinc-500 text-sm md:text-base font-semibold tracking-widest whitespace-nowrap">
+                        <span>CLUBMASTER</span><span>RANGE SERVANT</span><span>GOLFZON</span><span>TRACKMAN</span><span>ABOUTGOLF</span><span>FULL SWING</span>
+                        <span>CLUBMASTER</span><span>RANGE SERVANT</span><span>GOLFZON</span><span>TRACKMAN</span><span>ABOUTGOLF</span><span>FULL SWING</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ ANSWER-ENGINE CONTENT (GEO) ═══════════ -->
+            <section class="max-w-4xl mx-auto px-4 md:px-6 pt-16 md:pt-24">
+                <div class="reveal text-center mb-10">
+                    <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">What We Do</span>
+                    <h2 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight text-white">One Partner for Golf Simulation &amp; Automation</h2>
+                </div>
+                <div class="reveal space-y-5 text-zinc-400 text-sm md:text-base leading-relaxed">
+                    <p>
+                        <strong class="text-white font-semibold">NEAGLE GOLF</strong> is a global provider of
+                        <em class="text-zinc-200">tour-grade golf simulators, launch monitors, and 4K golf simulation systems</em>
+                        for indoor golf studios, commercial driving ranges, clubs, and private homes. Our simulation packages combine
+                        high-speed camera and radar tracking with photoreal course rendering, delivering shot data accurate enough for
+                        professional fitting and training.
+                    </p>
+                    <p>
+                        Beyond simulation, we engineer <em class="text-zinc-200">automated golf ball dispensers</em> and self-service
+                        range hardware that reduce labor costs and unlock new revenue for facility operators. Every system ships with
+                        white-glove onboarding, training, and 24/7 concierge support.
+                    </p>
+                    <div class="glass rounded-2xl p-6 md:p-8">
+                        <h3 class="text-white font-semibold text-lg mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-white font-medium">What is the best golf simulator for a commercial range?</p>
+                                <p class="mt-1">A ceiling or overhead launch-monitor system with multi-surface tracking, 4K projection, and durable enclosure — exactly what NEAGLE GOLF deploys for clubs and venues worldwide.</p>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">Do you supply automated ball dispensers?</p>
+                                <p class="mt-1">Yes. Our dispensing machines support cashless, self-service operation and integrate with range management software for 24/7 commercial use.</p>
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">Where do you ship?</p>
+                                <p class="mt-1">NEAGLE GOLF serves clubs, ranges, and home studios worldwide, with dedicated concierge support in every region.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════ WHY CHOOSE / FEATURES (Tech) ═══════════ -->
+            <section class="max-w-7xl mx-auto px-4 md:px-6 pt-20 md:pt-28">
+                <div class="reveal text-center max-w-2xl mx-auto mb-12 md:mb-16">
+                    <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Engineered to Perform</span>
+                    <h2 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight text-white">A Smarter Way to Play &amp; Operate</h2>
+                    <p class="mt-4 text-zinc-400 text-sm md:text-base">Cutting-edge hardware and intelligent software working in concert — for players and facility operators alike.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                    <!-- Feature 1 -->
+                    <div class="reveal glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-golfGreen mb-5" style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);">
+                            <i class="fa-solid fa-crosshairs text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Tour-Grade Accuracy</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Sub-millimeter launch monitors capture every angle, spin, and speed for data you can trust.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="reveal reveal-delay-1 glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-sky-400 mb-5" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);">
+                            <i class="fa-solid fa-cube text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Immersive 4K Simulation</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Ultra-HD projection and lifelike physics transport you to the world's greatest courses.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="reveal reveal-delay-2 glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-golfGreen mb-5" style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);">
+                            <i class="fa-solid fa-robot text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Fully Automated</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Self-service ball dispensing and cashless management reduce labor and boost revenue.</p>
+                    </div>
+                    <!-- Feature 4 -->
+                    <div class="reveal glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-sky-400 mb-5" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);">
+                            <i class="fa-solid fa-chart-line text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Real-Time Analytics</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Live reporting and player insights for clubs, ranges, and training academies.</p>
+                    </div>
+                    <!-- Feature 5 -->
+                    <div class="reveal reveal-delay-1 glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-golfGreen mb-5" style="background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);">
+                            <i class="fa-solid fa-shield-halved text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Enterprise Reliability</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Rugged, weather-resistant builds engineered for 24/7 commercial operation.</p>
+                    </div>
+                    <!-- Feature 6 -->
+                    <div class="reveal reveal-delay-2 glass rounded-2xl p-6 md:p-7 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-sky-400 mb-5" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);">
+                            <i class="fa-solid fa-headset text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">White-Glove Support</h3>
+                        <p class="text-zinc-400 text-sm leading-relaxed">Dedicated concierge onboarding, training, and round-the-clock assistance.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Grid starting immediately -->
             <div class="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-10">
                 
                 <!-- Category 1: Simulators (Hero Card, wide) -->
-                <div onclick="navigateTo('category', 'simulators')" class="md:col-span-2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg');">
+                <a href="#category/simulators" onclick="navigateTo('category', 'simulators')" class="reveal card-glow md:col-span-2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg');">
                     <div class="space-y-1 md:space-y-2">
                         <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Flagship Products</span>
                         <h2 class="text-2xl md:text-4xl font-bold">Golf Simulators</h2>
@@ -466,10 +786,10 @@
                             Explore Collection <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
                         </span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Category 2: Dispenser Machines -->
-                <div onclick="navigateTo('category', 'dispenserMachines')" class="md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/0.jpg');">
+                <a href="#category/dispenserMachines" onclick="navigateTo('category', 'dispenserMachines')" class="reveal card-glow md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/Dispenser_Machine/0.jpg');">
                     <div class="space-y-1 md:space-y-2">
                         <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Automated Solutions</span>
                         <h2 class="text-2xl md:text-3xl font-bold">Dispenser Machines</h2>
@@ -480,10 +800,10 @@
                             Explore Collection <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
                         </span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Category 3: Case Studies -->
-                <div onclick="navigateTo('cases')" class="md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/user_cases.jpg');">
+                <a href="#cases" onclick="navigateTo('cases')" class="reveal card-glow md:col-span-2 relative h-[350px] md:h-[400px] rounded-3xl overflow-hidden bg-cover bg-center flex flex-col justify-between p-8 md:p-12 group cursor-pointer" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.85)), url('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/user_cases.jpg');">
                     <div class="space-y-1 md:space-y-2">
                         <span class="text-[10px] md:text-xs font-semibold tracking-widest text-golfGreen uppercase">Success Stories</span>
                         <h2 class="text-2xl md:text-3xl font-bold">Case Studies</h2>
@@ -494,9 +814,30 @@
                             View Case Studies <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
                         </span>
                     </div>
-                </div>
+                </a>
 
             </div>
+
+            <!-- ═══════════ FINAL CTA (Tech / Premium) ═══════════ -->
+            <section class="max-w-7xl mx-auto px-4 md:px-6 pt-20 md:pt-28 pb-4">
+                <div class="reveal relative overflow-hidden rounded-3xl hero-glow border border-white/10 px-6 md:px-16 py-14 md:py-20 text-center">
+                    <div class="absolute inset-0 tech-grid pointer-events-none opacity-60"></div>
+                    <div class="relative">
+                        <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Ready When You Are</span>
+                        <h2 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight text-white max-w-3xl mx-auto leading-tight">Build Your Dream Golf Experience</h2>
+                        <p class="mt-4 text-zinc-400 text-sm md:text-base max-w-xl mx-auto">From a single simulator to a fully automated facility — our concierge team will tailor the perfect setup for you.</p>
+                        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow w-full sm:w-auto rounded-full px-8 py-3.5 text-sm md:text-base font-semibold tracking-wide flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                            </a>
+                            <a href="mailto:service@neaglegolf.com" class="btn-ghost w-full sm:w-auto rounded-full px-8 py-3.5 text-sm md:text-base font-semibold tracking-wide flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-envelope text-golfGreen"></i> Email Our Team
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
 
         <!-- Home Page Footer Injection -->
@@ -856,11 +1197,8 @@
                 <!-- Contact Direct Link Rows -->
                 <div class="space-y-3">
                     <span class="text-xs font-semibold text-white tracking-wider block uppercase">Direct Concierge Contact</span>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8">
-                        <a href="tel:+13142242264" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
-                            <i class="fa-solid fa-phone text-golfGreen"></i> +1 (314) 224-2264
-                        </a>
-                        <a href="https://wa.me/13142242264" target="_blank" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                        <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
                             <i class="fa-brands fa-whatsapp text-golfGreen"></i> +1 (314) 224-2264
                         </a>
                         <a href="mailto:service@neaglegolf.com" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
@@ -1322,6 +1660,41 @@
         let cameFromDirectory = false;  // Track if user navigated from Directory Hub
 
         // Universal Navigation Handler
+        // ── SEO / GEO: update document title & meta description per view ──
+        const SEO_TEMPLATES = {
+            home: {
+                title: 'NEAGLE GOLF — Golf Simulators, Launch Monitors & Ball Dispensers | NEAGLE',
+                desc: 'NEAGLE GOLF designs tour-grade golf simulators, launch monitors, 4K golf simulation systems, and automated ball dispensing machines for clubs, ranges, and home studios.'
+            },
+            category: {
+                'simulators': { title: 'Golf Simulators & Launch Monitors | NEAGLE GOLF', desc: 'Explore NEAGLE tour-grade golf simulators, launch monitors, and 4K indoor golf simulation systems for clubs, ranges, and home studios.' },
+                'dispenserMachines': { title: 'Automated Golf Ball Dispensers | NEAGLE GOLF', desc: 'NEAGLE automated golf ball dispensing machines for driving ranges and golf facilities — cashless, self-service, and weather-resistant.' },
+                'default': { title: 'Product Catalog | NEAGLE GOLF', desc: 'Browse the NEAGLE GOLF catalog of golf simulators, launch monitors, and dispensing systems.' }
+            },
+            directory: { title: 'Complete Catalog & Directory | NEAGLE GOLF', desc: 'Search the full NEAGLE GOLF directory of golf simulators, tracking hardware, fittings, and accessories.' },
+            cases: { title: 'Customer Cases & Installations | NEAGLE GOLF', desc: 'See how clubs, ranges, and venues worldwide use NEAGLE GOLF simulators and dispensing systems.' },
+            about: { title: 'About NEAGLE GOLF', desc: 'NEAGLE GOLF — tour-grade golf simulation and automation technology for clubs, ranges, and players worldwide.' }
+        };
+        function updateSeoMeta(viewId, categoryId = '', productId = '') {
+            let t = SEO_TEMPLATES.home.title, d = SEO_TEMPLATES.home.desc;
+            try {
+                if (viewId === 'category' && categoryId) {
+                    const c = SEO_TEMPLATES.category[categoryId] || SEO_TEMPLATES.category.default;
+                    t = c.title; d = c.desc;
+                    if (productId && catalogDb[categoryId]) {
+                        const prod = catalogDb[categoryId].items.find(i => i.id === productId);
+                        if (prod) { t = `${prod.name} | NEAGLE GOLF`; d = prod.tagline || prod.desc || d; }
+                    }
+                } else if (SEO_TEMPLATES[viewId]) {
+                    t = SEO_TEMPLATES[viewId].title; d = SEO_TEMPLATES[viewId].desc;
+                }
+            } catch (e) { /* keep defaults */ }
+            document.title = t;
+            let m = document.querySelector('meta[name="description"]');
+            if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); }
+            m.setAttribute('content', d);
+        }
+
         function navigateTo(viewId, categoryId = '', productId = '') {
             if (isNavOpen) toggleNavMenu();
 
@@ -1382,6 +1755,9 @@
                 hash = `#${viewId}`;
             }
             history.pushState({ viewId, categoryId, productId }, '', hash || window.location.pathname);
+
+            // SEO / GEO: keep document title & meta in sync with the active view
+            updateSeoMeta(viewId, categoryId, productId);
         }
 
         // Render Category Page dynamically
@@ -2790,6 +3166,22 @@
                     container.appendChild(clone);
                 }
             });
+
+            // Scroll-reveal: animate .reveal elements into view
+            const reveals = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach(e => {
+                        if (e.isIntersecting) {
+                            e.target.classList.add('in-view');
+                            io.unobserve(e.target);
+                        }
+                    });
+                }, { threshold: 0.12 });
+                reveals.forEach(el => io.observe(el));
+            } else {
+                reveals.forEach(el => el.classList.add('in-view'));
+            }
         });
 
         // Explicitly expose all onclick-used functions to window scope.
@@ -2829,10 +3221,13 @@
             
             if (viewId === 'category' && parts[1]) {
                 navigateTo('category', parts[1]);
+                updateSeoMeta('category', parts[1]);
             } else if (viewId === 'detail' && parts[1] && parts[2]) {
                 navigateTo('detail', parts[1], parts[2]);
+                updateSeoMeta('detail', parts[1], parts[2]);
             } else if (viewId && ['directory', 'cases', 'about'].includes(viewId)) {
                 navigateTo(viewId);
+                updateSeoMeta(viewId);
             }
         }
         

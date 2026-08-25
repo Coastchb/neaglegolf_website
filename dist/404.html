@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+    <meta charset="UTF-8">
+    <!-- viewport-fit=cover supports iPhone safe areas (notch/dynamic island) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Page Not Found | NEAGLE GOLF</title>
+    <meta name="description" content="The page you are looking for could not be found.">
+    <meta name="keywords" content="golf simulator, indoor golf simulator, launch monitor, golf launch monitor, golf simulation system, 4K golf simulator, golf ball dispenser, automated ball dispenser, golf range equipment, commercial golf simulator, home golf simulator, NEAGLE GOLF">
+    <meta name="author" content="NEAGLE GOLF">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://www.neaglegolf.com/">
+
+    <!-- Open Graph (social & LLM-friendly) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NEAGLE GOLF">
+    <meta property="og:title" content="Page Not Found | NEAGLE GOLF">
+    <meta property="og:description" content="The page you are looking for could not be found.">
+    <meta property="og:url" content="https://www.neaglegolf.com/">
+    <meta property="og:image" content="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Page Not Found | NEAGLE GOLF">
+    <meta name="twitter:description" content="The page you are looking for could not be found.">
+    <meta name="twitter:image" content="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg">
+
+    <!-- JSON-LD structured data (Organization + WebSite + Search) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.neaglegolf.com/#organization",
+          "name": "NEAGLE GOLF",
+          "url": "https://www.neaglegolf.com/",
+          "logo": "https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg",
+          "description": "Designer and supplier of tour-grade golf simulators, launch monitors, 4K golf simulation systems, and automated ball dispensing machines for clubs, ranges, and home studios.",
+          "email": "service@neaglegolf.com",
+          "sameAs": [
+            "https://api.whatsapp.com/send?phone=13142242264"
+          ],
+          "areaServed": "Worldwide"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.neaglegolf.com/#website",
+          "url": "https://www.neaglegolf.com/",
+          "name": "NEAGLE GOLF",
+          "publisher": { "@id": "https://www.neaglegolf.com/#organization" },
+          "inLanguage": "en",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.neaglegolf.com/#directory?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        appleGray: {
+                            50: '#f5f5f7',
+                            100: '#e8e8ed',
+                            800: '#1d1d1f',
+                            900: '#161617',
+                        },
+                        golfGreen: '#00e676',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #f5f5f7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Avoid native tap delays on mobile Safari */
+            touch-action: manipulation;
+        }
+        /* Smooth View Transition CSS */
+        .view-section {
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .view-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333336;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #424245;
+        }
+        /* Touch safety adjustments */
+        @supports(padding: max(0px)) {
+            .safe-pt {
+                padding-top: max(3rem, env(safe-area-inset-top));
+            }
+            .safe-pb {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* ── Tech / Premium Visual System ───────────────────────────── */
+        /* Animated radial glow background for hero */
+        .hero-glow {
+            background:
+                radial-gradient(60% 50% at 50% 0%, rgba(0,230,118,0.18), transparent 70%),
+                radial-gradient(40% 40% at 85% 20%, rgba(56,189,248,0.12), transparent 70%),
+                #000000;
+        }
+        /* Subtle technical grid texture overlay */
+        .tech-grid {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+        }
+        /* Glassmorphism card */
+        .glass {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glass:hover {
+            border-color: rgba(0,230,118,0.35);
+            box-shadow: 0 0 0 1px rgba(0,230,118,0.15), 0 20px 50px -20px rgba(0,230,118,0.25);
+        }
+        /* Neon gradient text */
+        .text-gradient {
+            background: linear-gradient(100deg, #ffffff 0%, #b9f6ca 40%, #00e676 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .text-gradient-cyan {
+            background: linear-gradient(100deg, #7dd3fc 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        /* Primary CTA button with glow */
+        .btn-glow {
+            background: linear-gradient(100deg, #00e676, #00c853);
+            color: #04130a;
+            box-shadow: 0 10px 30px -10px rgba(0,230,118,0.6);
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 45px -12px rgba(0,230,118,0.75);
+            filter: brightness(1.05);
+        }
+        /* Ghost / outline button */
+        .btn-ghost {
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+            transition: border-color .25s ease, background .25s ease, color .25s ease;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(0,230,118,0.6);
+            background: rgba(0,230,118,0.08);
+            color: #fff;
+        }
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s cubic-bezier(.25,1,.5,1), transform .7s cubic-bezier(.25,1,.5,1);
+        }
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; }
+        }
+        /* Slow floating pulse for hero orb */
+        @keyframes floatOrb {
+            0%,100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-18px) scale(1.04); }
+        }
+        .float-orb { animation: floatOrb 7s ease-in-out infinite; }
+        /* Marquee for partner logos */
+        @keyframes slideLeft {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .marquee-track { animation: slideLeft 28s linear infinite; }
+        /* Category card hover glow */
+        .card-glow { transition: transform .35s cubic-bezier(.25,1,.5,1), box-shadow .35s ease, border-color .35s ease; border: 1px solid rgba(255,255,255,0.08); }
+        .card-glow:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0,230,118,0.4);
+            box-shadow: 0 24px 60px -24px rgba(0,230,118,0.45);
+        }
+        .marquee-track:hover { animation-play-state: paused; }
+        /* Reveal stagger delays */
+        .reveal-delay-1 { transition-delay: .1s; }
+        .reveal-delay-2 { transition-delay: .2s; }
+        .reveal-delay-3 { transition-delay: .3s; }
+        /* Fade mask for marquee edges */
+        .mask-fade {
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+        /* Spec tabs for detailed product view */
+        .spec-tab-btn {
+            font-size: 14px;
+            color: #a1a1aa;
+            background: rgba(24, 24, 27, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .spec-tab-btn:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .spec-tab-btn.active {
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        
+        /* Spec card grid */
+        .spec-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .spec-card {
+            background: rgba(24, 24, 27, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+        .spec-card.highlight {
+            background: rgba(34, 197, 94, 0.05);
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+        .spec-card-label {
+            font-size: 12px;
+            color: #71717a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .spec-card.highlight .spec-card-label {
+            color: #22c55e;
+        }
+        .spec-card-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #f4f4f5;
+            line-height: 1.4;
+        }
+        @media (min-width: 768px) {
+            .spec-card-label {
+                font-size: 14px;
+            }
+            .spec-card-value {
+                font-size: 18px;
+            }
+        }
+        .spec-card.highlight .spec-card-value {
+            color: #22c55e;
+        }
+        .spec-card-sub {
+            font-size: 14px;
+            color: #71717a;
+            margin-top: 4px;
+        }
+        .spec-section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #a1a1aa;
+            margin: 16px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .spec-section-title:first-child {
+            margin-top: 0;
+        }
+        
+        /* Thumbnail active state */
+        .detail-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .detail-thumb:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .detail-thumb.active {
+            border-color: #22c55e;
+        }
+        .detail-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         聊天逻辑 — 通过 Firebase Cloud Functions 代理访问 Firestore
+         无需任何 SDK，纯 fetch，完全兼容中国网络环境
+         ⚠️  部署 Cloud Functions 后，将下方 PROXY_BASE 替换为你的函数 URL
+    ════════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ══════════════════════════════════════════════════════════════════
+        //  ⚙️  Firebase Cloud Functions 第二代 API 域名
+        //  已修复：使用第二代域名格式（与 neagle_golf.html 一致）
+        // ══════════════════════════════════════════════════════════════════
+        var PROXY_BASE = "https://chatapi-jbl3p7hx7q-uc.a.run.app";
+
+        // ── 全局状态 ─────────────────────────────────────────────────────
+        var originalPageTitle       = document.title;
+        var tabNotificationInterval = null;
+        var pollInterval            = null;
+        var _lastMsgCount           = 0;
+
+        var guestId = localStorage.getItem('neagle_guest_id')
+            || ('GUEST_' + Math.random().toString(36).substring(2, 9).toUpperCase());
+        localStorage.setItem('neagle_guest_id', guestId);
+
+        function el(id) { return document.getElementById(id); }
+
+        // ── 初始化：显示 guestId，加载历史，启动轮询 ─────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            var badge = el('user-anonymous-id');
+            if (badge) badge.textContent = guestId;
+            loadProfile();
+            startPolling();
+        });
+
+        // ── 拉取消息（每 4 秒轮询）───────────────────────────────────────
+        function startPolling() {
+            fetchMessages();
+            pollInterval = setInterval(fetchMessages, 4000);
+        }
+
+        function fetchMessages() {
+            fetch(PROXY_BASE + "/chatMessages?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var msgs = data.messages || [];
+                    var last   = msgs[msgs.length - 1];
+                    var pingEl = el('chat-ping-unread');
+                    if (msgs.length > _lastMsgCount && last && last.reply && document.hidden) {
+                        triggerTabAlert();
+                        if (pingEl) pingEl.classList.remove('hidden');
+                    }
+                    _lastMsgCount = msgs.length;
+                    renderMessages(msgs);
+                })
+                .catch(function (e) { console.error('fetchMessages error:', e); });
+        }
+
+        // ── 渲染消息气泡 ──────────────────────────────────────────────────
+        function renderMessages(msgs) {
+            var box = el('chat-messages');
+            if (!box) return;
+            box.innerHTML = '';
+            if (msgs.length === 0) {
+                box.innerHTML = '<p class="text-[10px] text-zinc-500 text-center py-6 leading-relaxed">No previous message history found.<br>Leave your questions above.</p>';
+                return;
+            }
+            msgs.forEach(function (msg) {
+                var uWrap = document.createElement('div');
+                uWrap.className = 'flex flex-col mb-3 items-end';
+                var uBubble = document.createElement('div');
+                uBubble.className = 'bg-golfGreen/10 border border-golfGreen/30 text-white rounded-2xl rounded-tr-none py-2 px-3 max-w-[85%] text-left';
+                uBubble.textContent = msg.content;
+                uWrap.appendChild(uBubble);
+                box.appendChild(uWrap);
+                if (msg.reply) {
+                    var aWrap = document.createElement('div');
+                    aWrap.className = 'flex flex-col mb-3 items-start';
+                    var aBubble = document.createElement('div');
+                    aBubble.className = 'bg-sky-500/10 border border-sky-400/30 text-sky-200 rounded-2xl rounded-tl-none py-2 px-3 max-w-[85%] text-left';
+                    aBubble.textContent = msg.reply;
+                    var tag = document.createElement('span');
+                    tag.className = 'block text-[8px] uppercase tracking-widest text-sky-400 font-bold mt-1';
+                    tag.textContent = '✓ Official Concierge';
+                    aBubble.appendChild(tag);
+                    aWrap.appendChild(aBubble);
+                    box.appendChild(aWrap);
+                }
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // ── 发送消息 ──────────────────────────────────────────────────────
+        function sendChatMessage() {
+            var input = el('chat-input');
+            if (!input) return;
+            var text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            fetch(PROXY_BASE + "/chatSend", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, content: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    console.log('✓ 消息已发送');
+                    fetchMessages(); // 立即刷新，不等下次轮询
+                } else {
+                    console.error('发送失败:', data.error);
+                    if (input.value === '') input.value = text;
+                }
+            })
+            .catch(function (e) {
+                console.error('sendChatMessage error:', e);
+                if (input.value === '') input.value = text;
+            });
+        }
+
+        // ── 保存联系方式 ──────────────────────────────────────────────────
+        function saveContactInfo() {
+            var field = el('lead-unified-contact');
+            var label = el('lead-status');
+            if (!field || !label) return;
+            var text = field.value.trim();
+            if (!text) {
+                label.innerHTML = '<span class="text-rose-500">Please enter an email, phone, or WhatsApp number.</span>';
+                return;
+            }
+            label.textContent = 'Securing data...';
+            fetch(PROXY_BASE + "/profileSave", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guestId: guestId, contact: text })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials synced. Thank you!</span>';
+                } else {
+                    label.textContent = 'Failed. Please try again.';
+                }
+            })
+            .catch(function () { label.textContent = 'Failed. Please try again.'; });
+        }
+
+        // ── 加载已保存的联系方式 ──────────────────────────────────────────
+        function loadProfile() {
+            fetch(PROXY_BASE + "/profileGet?guestId=" + encodeURIComponent(guestId))
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.contact) return;
+                    var field = el('lead-unified-contact');
+                    var label = el('lead-status');
+                    if (field) field.value = data.contact;
+                    if (label) label.innerHTML = '<span class="text-golfGreen"><i class="fa-solid fa-circle-check"></i> Credentials secured on cloud</span>';
+                })
+                .catch(function (e) { console.error('loadProfile error:', e); });
+        }
+
+        // ── Tab 标题闪烁提醒 ──────────────────────────────────────────────
+        function triggerTabAlert() {
+            if (tabNotificationInterval) clearInterval(tabNotificationInterval);
+            var flip = true;
+            tabNotificationInterval = setInterval(function () {
+                document.title = flip ? '【New Message】 NEAGLE GOLF' : originalPageTitle;
+                flip = !flip;
+            }, 1000);
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                if (tabNotificationInterval) { clearInterval(tabNotificationInterval); document.title = originalPageTitle; }
+                var ping = el('chat-ping-unread');
+                if (ping) ping.classList.add('hidden');
+            }
+        });
+    </script>
+
+<body class="overflow-x-hidden font-sans h-full flex flex-col bg-black text-white">
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
+        <a href="/" class="text-white hover:opacity-80 transition-opacity text-base md:text-lg tracking-wider font-semibold py-2">
+            NEAGLE <span class="text-golfGreen">GOLF</span>
+        </a>
+        <div class="hidden lg:flex items-center space-x-6 text-xs">
+            <a href="/golf-simulators/" class="text-white/80 hover:text-golfGreen transition-colors">Golf Simulators</a>
+            <a href="/golf-ball-dispensers/" class="text-white/80 hover:text-golfGreen transition-colors">Dispensers</a>
+            <a href="/case-studies/" class="text-white/80 hover:text-golfGreen transition-colors">Case Studies</a>
+            <a href="/about/" class="text-white/80 hover:text-golfGreen transition-colors">About</a>
+            <span class="text-white/30">|</span>
+            <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-brands fa-whatsapp text-base"></i><span>WhatsApp</span>
+            </a>
+            <a href="mailto:service@neaglegolf.com" class="flex items-center space-x-1 text-white hover:text-golfGreen transition-colors">
+                <i class="fa-solid fa-envelope text-xs"></i><span>Email</span>
+            </a>
+        </div>
+        <div class="lg:hidden flex items-center space-x-4 text-xs">
+            <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="text-white hover:text-golfGreen"><i class="fa-brands fa-whatsapp text-base"></i></a>
+            <a href="/case-studies/" class="text-white/80 hover:text-golfGreen">Cases</a>
+            <a href="/about/" class="text-white/80 hover:text-golfGreen">About</a>
+            <a href="/golf-simulators/" class="text-white/80 hover:text-golfGreen">Shop</a>
+        </div>
+    </nav>
+<main class="flex-1 pt-12 safe-pt">
+<section class="max-w-3xl mx-auto px-4 text-center pt-32 pb-32"><h1 class="text-4xl font-bold mb-4">404</h1><p class="text-zinc-400 mb-8">The page you requested could not be found.</p><a href="/" class="btn-glow rounded-full px-8 py-3 text-sm font-semibold inline-flex items-center gap-2">Back to Home</a></section>
+</main>
+<footer class="py-12 border-t border-white/5 bg-black text-xs text-zinc-400 px-4 md:px-12 mt-24">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
+                <div class="space-y-2 max-w-sm">
+                    <span class="text-base font-bold text-white tracking-widest font-luxury uppercase">NEAGLE <span class="text-golfGreen">GOLF</span></span>
+                    <p class="leading-relaxed">Tour-grade golf simulators, launch monitors, and automated ball dispensing systems for clubs, ranges, and home studios worldwide.</p>
+                </div>
+                <div class="space-y-3">
+                    <span class="text-xs font-semibold text-white tracking-wider block uppercase">Direct Concierge Contact</span>
+                    <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp text-golfGreen"></i> +1 (314) 224-2264
+                    </a>
+                    <a href="mailto:service@neaglegolf.com" class="text-zinc-200 hover:text-golfGreen transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-envelope text-golfGreen"></i> service@neaglegolf.com
+                    </a>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-semibold text-white tracking-wider block uppercase">Explore</span>
+                    <a href="/golf-simulators/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Golf Simulators</a>
+                    <a href="/golf-ball-dispensers/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Ball Dispensers</a>
+                    <a href="/case-studies/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Case Studies</a>
+                    <a href="/about/" class="block text-zinc-200 hover:text-golfGreen transition-colors">About NEAGLE</a>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto pt-8 mt-8 border-t border-white/5 text-zinc-600 text-[11px]">
+                © 2026 NEAGLE GOLF. All rights reserved.
+            </div>
+        </footer>
+</body>
+</html>
