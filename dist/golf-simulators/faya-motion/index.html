@@ -517,6 +517,7 @@
     </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"FAYA Motion Golf Simulator","sku":"faya-motion","url":"https://www.neaglegolf.com/golf-simulators/faya-motion/","description":"Professional dual-sensor golf simulator with full-spectrum shot data, 100+ HD real-world courses, and seamless one-touch switching between golf, cinema, and KTV.","image":["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/1.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/2.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/3.png"],"brand":{"@type":"Brand","name":"NEAGLE GOLF"},"category":"Golf Simulators","offers":{"@type":"Offer","url":"https://www.neaglegolf.com/golf-simulators/faya-motion/","priceCurrency":"USD","price":"9384.00","itemCondition":"https://schema.org/NewCondition","availability":"https://schema.org/PreOrder","seller":{"@type":"Organization","name":"NEAGLE GOLF","url":"https://www.neaglegolf.com/"}}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.neaglegolf.com/"},{"@type":"ListItem","position":2,"name":"Golf Simulators","item":"https://www.neaglegolf.com/golf-simulators/"},{"@type":"ListItem","position":3,"name":"FAYA Motion Golf Simulator","item":"https://www.neaglegolf.com/golf-simulators/faya-motion/"}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.17.0/dist/tabler-icons.min.css">
 <body class="overflow-x-hidden font-sans h-full flex flex-col bg-black text-white">
 
     <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
@@ -547,10 +548,45 @@
 <main class="flex-1 pt-12 safe-pt">
 
       <div class="max-w-7xl mx-auto px-4 md:px-6 pt-4 text-[11px] md:text-xs text-zinc-500 flex items-center gap-2"><a href="/" class="hover:text-white transition-colors">Home</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <a href="/golf-simulators/" class="hover:text-white transition-colors">Golf Simulators</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <span class="text-white font-medium">FAYA Motion Golf Simulator</span></div>
-      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <style>
+        #detail-main-media{position:relative;aspect-ratio:4/3;border-radius:1.5rem;overflow:hidden;background:#18181b;cursor:zoom-in;margin-bottom:1rem}
+        #detail-main-media img{width:100%;height:100%;object-fit:cover}
+        #detail-main-media .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;opacity:0;transition:opacity .2s,background .2s}
+        #detail-main-media:hover .nav-btn{opacity:1}
+        #detail-main-media .nav-btn:hover{background:rgba(0,0,0,.75)}
+        #detail-main-media .nav-btn.left{left:1rem}
+        #detail-main-media .nav-btn.right{right:1rem}
+        #detail-main-media .img-counter{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,.5);color:#fff;padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        /* no play button on main image */
+        .detail-thumb{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#18181b;transition:border-color .2s}
+        .detail-thumb:hover{border-color:rgba(255,255,255,.3)}
+        .detail-thumb.active{border-color:#22c55e}
+        .detail-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb{position:relative;flex:0 0 auto;width:192px;height:112px;border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
+        .video-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb .absolute{position:absolute}
+        .video-thumb .inset-0{inset:0}
+        .lightbox-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center}
+        .lightbox-overlay.active{display:flex}
+        .lightbox-overlay img{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay video{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay .close-btn{position:absolute;top:1.5rem;right:1.5rem;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav.left{left:1.5rem}
+        .lightbox-overlay .lb-nav.right{right:1.5rem}
+        .lightbox-overlay .lb-counter{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.5);padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        .lightbox-overlay .lb-caption{position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);color:#e4e4e7;font-size:.875rem;text-align:center;max-width:80%}
+      </style>
+      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-10">
         <div>
-          <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-900 mb-4"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png" alt="FAYA Motion Golf Simulator" class="w-full h-full object-cover"></div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png" alt="FAYA Motion Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/1.png" alt="FAYA Motion Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/2.png" alt="FAYA Motion Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/3.png" alt="FAYA Motion Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div></div>
+          <div id="detail-main-media" onclick="openLightbox()">
+            <img id="detail-main-image" src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png" alt="FAYA Motion Golf Simulator">
+            <button class="nav-btn left" onclick="event.stopPropagation();navigateGallery(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn right" onclick="event.stopPropagation();navigateGallery(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <span class="img-counter"><span id="detail-current-index">1</span> / 4</span>
+          </div>
+          <div id="detail-thumbnails" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none"><div class="detail-thumb active" onclick="setGalleryImage(0)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png" alt="Thumbnail 1" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(1)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/1.png" alt="Thumbnail 2" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(2)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/2.png" alt="Thumbnail 3" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(3)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/3.png" alt="Thumbnail 4" loading="lazy"></div></div>
+          
         </div>
         <div>
           <span class="text-[11px] uppercase tracking-widest text-golfGreen font-semibold">Golf Simulators</span>
@@ -567,7 +603,370 @@
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-12">
         <h2 class="text-2xl font-bold text-white mb-5">Specifications</h2>
-        <table class="w-full text-sm border border-white/5 rounded-2xl overflow-hidden"><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Tracking System</th><td class="py-3 text-zinc-400">IDS dual high-speed camera + precision rotation sensor</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Display</th><td class="py-3 text-zinc-400">Full HD 2K, Epson professional projector</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Installation</th><td class="py-3 text-zinc-400">Fully customizable to any venue</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Courses</th><td class="py-3 text-zinc-400">100+ international courses with 64GBit 3D engine</td></tr></table>
+        <style>
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f6f8;
+  --color-background-info:#e8f7ef;
+  --color-background-success:#e3f9ec;
+  --color-text-primary:#1a1a1a;
+  --color-text-secondary:#6b7280;
+  --color-text-info:#009e5a;
+  --color-text-success:#15803d;
+  --color-border-tertiary:#e5e7eb;
+  --color-border-secondary:#d1d5db;
+  --color-border-info:#00e676;
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+}</style><style>.specs-wrap *{box-sizing:border-box;margin:0;padding:0}.specs-wrap .wrap{padding:1.5rem 0}.specs-wrap .header{text-align:center;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}.specs-wrap .header h1{font-size:22px;font-weight:500;color:var(--color-text-primary)}.specs-wrap .header p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}.specs-wrap .stabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}.specs-wrap .stab{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 12px;cursor:pointer;transition:all .15s}.specs-wrap .stab.active{color:var(--color-text-info);background:var(--color-background-info);border-color:var(--color-border-info)}.specs-wrap .stab:hover:not(.active){border-color:var(--color-border-secondary)}.specs-wrap .spanel{display:none}.specs-wrap .spanel.active{display:block}.specs-wrap .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}.specs-wrap .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.9rem 1.1rem}.specs-wrap .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}.specs-wrap .val{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.4}.specs-wrap .sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px}.specs-wrap .hi{background:var(--color-background-info);border-color:var(--color-border-info)}.specs-wrap .hi .lbl{color:var(--color-text-info)}.specs-wrap .hi .val{color:var(--color-text-info)}.specs-wrap .sec{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:1rem 0 8px;text-transform:uppercase;letter-spacing:.04em}.specs-wrap .sec:first-child{margin-top:0}.specs-wrap .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);background:var(--color-background-success);color:var(--color-text-success);margin-top:4px}.specs-wrap .item{display:flex;align-items:baseline;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)}.specs-wrap .item:last-child{border-bottom:none}.specs-wrap .dot{width:4px;height:4px;border-radius:50%;background:var(--color-text-info);flex-shrink:0;margin-top:7px}.specs-wrap .itxt{font-size:13px;color:var(--color-text-primary);line-height:1.5}</style>
+<style class="specs-override">
+/* Dark-theme overrides for embedded product specs */
+.specs-wrap{background:#0d0d0f !important;color:#e4e4e7 !important}
+.specs-wrap .wrap{background:transparent !important;max-width:none !important}
+.specs-wrap .header h1{color:#fff !important}
+.specs-wrap .header p{color:#a1a1aa !important}
+.specs-wrap .stabs,
+.specs-wrap .tabs{justify-content:flex-start !important;flex-wrap:wrap !important;gap:0.5rem !important;margin-left:0 !important;padding-left:0 !important}
+.specs-wrap .stab,
+.specs-wrap .tab{background:rgba(255,255,255,0.05) !important;border:1px solid rgba(255,255,255,0.1) !important;color:#e4e4e7 !important;backdrop-filter:blur(4px)}
+.specs-wrap .stab:hover,
+.specs-wrap .tab:hover{border-color:rgba(0,230,118,0.5) !important;color:#00e676 !important}
+.specs-wrap .stab.active,
+.specs-wrap .tab.active{background:rgba(0,230,118,0.12) !important;border-color:#00e676 !important;color:#00e676 !important}
+.specs-wrap .stab i,
+.specs-wrap .tab i{color:#00e676 !important}
+.specs-wrap .card,
+.specs-wrap .range-card{background:rgba(24,24,27,0.85) !important;border:1px solid rgba(255,255,255,0.08) !important;color:#fff !important;backdrop-filter:blur(4px)}
+.specs-wrap .card.hi,
+.specs-wrap .range-card.hi{background:rgba(0,230,118,0.08) !important;border-color:rgba(0,230,118,0.25) !important}
+.specs-wrap .card .val,
+.specs-wrap .card-val{color:#fff !important}
+.specs-wrap .card .lbl,
+.specs-wrap .card-lbl{color:#a1a1aa !important}
+.specs-wrap .card .sub,
+.specs-wrap .card-sub{color:#71717a !important}
+.specs-wrap .range-name{color:#a1a1aa !important}
+.specs-wrap .range-val{color:#fff !important}
+.specs-wrap .range-acc{color:#00e676 !important}
+.specs-wrap .tour-badge{background:rgba(0,230,118,0.08) !important;border:1px solid rgba(0,230,118,0.25) !important;color:#00e676 !important}
+.specs-wrap .section-title{color:#d4d4d8 !important}
+.specs-wrap .section-title::after{background:linear-gradient(90deg,#00e676,transparent) !important}
+.specs-wrap .table-card table{color:#e4e4e7 !important}
+.specs-wrap .table-card th{color:#a1a1aa !important;border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .table-card td{border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .sec{color:#a1a1aa !important}
+.specs-wrap .itxt{color:#e4e4e7 !important}
+</style>
+<div class="specs-wrap">
+
+
+<div class="wrap">
+<div class="header">
+  <h1>FAYA Motion — Golf Simulator</h1>
+</div>
+
+<div class="stabs" id="tabs">
+  <button class="stab active" data-p="tracking">Tracking</button>
+  <button class="stab" data-p="display">Display</button>
+  <button class="stab" data-p="software">Software</button>
+  <button class="stab" data-p="entertain">Entertainment</button>
+  <button class="stab" data-p="solution">Solution</button>
+  <button class="stab" data-p="faya-svc">Service</button>
+</div>
+
+<!-- Tracking -->
+<div id="tracking" class="spanel active">
+  <p class="sec">Dual-Sensor Core</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Sensor Architecture</div>
+      <div class="val">IDS Dual High-Speed Camera + Precision Rotation Sensor</div>
+      <div class="sub">Dual-core design far exceeds single-sensor industry standard</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Detection Coverage</div>
+      <div class="val">Full 360° No Dead Zone</div>
+      <div class="sub">Ball spin, flight trajectory & clubhead motion all captured</div>
+    </div>
+    <div class="card">
+      <div class="lbl">High-Loft Detection</div>
+      <div class="val">60°+ Launch Angle</div>
+      <div class="sub">Accurately captures high-loft & specialty shots</div>
+    </div>
+    <div class="card">
+      <div class="lbl">False Trigger Protection</div>
+      <div class="val">Practice Swing Safe</div>
+      <div class="sub">No erroneous ball detection on empty swings</div>
+    </div>
+  </div>
+  <p class="sec">Professional Data Output</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Ball Data</div>
+      <div class="val">Speed · Launch Angle · Backspin · Sidespin</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Club Data</div>
+      <div class="val">Club Face Angle · Landing Point</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Video Tools</div>
+      <div class="val">Replay · Slow Motion · Swing Comparison</div>
+      <div class="sub">Precise posture correction for all skill levels</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Handedness & Position</div>
+      <div class="val">Left / Right · Free Stance</div>
+      <div class="sub">No fixed hitting position required</div>
+    </div>
+  </div>
+</div>
+
+<!-- Display -->
+<div id="display" class="spanel">
+  <p class="sec">Projection System</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Projector</div>
+      <div class="val">Epson Professional</div>
+      <div class="sub">3,500+ lumens standard configuration</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Resolution</div>
+      <div class="val">Full HD 2K</div>
+      <div class="sub">1920 × 1200P, vivid color reproduction</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Lens Features</div>
+      <div class="val">Lens Shift + Dust Filter</div>
+      <div class="sub">Flexible installation, protected optics</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Signal Transmission</div>
+      <div class="val">HDBaseT</div>
+      <div class="sub">Long-distance, lossless transmission, no lag</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Ambient Light Performance</div>
+      <div class="val">Bright-Environment Ready</div>
+      <div class="sub">Clear visibility even under strong ambient light</div>
+    </div>
+  </div>
+  <p class="sec">Impact Screen</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Screen Type</div>
+      <div class="val">Custom Anti-Impact Acoustic Screen</div>
+      <div class="sub">Built-in optical layer, withstands repeated ball impact</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Multi-Use Compatibility</div>
+      <div class="val">Golf · Cinema · KTV</div>
+      <div class="sub">Acoustic transparency for full audio performance</div>
+    </div>
+  </div>
+</div>
+
+<!-- Software -->
+<div id="software" class="spanel">
+  <p class="sec">Courses & Engine</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Course Library</div>
+      <div class="val">100+ International Courses</div>
+      <div class="sub">Full 18-hole real-world venues</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Game Engine</div>
+      <div class="val">64GBit 3D Engine</div>
+      <div class="sub">Full HD, highly realistic visuals with strong on-site feel</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Rules Design</div>
+      <div class="val">Full Official Golf Rules</div>
+      <div class="sub">Real competition operation throughout</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Course & Hole Selection</div>
+      <div class="val">Fully Customizable</div>
+      <div class="sub">Free course & hole selection per session</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Environment Settings</div>
+      <div class="val">Weather · Wind Direction · Wind Speed</div>
+      <div class="sub">Freely adjustable per round</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Language Support</div>
+      <div class="val">Chinese · Japanese · Korean · English</div>
+    </div>
+  </div>
+  <p class="sec">Game & Practice Modes</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Competition Mode</div>
+      <div class="val">1–8 Players Simultaneous</div>
+      <div class="sub">Stroke play & match play supported</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Practice Mode</div>
+      <div class="val">Drive · Approach · Chip · Bunker · Putt</div>
+      <div class="sub">Full skill-chain specialist training</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Lifetime Upgrades</div>
+      <div class="val">Free — Courses & Software</div>
+      <div class="sub">New courses, feature updates & stability improvements</div>
+      <div><span class="badge">Lifetime free</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Entertainment -->
+<div id="entertain" class="spanel">
+  <p class="sec">All-in-One Modes</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Integrated Modes</div>
+      <div class="val">Golf · Cinema · KTV</div>
+      <div class="sub">One-touch seamless switching, no re-configuration needed</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Audio System</div>
+      <div class="val">Dolby 7.2 Surround · Professional KTV</div>
+      <div class="sub">Denon 7.2-channel AV receiver</div>
+    </div>
+  </div>
+  <p class="sec">Audio / Video Formats</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Surround Formats</div>
+      <div class="val">Dolby Atmos · DTS:X</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Video Passthrough</div>
+      <div class="val">8K/60Hz · HDR · HLG</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Ease of Use</div>
+      <div class="val">Senior & Child Friendly</div>
+      <div class="sub">One-key switching, no technical knowledge needed</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Suitable Venues</div>
+      <div class="val">Villa · Club · Showroom · Premium Golf Bay</div>
+    </div>
+  </div>
+</div>
+
+<!-- Solution -->
+<div id="solution" class="spanel">
+  <p class="sec">Complete Package</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Scope of Supply</div>
+      <div class="val">Full Turnkey Solution</div>
+      <div class="sub">Simulator, projector, AV system + all accessories included</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Accessories Included</div>
+      <div class="val">IR Graphics Server · 3D Mat · EU-Standard Turf</div>
+      <div class="sub">Video cable, mount, voltage stabilizer, screen clips & more</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Space Flexibility</div>
+      <div class="val">No Strict Size Requirement</div>
+      <div class="sub">Customized to site — home basement, living room, commercial bay</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Suitable Venues</div>
+      <div class="val">Villa · Club · Hotel · Showroom · Golf Bay</div>
+    </div>
+  </div>
+  <p class="sec">After-Sales</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Warranty</div>
+      <div class="val">Lifetime After-Sales Service</div>
+      <div class="sub">Installation, commissioning, maintenance, repair & software upgrades</div>
+      <div><span class="badge">Lifetime</span></div>
+    </div>
+    <div class="card">
+      <div class="lbl">Software Updates</div>
+      <div class="val">Free Lifetime Upgrades</div>
+      <div class="sub">Courses & system continuously updated</div>
+    </div>
+  </div>
+</div>
+
+
+<div id="faya-svc" class="spanel">
+  <p class="sec">After-Sales Support</p>
+  <div class="grid">
+    <div class="card hi">
+      <div class="lbl">Customer Support</div>
+      <div class="val">7×24 Hours</div>
+      <div class="sub">Round-the-clock after-sales service, any time you need us</div>
+    </div>
+    <div class="card hi">
+      <div class="lbl">Warranty</div>
+      <div class="val">1-Year Warranty</div>
+      <div class="sub">Full coverage on parts and workmanship for one year from delivery</div>
+    </div>
+    <div class="card hi">
+      <div class="lbl">Repair Service</div>
+      <div class="val">Lifetime Repair</div>
+      <div class="sub">Ongoing repair support for the life of the product</div>
+    </div>
+  </div>
+  <p class="sec">Shipping &amp; Installation</p>
+  <p class="sec">Shipping & Installation</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Worldwide Shipping</div>
+      <div class="val">Global Delivery Available</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Lead Time</div>
+      <div class="val">7 Days</div>
+      <div class="sub">Stock preparation after order confirmation</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Sea Freight</div>
+      <div class="val">~45 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Express Sea</div>
+      <div class="val">~30 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Air Freight</div>
+      <div class="val">~7 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Remote Installation</div>
+      <div class="val">Floor Plans + Video Guidance</div>
+      <div class="sub">Standard for all orders</div>
+    </div>
+    <div class="card">
+      <div class="lbl">On-site Installation</div>
+      <div class="val">By Arrangement</div>
+      <div class="sub">Available upon separate request</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.getElementById('tabs').addEventListener('click',function(e){
+  var b=e.target.closest('.stab');if(!b)return;
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('active'));
+  b.classList.add('active');document.getElementById(b.dataset.p).classList.add('active');
+});
+</script>
+</div>
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-4">
         <h2 class="text-2xl font-bold text-white mb-6">More from Golf Simulators</h2>
@@ -596,6 +995,85 @@
     </a>
         </div>
       </section>
+
+      <!-- Image lightbox -->
+      <div id="lightbox-overlay" class="lightbox-overlay" onclick="if(event.target===this) closeLightbox()">
+        <button class="close-btn" onclick="closeLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <button class="lb-nav left" onclick="event.stopPropagation();navigateLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="lb-nav right" onclick="event.stopPropagation();navigateLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-image" src="" alt="Full size">
+        <div class="lb-caption" id="lightbox-caption"></div>
+        <div class="lb-counter" id="lightbox-counter"></div>
+      </div>
+
+      <!-- Video lightbox -->
+      <div id="video-lightbox" class="lightbox-overlay" onclick="if(event.target===this) closeVideoLightbox()">
+        <button class="close-btn" onclick="closeVideoLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <video id="video-lightbox-player" src="" controls playsinline webkit-playsinline></video>
+      </div>
+
+      <script>
+      (function(){
+        var imgs = ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/0.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/1.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/2.png","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/FAYA_Motion/3.png"];
+        var vids = [];
+        var cur = 0;
+        function setGalleryImage(idx){
+          if(!imgs.length) return;
+          cur = (idx % imgs.length + imgs.length) % imgs.length;
+          var main = document.getElementById('detail-main-image');
+          main.style.opacity = '0.8';
+          setTimeout(function(){ main.src = imgs[cur]; main.style.opacity = '1'; }, 150);
+          document.getElementById('detail-current-index').textContent = cur + 1;
+          document.querySelectorAll('#detail-thumbnails .detail-thumb').forEach(function(t,i){
+            t.classList.toggle('active', i === cur);
+          });
+        }
+        window.setGalleryImage = setGalleryImage;
+        window.navigateGallery = function(d){ setGalleryImage(cur + d); };
+        window.openLightbox = function(){
+          if(!imgs.length) return;
+          document.getElementById('lightbox-image').src = imgs[cur];
+          document.getElementById('lightbox-overlay').classList.add('active');
+          document.getElementById('lightbox-counter').textContent = (cur + 1) + ' / ' + imgs.length;
+          document.getElementById('lightbox-caption').textContent = document.querySelector('h1') ? document.querySelector('h1').textContent : '';
+        };
+        window.closeLightbox = function(){ document.getElementById('lightbox-overlay').classList.remove('active'); };
+        window.navigateLightbox = function(d){ setGalleryImage(cur + d); openLightbox(); };
+        window.openVideoLightbox = function(src){
+          var lb = document.getElementById('video-lightbox');
+          var player = document.getElementById('video-lightbox-player');
+          player.src = src;
+          player.pause();
+          lb.classList.add('active');
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          window.__videoPlayTimer = setTimeout(function(){ player.play().catch(function(){}); }, 2000);
+        };
+        window.closeVideoLightbox = function(){
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          var player = document.getElementById('video-lightbox-player');
+          player.pause(); player.removeAttribute('src');
+          document.getElementById('video-lightbox').classList.remove('active');
+        };
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape'){ closeLightbox(); closeVideoLightbox(); }
+          if(document.getElementById('lightbox-overlay').classList.contains('active')){
+            if(e.key === 'ArrowLeft') navigateLightbox(-1);
+            if(e.key === 'ArrowRight') navigateLightbox(1);
+          }
+        });
+        // touch swipe
+        var touchStartX = 0;
+        var mainMedia = document.getElementById('detail-main-media');
+        if(mainMedia){
+          mainMedia.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
+          mainMedia.addEventListener('touchend', function(e){
+            var diff = touchStartX - e.changedTouches[0].screenX;
+            if(Math.abs(diff) > 50) navigateGallery(diff > 0 ? 1 : -1);
+          });
+        }
+        setGalleryImage(0);
+      })();
+      </script>
 </main>
 <footer class="py-12 border-t border-white/5 bg-black text-xs text-zinc-400 px-4 md:px-12 mt-24">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">

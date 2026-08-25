@@ -517,6 +517,7 @@
     </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"GOLFPAI S1 Indoor Golf Simulator","sku":"golfpai-s1","url":"https://www.neaglegolf.com/golf-simulators/golfpai-s1/","description":"Premium indoor golf simulator with 6,000 FPS vision tracking, 4K laser projection, and 110+ photorealistic courses.","image":["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/1.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/2.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/3.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/4.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/5.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/6.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/7.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/8.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/9.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/10.jpg"],"brand":{"@type":"Brand","name":"NEAGLE GOLF"},"category":"Golf Simulators","offers":{"@type":"Offer","url":"https://www.neaglegolf.com/golf-simulators/golfpai-s1/","priceCurrency":"USD","price":"42516.00","itemCondition":"https://schema.org/NewCondition","availability":"https://schema.org/PreOrder","seller":{"@type":"Organization","name":"NEAGLE GOLF","url":"https://www.neaglegolf.com/"}}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.neaglegolf.com/"},{"@type":"ListItem","position":2,"name":"Golf Simulators","item":"https://www.neaglegolf.com/golf-simulators/"},{"@type":"ListItem","position":3,"name":"GOLFPAI S1 Indoor Golf Simulator","item":"https://www.neaglegolf.com/golf-simulators/golfpai-s1/"}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.17.0/dist/tabler-icons.min.css">
 <body class="overflow-x-hidden font-sans h-full flex flex-col bg-black text-white">
 
     <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
@@ -547,10 +548,50 @@
 <main class="flex-1 pt-12 safe-pt">
 
       <div class="max-w-7xl mx-auto px-4 md:px-6 pt-4 text-[11px] md:text-xs text-zinc-500 flex items-center gap-2"><a href="/" class="hover:text-white transition-colors">Home</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <a href="/golf-simulators/" class="hover:text-white transition-colors">Golf Simulators</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <span class="text-white font-medium">GOLFPAI S1 Indoor Golf Simulator</span></div>
-      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <style>
+        #detail-main-media{position:relative;aspect-ratio:4/3;border-radius:1.5rem;overflow:hidden;background:#18181b;cursor:zoom-in;margin-bottom:1rem}
+        #detail-main-media img{width:100%;height:100%;object-fit:cover}
+        #detail-main-media .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;opacity:0;transition:opacity .2s,background .2s}
+        #detail-main-media:hover .nav-btn{opacity:1}
+        #detail-main-media .nav-btn:hover{background:rgba(0,0,0,.75)}
+        #detail-main-media .nav-btn.left{left:1rem}
+        #detail-main-media .nav-btn.right{right:1rem}
+        #detail-main-media .img-counter{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,.5);color:#fff;padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        /* no play button on main image */
+        .detail-thumb{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#18181b;transition:border-color .2s}
+        .detail-thumb:hover{border-color:rgba(255,255,255,.3)}
+        .detail-thumb.active{border-color:#22c55e}
+        .detail-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb{position:relative;flex:0 0 auto;width:192px;height:112px;border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
+        .video-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb .absolute{position:absolute}
+        .video-thumb .inset-0{inset:0}
+        .lightbox-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center}
+        .lightbox-overlay.active{display:flex}
+        .lightbox-overlay img{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay video{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay .close-btn{position:absolute;top:1.5rem;right:1.5rem;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav.left{left:1.5rem}
+        .lightbox-overlay .lb-nav.right{right:1.5rem}
+        .lightbox-overlay .lb-counter{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.5);padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        .lightbox-overlay .lb-caption{position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);color:#e4e4e7;font-size:.875rem;text-align:center;max-width:80%}
+      </style>
+      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-10">
         <div>
-          <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-900 mb-4"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg" alt="GOLFPAI S1 Indoor Golf Simulator" class="w-full h-full object-cover"></div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg" alt="GOLFPAI S1 Indoor Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/1.jpg" alt="GOLFPAI S1 Indoor Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/2.jpg" alt="GOLFPAI S1 Indoor Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/3.jpg" alt="GOLFPAI S1 Indoor Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div></div>
+          <div id="detail-main-media" onclick="openLightbox()">
+            <img id="detail-main-image" src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg" alt="GOLFPAI S1 Indoor Golf Simulator">
+            <button class="nav-btn left" onclick="event.stopPropagation();navigateGallery(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn right" onclick="event.stopPropagation();navigateGallery(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <span class="img-counter"><span id="detail-current-index">1</span> / 11</span>
+          </div>
+          <div id="detail-thumbnails" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none"><div class="detail-thumb active" onclick="setGalleryImage(0)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg" alt="Thumbnail 1" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(1)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/1.jpg" alt="Thumbnail 2" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(2)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/2.jpg" alt="Thumbnail 3" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(3)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/3.jpg" alt="Thumbnail 4" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(4)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/4.jpg" alt="Thumbnail 5" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(5)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/5.jpg" alt="Thumbnail 6" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(6)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/6.jpg" alt="Thumbnail 7" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(7)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/7.jpg" alt="Thumbnail 8" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(8)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/8.jpg" alt="Thumbnail 9" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(9)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/9.jpg" alt="Thumbnail 10" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(10)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/10.jpg" alt="Thumbnail 11" loading="lazy"></div></div>
+          <div id="detail-video-section" class="border-t border-white/10 pt-4 mt-4">
+          <h4 class="text-sm uppercase tracking-widest text-zinc-500 mb-3">Product Videos</h4>
+          <div id="detail-video-list" class="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+            <div class="video-thumb" onclick="openVideoLightbox('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/S1_intro.mp4')"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg" alt="Video cover" loading="lazy"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center"><i class="fa-solid fa-play text-zinc-900 text-base ml-0.5"></i></div></div><span class="absolute bottom-2 right-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">Intro</span></div>
+          </div>
+        </div>
         </div>
         <div>
           <span class="text-[11px] uppercase tracking-widest text-golfGreen font-semibold">Golf Simulators</span>
@@ -567,7 +608,224 @@
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-12">
         <h2 class="text-2xl font-bold text-white mb-5">Specifications</h2>
-        <table class="w-full text-sm border border-white/5 rounded-2xl overflow-hidden"><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Tracking System</th><td class="py-3 text-zinc-400">6,000 FPS dual-camera stereo vision, ≥99.9% ball &amp; club recognition</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Display</th><td class="py-3 text-zinc-400">4K UHD laser projector, 6,000 ANSI lumens, 3,000,000:1 contrast</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Performance</th><td class="py-3 text-zinc-400">Intel i5-12400, NVIDIA RTX 4060Ti, 32GB DDR4, 1TB SSD</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Courses</th><td class="py-3 text-zinc-400">110+ world-famous courses with 4K photorealistic modeling</td></tr></table>
+        <style>
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f6f8;
+  --color-background-info:#e8f7ef;
+  --color-background-success:#e3f9ec;
+  --color-text-primary:#1a1a1a;
+  --color-text-secondary:#6b7280;
+  --color-text-info:#009e5a;
+  --color-text-success:#15803d;
+  --color-border-tertiary:#e5e7eb;
+  --color-border-secondary:#d1d5db;
+  --color-border-info:#00e676;
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+}</style><style>.specs-wrap *{box-sizing:border-box;margin:0;padding:0}.specs-wrap .wrap{padding:1.5rem 0}.specs-wrap .header{text-align:center;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}.specs-wrap .header h1{font-size:22px;font-weight:500;color:var(--color-text-primary)}.specs-wrap .header p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}.specs-wrap .price-tag{display:inline-block;font-size:13px;font-weight:500;padding:4px 14px;border-radius:var(--border-radius-md);background:var(--color-background-success);color:var(--color-text-success);margin-top:8px}.specs-wrap .stabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;justify-content:center}.specs-wrap .stab{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}.specs-wrap .stab.active{color:var(--color-text-info);background:var(--color-background-info);border-color:var(--color-border-info)}.specs-wrap .stab:hover:not(.active){border-color:var(--color-border-secondary)}.specs-wrap .spanel{display:none}.specs-wrap .spanel.active{display:block}.specs-wrap .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.specs-wrap .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.9rem 1.1rem}.specs-wrap .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;display:flex;align-items:center;gap:4px}.specs-wrap .val{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.4}.specs-wrap .sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px}.specs-wrap .hi{background:var(--color-background-info);border-color:var(--color-border-info)}.specs-wrap .hi .lbl{color:var(--color-text-info)}.specs-wrap .hi .val{color:var(--color-text-info)}.specs-wrap .sec{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:1rem 0 8px;text-transform:uppercase;letter-spacing:.04em}.specs-wrap .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);background:var(--color-background-success);color:var(--color-text-success);margin-top:4px}</style>
+<style class="specs-override">
+/* Dark-theme overrides for embedded product specs */
+.specs-wrap{background:#0d0d0f !important;color:#e4e4e7 !important}
+.specs-wrap .wrap{background:transparent !important;max-width:none !important}
+.specs-wrap .header h1{color:#fff !important}
+.specs-wrap .header p{color:#a1a1aa !important}
+.specs-wrap .stabs,
+.specs-wrap .tabs{justify-content:flex-start !important;flex-wrap:wrap !important;gap:0.5rem !important;margin-left:0 !important;padding-left:0 !important}
+.specs-wrap .stab,
+.specs-wrap .tab{background:rgba(255,255,255,0.05) !important;border:1px solid rgba(255,255,255,0.1) !important;color:#e4e4e7 !important;backdrop-filter:blur(4px)}
+.specs-wrap .stab:hover,
+.specs-wrap .tab:hover{border-color:rgba(0,230,118,0.5) !important;color:#00e676 !important}
+.specs-wrap .stab.active,
+.specs-wrap .tab.active{background:rgba(0,230,118,0.12) !important;border-color:#00e676 !important;color:#00e676 !important}
+.specs-wrap .stab i,
+.specs-wrap .tab i{color:#00e676 !important}
+.specs-wrap .card,
+.specs-wrap .range-card{background:rgba(24,24,27,0.85) !important;border:1px solid rgba(255,255,255,0.08) !important;color:#fff !important;backdrop-filter:blur(4px)}
+.specs-wrap .card.hi,
+.specs-wrap .range-card.hi{background:rgba(0,230,118,0.08) !important;border-color:rgba(0,230,118,0.25) !important}
+.specs-wrap .card .val,
+.specs-wrap .card-val{color:#fff !important}
+.specs-wrap .card .lbl,
+.specs-wrap .card-lbl{color:#a1a1aa !important}
+.specs-wrap .card .sub,
+.specs-wrap .card-sub{color:#71717a !important}
+.specs-wrap .range-name{color:#a1a1aa !important}
+.specs-wrap .range-val{color:#fff !important}
+.specs-wrap .range-acc{color:#00e676 !important}
+.specs-wrap .tour-badge{background:rgba(0,230,118,0.08) !important;border:1px solid rgba(0,230,118,0.25) !important;color:#00e676 !important}
+.specs-wrap .section-title{color:#d4d4d8 !important}
+.specs-wrap .section-title::after{background:linear-gradient(90deg,#00e676,transparent) !important}
+.specs-wrap .table-card table{color:#e4e4e7 !important}
+.specs-wrap .table-card th{color:#a1a1aa !important;border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .table-card td{border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .sec{color:#a1a1aa !important}
+.specs-wrap .itxt{color:#e4e4e7 !important}
+</style>
+<div class="specs-wrap">
+
+
+<div class="wrap">
+<h2 class="sr-only">GOLFPAI S1 Indoor Golf Simulator — full product specifications</h2>
+<div class="header">
+  <h1>GOLFPAI S1 — Indoor Golf Simulator</h1>
+</div>
+
+<div class="stabs" id="s1tabs">
+  <button class="stab active" data-p="s1-track"><i class="ti ti-eye" aria-hidden="true"></i>Tracking</button>
+  <button class="stab" data-p="s1-perf"><i class="ti ti-cpu" aria-hidden="true"></i>Performance</button>
+  <button class="stab" data-p="s1-display"><i class="ti ti-device-tv" aria-hidden="true"></i>Display</button>
+  <button class="stab" data-p="s1-soft"><i class="ti ti-tournament" aria-hidden="true"></i>Software</button>
+  <button class="stab" data-p="s1-hw"><i class="ti ti-tools" aria-hidden="true"></i>Hardware</button>
+  <button class="stab" data-p="s1-svc"><i class="ti ti-headset" aria-hidden="true"></i>Service</button>
+</div>
+
+<div id="s1-track" class="spanel active">
+  <p class="sec">Core Tracking</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-camera" aria-hidden="true"></i>Capture Speed</div><div class="val">6,000 FPS</div><div class="sub">Binocular high-speed vision system</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-target" aria-hidden="true"></i>Ball Recognition</div><div class="val">≥ 99.9%</div><div class="sub">Clubhead recognition at same accuracy</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-bolt" aria-hidden="true"></i>System Latency</div><div class="val">8 ms</div><div class="sub">Human blink ≈ 300ms</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-flag" aria-hidden="true"></i>Complex Scene Recognition</div><div class="val">≥ 99.9%</div><div class="sub">Bunker, rough, rain/fog environments</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-arrows-left-right" aria-hidden="true"></i>Handedness</div><div class="val">Left / Right Auto-detect</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-golf" aria-hidden="true"></i>Club Compatibility</div><div class="val">99% of mainstream clubs</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-chart-line" aria-hidden="true"></i>Shot Shape Analysis</div><div class="val">12 Shot Types</div><div class="sub">Draw, fade, flop, chip & more</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-rotate" aria-hidden="true"></i>Swing Analysis</div><div class="val">AI Swing Analysis</div><div class="sub">Multi-angle video replay & comparison</div></div>
+  </div>
+</div>
+
+<div id="s1-perf" class="spanel">
+  <p class="sec">Hardware Specs</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-cpu" aria-hidden="true"></i>CPU</div><div class="val">Intel i5-12400</div><div class="sub">Or equivalent</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-brand-nvidia" aria-hidden="true"></i>GPU</div><div class="val">NVIDIA RTX 4060Ti</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-server" aria-hidden="true"></i>RAM</div><div class="val">32 GB DDR4</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-database" aria-hidden="true"></i>Storage</div><div class="val">1 TB M.2 SSD</div></div>
+  </div>
+  <p class="sec">Performance Metrics</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-bolt" aria-hidden="true"></i>Response Latency</div><div class="val">8 ms real-time</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-player-play" aria-hidden="true"></i>Extreme Scene FPS</div><div class="val">240 FPS</div><div class="sub">Heavy rain / sandstorm conditions</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-clock" aria-hidden="true"></i>Course Load Time</div><div class="val">As fast as 0.03 s</div><div class="sub">Full 18-hole course</div></div>
+  </div>
+</div>
+
+<div id="s1-display" class="spanel">
+  <p class="sec">Projection & Display</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-focus-2" aria-hidden="true"></i>Resolution</div><div class="val">4K UHD</div><div class="sub">Laser projector</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-sun" aria-hidden="true"></i>Brightness</div><div class="val">6,000 ANSI Lumens</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-contrast" aria-hidden="true"></i>Contrast Ratio</div><div class="val">3,000,000 : 1</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-clock" aria-hidden="true"></i>Light Source Life</div><div class="val">≥ 20,000 hrs</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-adjustments" aria-hidden="true"></i>Lens</div><div class="val">Motorized + Limited Zoom</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-maximize" aria-hidden="true"></i>Impact Screen</div><div class="val">~200 inches</div><div class="sub">Dual-layer anti-impact, noise-dampening</div></div>
+  </div>
+</div>
+
+<div id="s1-soft" class="spanel">
+  <p class="sec">Courses & Environment</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-map" aria-hidden="true"></i>Course Library</div><div class="val">110+ World-Famous Courses</div><div class="sub">Yanqi Lake, Augusta National & more</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-photo" aria-hidden="true"></i>Visual Quality</div><div class="val">4K Real-Scene Modeling</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-cloud" aria-hidden="true"></i>Environment Simulation</div><div class="val">Wind, Weather, Temp</div><div class="sub">Humidity & altitude included</div></div>
+  </div>
+  <p class="sec">Game Modes</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-school" aria-hidden="true"></i>Practice Mode</div><div class="val">Drive, Iron, Chip, Putt</div><div class="sub">Dedicated training modules</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-world" aria-hidden="true"></i>Online Play</div><div class="val">Tournaments + Multiplayer</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-cloud-upload" aria-hidden="true"></i>Data Management</div><div class="val">Cloud Score History</div><div class="sub">Mobile APP sync</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-device-gamepad" aria-hidden="true"></i>Entertainment</div><div class="val">Metaverse Game Island</div><div class="sub">Cinema, KTV, Meeting modes</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-users" aria-hidden="true"></i>Kids Mode</div><div class="val">Cartoon Course</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-robot" aria-hidden="true"></i>AI Caddie</div><div class="val">Shot Advice + Putt Assist</div><div class="sub">Hole analysis & hazard tips</div></div>
+  </div>
+</div>
+
+<div id="s1-hw" class="spanel">
+  <p class="sec">Smart Accessories</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-device-gamepad-2" aria-hidden="true"></i>Auto Tee System</div><div class="val">Motorized Auto-Tee</div><div class="sub">Height memory, auto-adjust</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-hand-click" aria-hidden="true"></i>Control Panel</div><div class="val">One-touch tee + angle control</div></div>
+  </div>
+  <p class="sec">Mat & Turf</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-layers-subtract" aria-hidden="true"></i>Hitting Mat Zones</div><div class="val">3D Shock-Absorbing Mat</div><div class="sub">Fairway, rough & bunker zones</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-leaf" aria-hidden="true"></i>Fairway Turf</div><div class="val">Korean Imported Curved Fiber</div><div class="sub">16mm high-density</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-leaf" aria-hidden="true"></i>Stance Turf</div><div class="val">High-Wear Nylon Grass</div><div class="sub">15mm</div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-grid-dots" aria-hidden="true"></i>Ambient Turf</div><div class="val">75,600 stitches/m²</div><div class="sub">16mm pile, slow-rebound artificial grass</div></div>
+  </div>
+  <p class="sec">Included Gifts</p>
+  <div class="grid">
+    <div class="card"><div class="lbl"><i class="ti ti-gift" aria-hidden="true"></i>Custom Golf Balls</div><div class="val">100 pcs</div><div><span class="badge">Free gift</span></div></div>
+    <div class="card"><div class="lbl"><i class="ti ti-gift" aria-hidden="true"></i>Club Rack</div><div class="val">1 unit</div><div><span class="badge">Free gift</span></div></div>
+  </div>
+</div>
+
+<div id="s1-svc" class="spanel">
+  <p class="sec">After-Sales Support</p>
+  <div class="grid">
+    <div class="card hi">
+      <div class="lbl">Customer Support</div>
+      <div class="val">7×24 Hours</div>
+      <div class="sub">Round-the-clock after-sales service, any time you need us</div>
+    </div>
+    <div class="card hi">
+      <div class="lbl">Warranty</div>
+      <div class="val">1-Year Warranty</div>
+      <div class="sub">Full coverage on parts and workmanship for one year from delivery</div>
+    </div>
+    <div class="card hi">
+      <div class="lbl">Repair Service</div>
+      <div class="val">Lifetime Repair</div>
+      <div class="sub">Ongoing repair support for the life of the product</div>
+    </div>
+  </div>
+  <p class="sec">Shipping &amp; Installation</p>
+  <p class="sec">Shipping & Installation</p>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Worldwide Shipping</div>
+      <div class="val">Global Delivery Available</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Lead Time</div>
+      <div class="val">7 Days</div>
+      <div class="sub">Stock preparation after order confirmation</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Sea Freight</div>
+      <div class="val">~45 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Express Sea</div>
+      <div class="val">~30 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Air Freight</div>
+      <div class="val">~7 Days</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Remote Installation</div>
+      <div class="val">Floor Plans + Video Guidance</div>
+      <div class="sub">Standard for all orders</div>
+    </div>
+    <div class="card">
+      <div class="lbl">On-site Installation</div>
+      <div class="val">By Arrangement</div>
+      <div class="sub">Available upon separate request</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+document.getElementById('s1tabs').addEventListener('click',function(e){
+  var b=e.target.closest('.stab');if(!b)return;
+  document.querySelectorAll('#s1tabs .stab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#s1-track,#s1-perf,#s1-display,#s1-soft,#s1-hw,#s1-svc').forEach(p=>p.classList.remove('active'));
+  b.classList.add('active');document.getElementById(b.dataset.p).classList.add('active');
+});
+</script>
+</div>
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-4">
         <h2 class="text-2xl font-bold text-white mb-6">More from Golf Simulators</h2>
@@ -596,6 +854,85 @@
     </a>
         </div>
       </section>
+
+      <!-- Image lightbox -->
+      <div id="lightbox-overlay" class="lightbox-overlay" onclick="if(event.target===this) closeLightbox()">
+        <button class="close-btn" onclick="closeLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <button class="lb-nav left" onclick="event.stopPropagation();navigateLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="lb-nav right" onclick="event.stopPropagation();navigateLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-image" src="" alt="Full size">
+        <div class="lb-caption" id="lightbox-caption"></div>
+        <div class="lb-counter" id="lightbox-counter"></div>
+      </div>
+
+      <!-- Video lightbox -->
+      <div id="video-lightbox" class="lightbox-overlay" onclick="if(event.target===this) closeVideoLightbox()">
+        <button class="close-btn" onclick="closeVideoLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <video id="video-lightbox-player" src="" controls playsinline webkit-playsinline></video>
+      </div>
+
+      <script>
+      (function(){
+        var imgs = ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/0.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/1.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/2.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/3.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/4.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/5.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/6.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/7.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/8.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/9.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/S1/10.jpg"];
+        var vids = ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/S1_intro.mp4"];
+        var cur = 0;
+        function setGalleryImage(idx){
+          if(!imgs.length) return;
+          cur = (idx % imgs.length + imgs.length) % imgs.length;
+          var main = document.getElementById('detail-main-image');
+          main.style.opacity = '0.8';
+          setTimeout(function(){ main.src = imgs[cur]; main.style.opacity = '1'; }, 150);
+          document.getElementById('detail-current-index').textContent = cur + 1;
+          document.querySelectorAll('#detail-thumbnails .detail-thumb').forEach(function(t,i){
+            t.classList.toggle('active', i === cur);
+          });
+        }
+        window.setGalleryImage = setGalleryImage;
+        window.navigateGallery = function(d){ setGalleryImage(cur + d); };
+        window.openLightbox = function(){
+          if(!imgs.length) return;
+          document.getElementById('lightbox-image').src = imgs[cur];
+          document.getElementById('lightbox-overlay').classList.add('active');
+          document.getElementById('lightbox-counter').textContent = (cur + 1) + ' / ' + imgs.length;
+          document.getElementById('lightbox-caption').textContent = document.querySelector('h1') ? document.querySelector('h1').textContent : '';
+        };
+        window.closeLightbox = function(){ document.getElementById('lightbox-overlay').classList.remove('active'); };
+        window.navigateLightbox = function(d){ setGalleryImage(cur + d); openLightbox(); };
+        window.openVideoLightbox = function(src){
+          var lb = document.getElementById('video-lightbox');
+          var player = document.getElementById('video-lightbox-player');
+          player.src = src;
+          player.pause();
+          lb.classList.add('active');
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          window.__videoPlayTimer = setTimeout(function(){ player.play().catch(function(){}); }, 2000);
+        };
+        window.closeVideoLightbox = function(){
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          var player = document.getElementById('video-lightbox-player');
+          player.pause(); player.removeAttribute('src');
+          document.getElementById('video-lightbox').classList.remove('active');
+        };
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape'){ closeLightbox(); closeVideoLightbox(); }
+          if(document.getElementById('lightbox-overlay').classList.contains('active')){
+            if(e.key === 'ArrowLeft') navigateLightbox(-1);
+            if(e.key === 'ArrowRight') navigateLightbox(1);
+          }
+        });
+        // touch swipe
+        var touchStartX = 0;
+        var mainMedia = document.getElementById('detail-main-media');
+        if(mainMedia){
+          mainMedia.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
+          mainMedia.addEventListener('touchend', function(e){
+            var diff = touchStartX - e.changedTouches[0].screenX;
+            if(Math.abs(diff) > 50) navigateGallery(diff > 0 ? 1 : -1);
+          });
+        }
+        setGalleryImage(0);
+      })();
+      </script>
 </main>
 <footer class="py-12 border-t border-white/5 bg-black text-xs text-zinc-400 px-4 md:px-12 mt-24">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">

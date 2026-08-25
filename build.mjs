@@ -37,6 +37,138 @@ vm.runInContext(`var catalogDb = ${catalogSnip[1]}; var caseStudies = ${casesSni
 const catalogDb = sandbox.catalogDb;
 const caseStudies = sandbox.caseStudies;
 
+/* ── 1b-i. Detailed specs html mapping (products/ folder source of truth) ── */
+// NOTE: products/ lives one level ABOVE this build script (project root).
+const PRODUCTS_ROOT = path.join(ROOT, '..', 'products');
+const SPECS_FILES = {
+  'golfpai-s1': 'simulator/S1/golfpai_s1_specs_en.html',
+  'golfpai-a1': 'simulator/A1/golfpai_a1_specs_en.html',
+  'golfpai-x1': 'simulator/X1/golfpai_x1_specs_en.html',
+  'rg-ruge': 'simulator/RG/ruge_specs_tabs.html',
+  'faya-motion': 'simulator/FAYA_Motion/faya_motion_specs.html',
+  'dispenser-machine': 'Dispenser_Machine/golf_ball_dispenser_specs.html',
+  'vending-machine': 'Vending_Machine/golf_ball_vending_specs.html',
+};
+// Prefix every selector in an embedded specs stylesheet so it only applies
+// inside .specs-wrap. This prevents rules like `.grid { ... }` or `body { ... }`
+// from leaking out and breaking the rest of the product page.
+function scopeCss(css) {
+  // Drop global-only rules that should never be embedded.
+  css = css.replace(/@font-face\s*\{[^{}]*\}/gi, '');
+  // Scope a single selector. We keep :root as-is so variables remain global,
+  // but we rewrite body/html/* selectors to target .specs-wrap instead.
+  const scopeSelector = (sel) => {
+    const s = sel.trim();
+    if (!s) return '';
+    if (s === ':root' || s.startsWith(':root')) return s;
+    if (s === 'html' || s === 'body') return '';
+    if (s === '*' || s.startsWith('*,')) return s.replace(/^\*/g, '.specs-wrap *');
+    if (s.includes(',')) return s.split(',').map(scopeSelector).join(', ');
+    return '.specs-wrap ' + s;
+  };
+  // Recursively scope rule blocks, including nested @media / @supports.
+  const scopeBlock = (block) => {
+    let out = '';
+    const re = /([^{}@]+|@[^{}]+\{)(\{([^{}]|\{[^}]*\})*\})/g;
+    let m;
+    while ((m = re.exec(block)) !== null) {
+      const prelude = m[1].trim();
+      const inner = m[2];
+      if (prelude.startsWith('@media') || prelude.startsWith('@supports') || prelude.startsWith('@document')) {
+        const body = inner.slice(1, -1);
+        out += prelude + '{' + scopeBlock(body) + '}';
+      } else if (prelude.startsWith('@')) {
+        // other at-rules (keyframes, etc.): keep as-is
+        out += prelude + inner;
+      } else {
+        const scopedSel = scopeSelector(prelude);
+        if (scopedSel) out += scopedSel + inner;
+      }
+    }
+    return out;
+  };
+  return scopeBlock(css);
+}
+
+function embedSpecs(productId) {
+  const rel = SPECS_FILES[productId];
+  if (!rel) return '';
+  const fp = path.join(PRODUCTS_ROOT, rel);
+  if (!fs.existsSync(fp)) return '';
+  const raw = fs.readFileSync(fp, 'utf-8');
+  const styles = [...raw.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)]
+    .map(m => m[1]).join('\n');
+  const bodyMatch = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  let body = bodyMatch ? bodyMatch[1] : raw;
+  // Remove any remaining inline <style> tags from the body so we do not
+  // output the same stylesheet twice (once scoped, once unscoped).
+  body = body.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  if (!body.trim()) return '';
+  // Some specs files (A1/S1/X1) rely on CSS variables that are NOT defined
+  // inside the file (they expect an external theme). Inject a light-theme
+  // variable set so the cards render with readable light colors.
+  let varStyle = '';
+  if (/var\(--color-/.test(raw) && !/:root/.test(styles)) {
+    varStyle = `<style>
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f6f8;
+  --color-background-info:#e8f7ef;
+  --color-background-success:#e3f9ec;
+  --color-text-primary:#1a1a1a;
+  --color-text-secondary:#6b7280;
+  --color-text-info:#009e5a;
+  --color-text-success:#15803d;
+  --color-border-tertiary:#e5e7eb;
+  --color-border-secondary:#d1d5db;
+  --color-border-info:#00e676;
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+}</style>`;
+  }
+  const scopedStyles = scopeCss(styles);
+  return `${varStyle}<style>${scopedStyles}</style>
+<style class="specs-override">
+/* Dark-theme overrides for embedded product specs */
+.specs-wrap{background:#0d0d0f !important;color:#e4e4e7 !important}
+.specs-wrap .wrap{background:transparent !important;max-width:none !important}
+.specs-wrap .header h1{color:#fff !important}
+.specs-wrap .header p{color:#a1a1aa !important}
+.specs-wrap .stabs,
+.specs-wrap .tabs{justify-content:flex-start !important;flex-wrap:wrap !important;gap:0.5rem !important;margin-left:0 !important;padding-left:0 !important}
+.specs-wrap .stab,
+.specs-wrap .tab{background:rgba(255,255,255,0.05) !important;border:1px solid rgba(255,255,255,0.1) !important;color:#e4e4e7 !important;backdrop-filter:blur(4px)}
+.specs-wrap .stab:hover,
+.specs-wrap .tab:hover{border-color:rgba(0,230,118,0.5) !important;color:#00e676 !important}
+.specs-wrap .stab.active,
+.specs-wrap .tab.active{background:rgba(0,230,118,0.12) !important;border-color:#00e676 !important;color:#00e676 !important}
+.specs-wrap .stab i,
+.specs-wrap .tab i{color:#00e676 !important}
+.specs-wrap .card,
+.specs-wrap .range-card{background:rgba(24,24,27,0.85) !important;border:1px solid rgba(255,255,255,0.08) !important;color:#fff !important;backdrop-filter:blur(4px)}
+.specs-wrap .card.hi,
+.specs-wrap .range-card.hi{background:rgba(0,230,118,0.08) !important;border-color:rgba(0,230,118,0.25) !important}
+.specs-wrap .card .val,
+.specs-wrap .card-val{color:#fff !important}
+.specs-wrap .card .lbl,
+.specs-wrap .card-lbl{color:#a1a1aa !important}
+.specs-wrap .card .sub,
+.specs-wrap .card-sub{color:#71717a !important}
+.specs-wrap .range-name{color:#a1a1aa !important}
+.specs-wrap .range-val{color:#fff !important}
+.specs-wrap .range-acc{color:#00e676 !important}
+.specs-wrap .tour-badge{background:rgba(0,230,118,0.08) !important;border:1px solid rgba(0,230,118,0.25) !important;color:#00e676 !important}
+.specs-wrap .section-title{color:#d4d4d8 !important}
+.specs-wrap .section-title::after{background:linear-gradient(90deg,#00e676,transparent) !important}
+.specs-wrap .table-card table{color:#e4e4e7 !important}
+.specs-wrap .table-card th{color:#a1a1aa !important;border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .table-card td{border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .sec{color:#a1a1aa !important}
+.specs-wrap .itxt{color:#e4e4e7 !important}
+</style>
+<div class="specs-wrap">${body}</div>`;
+}
+
 // 1c. Extract footer markup from the <template>
 const footerMatch = html.match(/<template id="global-footer-template">([\s\S]*?)<\/template>/);
 const footerInner = footerMatch ? footerMatch[1] : '';
@@ -317,10 +449,28 @@ for (const catId of Object.keys(catalogDb)) {
   for (const p of cat.items) {
     const specsRows = Object.entries(p.specs || {}).map(([k, v]) =>
       `<tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">${esc(k)}</th><td class="py-3 text-zinc-400">${esc(v)}</td></tr>`).join('');
+    const specsHtml = embedSpecs(p.id);
     const highlights = (p.highlights || []).map(h => `<li class="flex gap-2 text-zinc-300"><i class="fa-solid fa-circle-check text-golfGreen mt-1 text-sm"></i><span>${esc(h)}</span></li>`).join('');
     const useCases = (p.useCases || []).map(u => `<span class="text-xs px-3 py-1 rounded-full bg-white/5 text-zinc-300 border border-white/10">${esc(u)}</span>`).join(' ');
-    const gallery = (p.images || [p.image]).slice(0, 4).map(src =>
-      `<div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="${src}" alt="${esc(p.name)}" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div>`).join('');
+    const galleryImgs = (p.images && p.images.length ? p.images : [p.image]);
+    const videos = (p.videos && p.videos.length) ? p.videos : (p.video ? [p.video] : []);
+    const hasMultiImages = galleryImgs.length > 1;
+    const videoLabel = (src, idx) => {
+      const name = String(src).split('/').pop().replace(/\.[^/.]+$/, '').toLowerCase();
+      const map = { intro: 'Intro', introduction: 'Intro', tech: 'Tech', demo: 'Demo', overview: 'Overview', operation: 'Operation' };
+      const key = Object.keys(map).find(k => name.includes(k));
+      return map[key] || (videos.length > 1 ? `Video ${idx + 1}` : 'Intro');
+    };
+    const galleryThumbs = galleryImgs.map((src, i) =>
+      `<div class="detail-thumb ${i === 0 ? 'active' : ''}" onclick="setGalleryImage(${i})"><img src="${esc(src)}" alt="Thumbnail ${i + 1}" loading="lazy"></div>`).join('');
+    const videoSection = videos.length
+      ? `<div id="detail-video-section" class="border-t border-white/10 pt-4 mt-4">
+          <h4 class="text-sm uppercase tracking-widest text-zinc-500 mb-3">Product Videos</h4>
+          <div id="detail-video-list" class="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+            ${videos.map((src, i) => `<div class="video-thumb" onclick="openVideoLightbox('${esc(src)}')"><img src="${esc(galleryImgs[0] || '')}" alt="Video cover" loading="lazy"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center"><i class="fa-solid fa-play text-zinc-900 text-base ml-0.5"></i></div></div><span class="absolute bottom-2 right-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">${esc(videoLabel(src, i))}</span></div>`).join('')}
+          </div>
+        </div>`
+      : '';
     const productUrl = SITE + prodLink(catId, p);
     const schema = {
       '@context': 'https://schema.org',
@@ -356,13 +506,49 @@ for (const catId of Object.keys(catalogDb)) {
       navActive: catId,
       ogImage: p.image,
       extraHead: `<script type="application/ld+json">${JSON.stringify(schema)}</script>
-<script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>`,
+<script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.17.0/dist/tabler-icons.min.css">`,
       main: `
       ${breadcrumb([{ label: 'Home', href: '/' }, { label: cat.title, href: catLink(catId) }, { label: p.name }])}
-      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <style>
+        #detail-main-media{position:relative;aspect-ratio:4/3;border-radius:1.5rem;overflow:hidden;background:#18181b;cursor:zoom-in;margin-bottom:1rem}
+        #detail-main-media img{width:100%;height:100%;object-fit:cover}
+        #detail-main-media .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;opacity:0;transition:opacity .2s,background .2s}
+        #detail-main-media:hover .nav-btn{opacity:1}
+        #detail-main-media .nav-btn:hover{background:rgba(0,0,0,.75)}
+        #detail-main-media .nav-btn.left{left:1rem}
+        #detail-main-media .nav-btn.right{right:1rem}
+        #detail-main-media .img-counter{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,.5);color:#fff;padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        /* no play button on main image */
+        .detail-thumb{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#18181b;transition:border-color .2s}
+        .detail-thumb:hover{border-color:rgba(255,255,255,.3)}
+        .detail-thumb.active{border-color:#22c55e}
+        .detail-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb{position:relative;flex:0 0 auto;width:192px;height:112px;border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
+        .video-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb .absolute{position:absolute}
+        .video-thumb .inset-0{inset:0}
+        .lightbox-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center}
+        .lightbox-overlay.active{display:flex}
+        .lightbox-overlay img{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay video{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay .close-btn{position:absolute;top:1.5rem;right:1.5rem;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav.left{left:1.5rem}
+        .lightbox-overlay .lb-nav.right{right:1.5rem}
+        .lightbox-overlay .lb-counter{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.5);padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        .lightbox-overlay .lb-caption{position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);color:#e4e4e7;font-size:.875rem;text-align:center;max-width:80%}
+      </style>
+      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-10">
         <div>
-          <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-900 mb-4"><img src="${p.image}" alt="${esc(p.name)}" class="w-full h-full object-cover"></div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">${gallery}</div>
+          <div id="detail-main-media" onclick="openLightbox()">
+            <img id="detail-main-image" src="${esc(galleryImgs[0])}" alt="${esc(p.name)}">
+            ${hasMultiImages ? `<button class="nav-btn left" onclick="event.stopPropagation();navigateGallery(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn right" onclick="event.stopPropagation();navigateGallery(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <span class="img-counter"><span id="detail-current-index">1</span> / ${galleryImgs.length}</span>` : ''}
+          </div>
+          ${hasMultiImages ? `<div id="detail-thumbnails" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">${galleryThumbs}</div>` : ''}
+          ${videoSection}
         </div>
         <div>
           <span class="text-[11px] uppercase tracking-widest text-golfGreen font-semibold">${esc(cat.title)}</span>
@@ -379,14 +565,93 @@ for (const catId of Object.keys(catalogDb)) {
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-12">
         <h2 class="text-2xl font-bold text-white mb-5">Specifications</h2>
-        <table class="w-full text-sm border border-white/5 rounded-2xl overflow-hidden">${specsRows}</table>
+        ${specsHtml || `<table class="w-full text-sm border border-white/5 rounded-2xl overflow-hidden">${specsRows}</table>`}
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-4">
         <h2 class="text-2xl font-bold text-white mb-6">More from ${esc(cat.title)}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           ${cat.items.filter(x => x.id !== p.id).slice(0, 3).map(x => productCard(catId, x)).join('')}
         </div>
-      </section>`
+      </section>
+
+      <!-- Image lightbox -->
+      <div id="lightbox-overlay" class="lightbox-overlay" onclick="if(event.target===this) closeLightbox()">
+        <button class="close-btn" onclick="closeLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <button class="lb-nav left" onclick="event.stopPropagation();navigateLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="lb-nav right" onclick="event.stopPropagation();navigateLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-image" src="" alt="Full size">
+        <div class="lb-caption" id="lightbox-caption"></div>
+        <div class="lb-counter" id="lightbox-counter"></div>
+      </div>
+
+      <!-- Video lightbox -->
+      <div id="video-lightbox" class="lightbox-overlay" onclick="if(event.target===this) closeVideoLightbox()">
+        <button class="close-btn" onclick="closeVideoLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <video id="video-lightbox-player" src="" controls playsinline webkit-playsinline></video>
+      </div>
+
+      <script>
+      (function(){
+        var imgs = ${JSON.stringify(galleryImgs)};
+        var vids = ${JSON.stringify(videos)};
+        var cur = 0;
+        function setGalleryImage(idx){
+          if(!imgs.length) return;
+          cur = (idx % imgs.length + imgs.length) % imgs.length;
+          var main = document.getElementById('detail-main-image');
+          main.style.opacity = '0.8';
+          setTimeout(function(){ main.src = imgs[cur]; main.style.opacity = '1'; }, 150);
+          document.getElementById('detail-current-index').textContent = cur + 1;
+          document.querySelectorAll('#detail-thumbnails .detail-thumb').forEach(function(t,i){
+            t.classList.toggle('active', i === cur);
+          });
+        }
+        window.setGalleryImage = setGalleryImage;
+        window.navigateGallery = function(d){ setGalleryImage(cur + d); };
+        window.openLightbox = function(){
+          if(!imgs.length) return;
+          document.getElementById('lightbox-image').src = imgs[cur];
+          document.getElementById('lightbox-overlay').classList.add('active');
+          document.getElementById('lightbox-counter').textContent = (cur + 1) + ' / ' + imgs.length;
+          document.getElementById('lightbox-caption').textContent = document.querySelector('h1') ? document.querySelector('h1').textContent : '';
+        };
+        window.closeLightbox = function(){ document.getElementById('lightbox-overlay').classList.remove('active'); };
+        window.navigateLightbox = function(d){ setGalleryImage(cur + d); openLightbox(); };
+        window.openVideoLightbox = function(src){
+          var lb = document.getElementById('video-lightbox');
+          var player = document.getElementById('video-lightbox-player');
+          player.src = src;
+          player.pause();
+          lb.classList.add('active');
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          window.__videoPlayTimer = setTimeout(function(){ player.play().catch(function(){}); }, 2000);
+        };
+        window.closeVideoLightbox = function(){
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          var player = document.getElementById('video-lightbox-player');
+          player.pause(); player.removeAttribute('src');
+          document.getElementById('video-lightbox').classList.remove('active');
+        };
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape'){ closeLightbox(); closeVideoLightbox(); }
+          if(document.getElementById('lightbox-overlay').classList.contains('active')){
+            if(e.key === 'ArrowLeft') navigateLightbox(-1);
+            if(e.key === 'ArrowRight') navigateLightbox(1);
+          }
+        });
+        // touch swipe
+        var touchStartX = 0;
+        var mainMedia = document.getElementById('detail-main-media');
+        if(mainMedia){
+          mainMedia.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
+          mainMedia.addEventListener('touchend', function(e){
+            var diff = touchStartX - e.changedTouches[0].screenX;
+            if(Math.abs(diff) > 50) navigateGallery(diff > 0 ? 1 : -1);
+          });
+        }
+        setGalleryImage(0);
+      })();
+      </script>`
     });
   }
 }

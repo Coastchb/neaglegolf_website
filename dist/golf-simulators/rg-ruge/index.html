@@ -517,6 +517,7 @@
     </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Ruge Golf Simulator","sku":"rg-ruge","url":"https://www.neaglegolf.com/golf-simulators/rg-ruge/","description":"Tournament-proven golf simulator with triple-lens Eagle Eye tracking, UE5-powered 4K visuals, and 180+ real-world courses.","image":["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/1.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/2.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/3.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/4.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/5.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/6.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/7.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/8.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/9.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/10.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/11.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/12.jpg"],"brand":{"@type":"Brand","name":"NEAGLE GOLF"},"category":"Golf Simulators","offers":{"@type":"Offer","url":"https://www.neaglegolf.com/golf-simulators/rg-ruge/","priceCurrency":"USD","price":"31464.00","itemCondition":"https://schema.org/NewCondition","availability":"https://schema.org/PreOrder","seller":{"@type":"Organization","name":"NEAGLE GOLF","url":"https://www.neaglegolf.com/"}}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.neaglegolf.com/"},{"@type":"ListItem","position":2,"name":"Golf Simulators","item":"https://www.neaglegolf.com/golf-simulators/"},{"@type":"ListItem","position":3,"name":"Ruge Golf Simulator","item":"https://www.neaglegolf.com/golf-simulators/rg-ruge/"}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.17.0/dist/tabler-icons.min.css">
 <body class="overflow-x-hidden font-sans h-full flex flex-col bg-black text-white">
 
     <nav class="fixed top-0 left-0 w-full z-50 bg-black/85 backdrop-blur-md border-b border-white/10 h-12 flex items-center justify-between px-4 md:px-12 select-none">
@@ -547,10 +548,50 @@
 <main class="flex-1 pt-12 safe-pt">
 
       <div class="max-w-7xl mx-auto px-4 md:px-6 pt-4 text-[11px] md:text-xs text-zinc-500 flex items-center gap-2"><a href="/" class="hover:text-white transition-colors">Home</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <a href="/golf-simulators/" class="hover:text-white transition-colors">Golf Simulators</a> <i class="fa-solid fa-chevron-right text-[7px] text-zinc-600"></i> <span class="text-white font-medium">Ruge Golf Simulator</span></div>
-      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <style>
+        #detail-main-media{position:relative;aspect-ratio:4/3;border-radius:1.5rem;overflow:hidden;background:#18181b;cursor:zoom-in;margin-bottom:1rem}
+        #detail-main-media img{width:100%;height:100%;object-fit:cover}
+        #detail-main-media .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;opacity:0;transition:opacity .2s,background .2s}
+        #detail-main-media:hover .nav-btn{opacity:1}
+        #detail-main-media .nav-btn:hover{background:rgba(0,0,0,.75)}
+        #detail-main-media .nav-btn.left{left:1rem}
+        #detail-main-media .nav-btn.right{right:1rem}
+        #detail-main-media .img-counter{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,.5);color:#fff;padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        /* no play button on main image */
+        .detail-thumb{position:relative;flex:0 0 auto;width:48px;height:48px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;background:#18181b;transition:border-color .2s}
+        .detail-thumb:hover{border-color:rgba(255,255,255,.3)}
+        .detail-thumb.active{border-color:#22c55e}
+        .detail-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb{position:relative;flex:0 0 auto;width:192px;height:112px;border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
+        .video-thumb img{width:100%;height:100%;object-fit:cover}
+        .video-thumb .absolute{position:absolute}
+        .video-thumb .inset-0{inset:0}
+        .lightbox-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center}
+        .lightbox-overlay.active{display:flex}
+        .lightbox-overlay img{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay video{max-width:90vw;max-height:90vh;object-fit:contain}
+        .lightbox-overlay .close-btn{position:absolute;top:1.5rem;right:1.5rem;width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+        .lightbox-overlay .lb-nav.left{left:1.5rem}
+        .lightbox-overlay .lb-nav.right{right:1.5rem}
+        .lightbox-overlay .lb-counter{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.5);padding:.35rem .75rem;border-radius:9999px;font-size:.75rem}
+        .lightbox-overlay .lb-caption{position:absolute;bottom:3.5rem;left:50%;transform:translateX(-50%);color:#e4e4e7;font-size:.875rem;text-align:center;max-width:80%}
+      </style>
+      <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-10">
         <div>
-          <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-900 mb-4"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg" alt="Ruge Golf Simulator" class="w-full h-full object-cover"></div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg" alt="Ruge Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/1.jpg" alt="Ruge Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/2.jpg" alt="Ruge Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div><div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/3.jpg" alt="Ruge Golf Simulator" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div></div>
+          <div id="detail-main-media" onclick="openLightbox()">
+            <img id="detail-main-image" src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg" alt="Ruge Golf Simulator">
+            <button class="nav-btn left" onclick="event.stopPropagation();navigateGallery(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn right" onclick="event.stopPropagation();navigateGallery(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <span class="img-counter"><span id="detail-current-index">1</span> / 13</span>
+          </div>
+          <div id="detail-thumbnails" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none"><div class="detail-thumb active" onclick="setGalleryImage(0)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg" alt="Thumbnail 1" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(1)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/1.jpg" alt="Thumbnail 2" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(2)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/2.jpg" alt="Thumbnail 3" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(3)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/3.jpg" alt="Thumbnail 4" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(4)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/4.jpg" alt="Thumbnail 5" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(5)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/5.jpg" alt="Thumbnail 6" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(6)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/6.jpg" alt="Thumbnail 7" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(7)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/7.jpg" alt="Thumbnail 8" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(8)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/8.jpg" alt="Thumbnail 9" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(9)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/9.jpg" alt="Thumbnail 10" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(10)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/10.jpg" alt="Thumbnail 11" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(11)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/11.jpg" alt="Thumbnail 12" loading="lazy"></div><div class="detail-thumb " onclick="setGalleryImage(12)"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/12.jpg" alt="Thumbnail 13" loading="lazy"></div></div>
+          <div id="detail-video-section" class="border-t border-white/10 pt-4 mt-4">
+          <h4 class="text-sm uppercase tracking-widest text-zinc-500 mb-3">Product Videos</h4>
+          <div id="detail-video-list" class="flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+            <div class="video-thumb" onclick="openVideoLightbox('https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/RG_intro.mp4')"><img src="https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg" alt="Video cover" loading="lazy"><div class="absolute inset-0 bg-black/40 flex items-center justify-center"><div class="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center"><i class="fa-solid fa-play text-zinc-900 text-base ml-0.5"></i></div></div><span class="absolute bottom-2 right-2 text-xs text-white/80 bg-black/50 px-2 py-1 rounded">Intro</span></div>
+          </div>
+        </div>
         </div>
         <div>
           <span class="text-[11px] uppercase tracking-widest text-golfGreen font-semibold">Golf Simulators</span>
@@ -567,7 +608,389 @@
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-12">
         <h2 class="text-2xl font-bold text-white mb-5">Specifications</h2>
-        <table class="w-full text-sm border border-white/5 rounded-2xl overflow-hidden"><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Tracking System</th><td class="py-3 text-zinc-400">Eagle Eye III triple-lens ultra-high-speed sensor</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Display</th><td class="py-3 text-zinc-400">UE5 engine, 2K/4K display, 180+ 1:1 real-scene 3D courses</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Customization</th><td class="py-3 text-zinc-400">Fully customizable to your space</td></tr><tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">Integration</th><td class="py-3 text-zinc-400">AIGOLF swing analysis, 6 practice modules</td></tr></table>
+        <style>:root{
+  --bg: #f9f8f6;
+  --bg-card: #ffffff;
+  --bg-hi: #f0f4ff;
+  --bg-sec: #f4f3f1;
+  --border: #e4e1db;
+  --border-hi: #c2ceee;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-info: #3355cc;
+  --accent: #3355cc;
+  --accent-light: #f0f4ff;
+  --radius: 10px;
+  --radius-sm: 6px;
+}.specs-wrap *, *::before, *::after{ box-sizing: border-box; margin: 0; padding: 0; }.specs-wrap .wrap{
+  max-width: 900px;
+  margin: 0 auto;
+}.specs-wrap /* Header */
+.header{
+  text-align: center;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 0.5px solid var(--border);
+}.specs-wrap .header h1{
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}.specs-wrap .header p{
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}.specs-wrap .tour-badges{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}.specs-wrap .tour-badge{
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  padding: 4px 10px;
+  border: 0.5px solid var(--accent);
+  border-radius: 3px;
+  color: var(--text-info);
+  background: var(--accent-light);
+  letter-spacing: .02em;
+}.specs-wrap /* Tabs */
+.tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}.specs-wrap .tab{
+  font-size: 12px;
+  font-weight: 400;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-secondary);
+  background: var(--bg-sec);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all .15s;
+}.specs-wrap .tab:hover{ border-color: var(--accent); color: var(--accent); }.specs-wrap .tab.active{
+  color: var(--text-info);
+  background: var(--accent-light);
+  border-color: var(--border-hi);
+}.specs-wrap /* Panels */
+.panel{ display: none; }.specs-wrap .panel.active{ display: block; }.specs-wrap /* Section label */
+.sec{
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-secondary);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 20px 0 10px;
+}.specs-wrap .sec:first-child{ margin-top: 0; }.specs-wrap /* Grid */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}.specs-wrap /* Card */
+.card{
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}.specs-wrap .card.hi{
+  background: var(--bg-hi);
+  border-color: var(--border-hi);
+}.specs-wrap .card-lbl{
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .03em;
+}.specs-wrap .card.hi .card-lbl{ color: var(--text-info); opacity: .8; }.specs-wrap .card-val{
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.35;
+}.specs-wrap .card.hi .card-val{ color: var(--text-info); }.specs-wrap .card-sub{
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}.specs-wrap /* Range cards */
+.range-card{
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}.specs-wrap .range-name{
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: 'DM Mono', monospace;
+}.specs-wrap .range-right{ text-align: right; }.specs-wrap .range-val{
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}.specs-wrap .range-acc{
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+}.specs-wrap media (max-width: 540px){
+  body { padding: 24px 16px 48px; }
+  .grid { grid-template-columns: 1fr 1fr; }
+}</style>
+<style class="specs-override">
+/* Dark-theme overrides for embedded product specs */
+.specs-wrap{background:#0d0d0f !important;color:#e4e4e7 !important}
+.specs-wrap .wrap{background:transparent !important;max-width:none !important}
+.specs-wrap .header h1{color:#fff !important}
+.specs-wrap .header p{color:#a1a1aa !important}
+.specs-wrap .stabs,
+.specs-wrap .tabs{justify-content:flex-start !important;flex-wrap:wrap !important;gap:0.5rem !important;margin-left:0 !important;padding-left:0 !important}
+.specs-wrap .stab,
+.specs-wrap .tab{background:rgba(255,255,255,0.05) !important;border:1px solid rgba(255,255,255,0.1) !important;color:#e4e4e7 !important;backdrop-filter:blur(4px)}
+.specs-wrap .stab:hover,
+.specs-wrap .tab:hover{border-color:rgba(0,230,118,0.5) !important;color:#00e676 !important}
+.specs-wrap .stab.active,
+.specs-wrap .tab.active{background:rgba(0,230,118,0.12) !important;border-color:#00e676 !important;color:#00e676 !important}
+.specs-wrap .stab i,
+.specs-wrap .tab i{color:#00e676 !important}
+.specs-wrap .card,
+.specs-wrap .range-card{background:rgba(24,24,27,0.85) !important;border:1px solid rgba(255,255,255,0.08) !important;color:#fff !important;backdrop-filter:blur(4px)}
+.specs-wrap .card.hi,
+.specs-wrap .range-card.hi{background:rgba(0,230,118,0.08) !important;border-color:rgba(0,230,118,0.25) !important}
+.specs-wrap .card .val,
+.specs-wrap .card-val{color:#fff !important}
+.specs-wrap .card .lbl,
+.specs-wrap .card-lbl{color:#a1a1aa !important}
+.specs-wrap .card .sub,
+.specs-wrap .card-sub{color:#71717a !important}
+.specs-wrap .range-name{color:#a1a1aa !important}
+.specs-wrap .range-val{color:#fff !important}
+.specs-wrap .range-acc{color:#00e676 !important}
+.specs-wrap .tour-badge{background:rgba(0,230,118,0.08) !important;border:1px solid rgba(0,230,118,0.25) !important;color:#00e676 !important}
+.specs-wrap .section-title{color:#d4d4d8 !important}
+.specs-wrap .section-title::after{background:linear-gradient(90deg,#00e676,transparent) !important}
+.specs-wrap .table-card table{color:#e4e4e7 !important}
+.specs-wrap .table-card th{color:#a1a1aa !important;border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .table-card td{border-color:rgba(255,255,255,0.08) !important}
+.specs-wrap .sec{color:#a1a1aa !important}
+.specs-wrap .itxt{color:#e4e4e7 !important}
+</style>
+<div class="specs-wrap">
+<div class="wrap">
+
+  <div class="header">
+    <h1>Ruge Golf Simulator — Key Specifications</h1>
+    <div class="tour-badges">
+      <span class="tour-badge">✦ Official — Volvo China Open</span>
+      <span class="tour-badge">✦ Official — Buick LPGA Championship</span>
+      <span class="tour-badge">✦ Official — China PGA Tour</span>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-p="tracking">Tracking</button>
+    <button class="tab" data-p="display">Display</button>
+    <button class="tab" data-p="software">Software</button>
+    <button class="tab" data-p="service">Service</button>
+  </div>
+
+  <!-- Tracking -->
+  <div id="tracking" class="panel active">
+    <p class="sec">Eagle Eye III Sensor</p>
+    <div class="grid">
+      <div class="card">
+        <div class="card-lbl">Sensor Type</div>
+        <div class="card-val">Triple-Lens Ultra-High-Speed</div>
+        <div class="card-sub">Front-mounted, top-positioned, full-view capture</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Data Output</div>
+        <div class="card-val">Ball · Club · Player 3D</div>
+        <div class="card-sub">Multi-dimensional detection throughout full swing</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Ball Flight Latency</div>
+        <div class="card-val">Zero Delay</div>
+        <div class="card-sub">Instant ballistic restoration</div>
+      </div>
+    </div>
+
+    <p class="sec">Detection Range & Precision</p>
+    <div class="grid">
+      <div class="range-card">
+        <div class="range-name">Ball Speed</div>
+        <div class="range-right">
+          <div class="range-val">1.0 – 200.0 MPH</div>
+          <div class="range-acc">± 0.5 MPH</div>
+        </div>
+      </div>
+      <div class="range-card">
+        <div class="range-name">Club Head Speed</div>
+        <div class="range-right">
+          <div class="range-val">1.6 – 160.0 MPH</div>
+          <div class="range-acc">± 0.5 MPH</div>
+        </div>
+      </div>
+      <div class="range-card">
+        <div class="range-name">Carry Distance</div>
+        <div class="range-right">
+          <div class="range-val">2 – 430 Yards</div>
+          <div class="range-acc">± 2.0 Yards</div>
+        </div>
+      </div>
+      <div class="range-card">
+        <div class="range-name">Launch Angle</div>
+        <div class="range-right">
+          <div class="range-val">0 – 72°</div>
+          <div class="range-acc">± 1.0°</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display -->
+  <div id="display" class="panel">
+    <p class="sec">Visual System</p>
+    <div class="grid">
+      <div class="card">
+        <div class="card-lbl">Render Engine</div>
+        <div class="card-val">Unreal Engine 5 (UE5)</div>
+        <div class="card-sub">Industry-leading real-time 3D rendering</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Resolution</div>
+        <div class="card-val">2K / 4K HD</div>
+        <div class="card-sub">Selectable based on installation setup</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Course Reproduction</div>
+        <div class="card-val">1:1 Real-Scene 3D Modeling</div>
+        <div class="card-sub">Photorealistic fairways, hazards and landscapes</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Course Library</div>
+        <div class="card-val">180+ Courses</div>
+        <div class="card-sub">Domestic & international real venues</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Software -->
+  <div id="software" class="panel">
+    <p class="sec">AI Coaching</p>
+    <div class="grid">
+      <div class="card">
+        <div class="card-lbl">Swing Analysis</div>
+        <div class="card-val">AIGOLF Full-Swing AI</div>
+        <div class="card-sub">Auto detects flaws, comparison & correction guidance</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Practice Modules</div>
+        <div class="card-val">6 Dedicated Modules</div>
+        <div class="card-sub">With video replay for each session</div>
+      </div>
+    </div>
+
+    <p class="sec">Tournament System</p>
+    <div class="grid">
+      <div class="card">
+        <div class="card-lbl">Event Formats</div>
+        <div class="card-val">Multi-level, Multi-format</div>
+        <div class="card-sub">Year-round uninterrupted competition calendar</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Signature Format</div>
+        <div class="card-val">4-Ball Team Match</div>
+        <div class="card-sub">World-first 4-player team competition format</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Remote Play</div>
+        <div class="card-val">Real-time Online Matches</div>
+        <div class="card-sub">15-hole 3v3 team competition supported</div>
+      </div>
+      <div class="card">
+        <div class="card-lbl">Event Management</div>
+        <div class="card-val">Club / Team / Individual</div>
+        <div class="card-sub">Mini-program for live leaderboard access</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service -->
+  <div id="service" class="panel">
+  <p class="sec">After-Sales Support</p>
+  <div class="grid">
+    <div class="card hi">
+      <div class="card-lbl">Customer Support</div>
+      <div class="card-val">7×24 Hours</div>
+      <div class="card-sub">Round-the-clock after-sales service, any time you need us</div>
+    </div>
+    <div class="card hi">
+      <div class="card-lbl">Warranty</div>
+      <div class="card-val">1-Year Warranty</div>
+      <div class="card-sub">Full coverage on parts and workmanship for one year from delivery</div>
+    </div>
+    <div class="card hi">
+      <div class="card-lbl">Repair Service</div>
+      <div class="card-val">Lifetime Repair</div>
+      <div class="card-sub">Ongoing repair support for the life of the product</div>
+    </div>
+  </div>
+  <p class="sec">Shipping &amp; Installation</p>
+  <p class="sec">Shipping & Installation</p>
+  <div class="grid">
+    <div class="card">
+      <div class="card-lbl">Worldwide Shipping</div>
+      <div class="card-val">Global Delivery Available</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Lead Time</div>
+      <div class="card-val">7 Days</div>
+      <div class="card-sub">Stock preparation after order confirmation</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Sea Freight</div>
+      <div class="card-val">~45 Days</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Express Sea</div>
+      <div class="card-val">~30 Days</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Air Freight</div>
+      <div class="card-val">~7 Days</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Remote Installation</div>
+      <div class="card-val">Floor Plans + Video Guidance</div>
+      <div class="card-sub">Standard for all orders</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">On-site Installation</div>
+      <div class="card-val">By Arrangement</div>
+      <div class="card-sub">Available upon separate request</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.getElementById('tabs').addEventListener('click', function(e) {
+  var b = e.target.closest('.tab');
+  if (!b) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.p).classList.add('active');
+});
+</script>
+</div>
       </section>
       <section class="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-4">
         <h2 class="text-2xl font-bold text-white mb-6">More from Golf Simulators</h2>
@@ -596,6 +1019,85 @@
     </a>
         </div>
       </section>
+
+      <!-- Image lightbox -->
+      <div id="lightbox-overlay" class="lightbox-overlay" onclick="if(event.target===this) closeLightbox()">
+        <button class="close-btn" onclick="closeLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <button class="lb-nav left" onclick="event.stopPropagation();navigateLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="lb-nav right" onclick="event.stopPropagation();navigateLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <img id="lightbox-image" src="" alt="Full size">
+        <div class="lb-caption" id="lightbox-caption"></div>
+        <div class="lb-counter" id="lightbox-counter"></div>
+      </div>
+
+      <!-- Video lightbox -->
+      <div id="video-lightbox" class="lightbox-overlay" onclick="if(event.target===this) closeVideoLightbox()">
+        <button class="close-btn" onclick="closeVideoLightbox()"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <video id="video-lightbox-player" src="" controls playsinline webkit-playsinline></video>
+      </div>
+
+      <script>
+      (function(){
+        var imgs = ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/0.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/1.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/2.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/3.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/4.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/5.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/6.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/7.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/8.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/9.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/10.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/11.jpg","https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/RG/12.jpg"];
+        var vids = ["https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/videos/RG_intro.mp4"];
+        var cur = 0;
+        function setGalleryImage(idx){
+          if(!imgs.length) return;
+          cur = (idx % imgs.length + imgs.length) % imgs.length;
+          var main = document.getElementById('detail-main-image');
+          main.style.opacity = '0.8';
+          setTimeout(function(){ main.src = imgs[cur]; main.style.opacity = '1'; }, 150);
+          document.getElementById('detail-current-index').textContent = cur + 1;
+          document.querySelectorAll('#detail-thumbnails .detail-thumb').forEach(function(t,i){
+            t.classList.toggle('active', i === cur);
+          });
+        }
+        window.setGalleryImage = setGalleryImage;
+        window.navigateGallery = function(d){ setGalleryImage(cur + d); };
+        window.openLightbox = function(){
+          if(!imgs.length) return;
+          document.getElementById('lightbox-image').src = imgs[cur];
+          document.getElementById('lightbox-overlay').classList.add('active');
+          document.getElementById('lightbox-counter').textContent = (cur + 1) + ' / ' + imgs.length;
+          document.getElementById('lightbox-caption').textContent = document.querySelector('h1') ? document.querySelector('h1').textContent : '';
+        };
+        window.closeLightbox = function(){ document.getElementById('lightbox-overlay').classList.remove('active'); };
+        window.navigateLightbox = function(d){ setGalleryImage(cur + d); openLightbox(); };
+        window.openVideoLightbox = function(src){
+          var lb = document.getElementById('video-lightbox');
+          var player = document.getElementById('video-lightbox-player');
+          player.src = src;
+          player.pause();
+          lb.classList.add('active');
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          window.__videoPlayTimer = setTimeout(function(){ player.play().catch(function(){}); }, 2000);
+        };
+        window.closeVideoLightbox = function(){
+          if(window.__videoPlayTimer) clearTimeout(window.__videoPlayTimer);
+          var player = document.getElementById('video-lightbox-player');
+          player.pause(); player.removeAttribute('src');
+          document.getElementById('video-lightbox').classList.remove('active');
+        };
+        document.addEventListener('keydown', function(e){
+          if(e.key === 'Escape'){ closeLightbox(); closeVideoLightbox(); }
+          if(document.getElementById('lightbox-overlay').classList.contains('active')){
+            if(e.key === 'ArrowLeft') navigateLightbox(-1);
+            if(e.key === 'ArrowRight') navigateLightbox(1);
+          }
+        });
+        // touch swipe
+        var touchStartX = 0;
+        var mainMedia = document.getElementById('detail-main-media');
+        if(mainMedia){
+          mainMedia.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].screenX; });
+          mainMedia.addEventListener('touchend', function(e){
+            var diff = touchStartX - e.changedTouches[0].screenX;
+            if(Math.abs(diff) > 50) navigateGallery(diff > 0 ? 1 : -1);
+          });
+        }
+        setGalleryImage(0);
+      })();
+      </script>
 </main>
 <footer class="py-12 border-t border-white/5 bg-black text-xs text-zinc-400 px-4 md:px-12 mt-24">
             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
