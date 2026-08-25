@@ -67,6 +67,7 @@ function nav(active = '') {
         <div class="hidden lg:flex items-center space-x-6 text-xs">
             ${item('/golf-simulators/', 'Golf Simulators', 'simulators')}
             ${item('/golf-ball-dispensers/', 'Dispensers', 'dispenserMachines')}
+            ${item('/golf-simulators/compare/', 'Compare', 'simulators')}
             ${item('/case-studies/', 'Case Studies')}
             ${item('/about/', 'About')}
             <span class="text-white/30">|</span>
@@ -117,15 +118,24 @@ function footer() {
 }
 
 /* ── 4. Page wrapper ───────────────────────────────────────────── */
-function page({ title, description, extraHead = '', bodyClass = '', main, navActive = '' }) {
-  // Replace base title/description/OG in head with page-specific values
+// DEFAULT_OG: brand hero image used on home/section pages
+const DEFAULT_OG = 'https://pub-668f8b794c5b4860a9cb5c27e8ff77e0.r2.dev/images/card_bg_1.jpg';
+function page({ title, description, extraHead = '', bodyClass = '', main, navActive = '', url = '/', ogImage = DEFAULT_OG, noindex = false }) {
+  const canon = noindex ? '' : `<link rel="canonical" href="${esc(SITE + url)}">`;
+  const robots = noindex ? '<meta name="robots" content="noindex, follow">' : '';
+  // Replace base title/description/OG/canonical in head with page-specific values
   let h = head
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description"[^>]*>/i, `<meta name="description" content="${esc(description)}">`)
+    .replace(/<link rel="canonical"[^>]*>/i, canon)
     .replace(/<meta property="og:title"[^>]*>/i, `<meta property="og:title" content="${esc(title)}">`)
     .replace(/<meta property="og:description"[^>]*>/i, `<meta property="og:description" content="${esc(description)}">`)
+    .replace(/<meta property="og:url"[^>]*>/i, `<meta property="og:url" content="${esc(SITE + url)}">`)
+    .replace(/<meta property="og:image"[^>]*>/i, `<meta property="og:image" content="${esc(ogImage)}">`)
     .replace(/<meta name="twitter:title"[^>]*>/i, `<meta name="twitter:title" content="${esc(title)}">`)
-    .replace(/<meta name="twitter:description"[^>]*>/i, `<meta name="twitter:description" content="${esc(description)}">`);
+    .replace(/<meta name="twitter:description"[^>]*>/i, `<meta name="twitter:description" content="${esc(description)}">`)
+    .replace(/<meta name="twitter:image"[^>]*>/i, `<meta name="twitter:image" content="${esc(ogImage)}">`);
+  h = robots + h;
   h += extraHead;
   return `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -166,15 +176,29 @@ const pages = [];
 const sitemapUrls = [];
 
 function addPage(relPath, opts) {
-  pages.push({ relPath, opts });
-  sitemapUrls.push(SITE + (relPath === 'index.html' ? '/' : '/' + relPath.replace(/index\.html$/, '')));
+  // Derive canonical url from file path: index.html -> "/", a/b/index.html -> "/a/b/"
+  const url = relPath === 'index.html' ? '/' : '/' + relPath.replace(/index\.html$/, '');
+  pages.push({ relPath, opts: { url, ...opts } });
+  sitemapUrls.push(SITE + url);
 }
 
 /* 6a. HOME */
+const faqSchema = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'What is the best golf simulator for a commercial range?',
+      acceptedAnswer: { '@type': 'Answer', text: 'A ceiling or overhead launch-monitor system with multi-surface tracking, 4K projection, and durable enclosure — exactly what NEAGLE GOLF deploys for clubs and venues worldwide.' } },
+    { '@type': 'Question', name: 'Do you supply automated ball dispensers?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Our dispensing machines support cashless, self-service operation and integrate with range management software for 24/7 commercial use.' } },
+    { '@type': 'Question', name: 'Where do you ship?',
+      acceptedAnswer: { '@type': 'Answer', text: 'NEAGLE GOLF serves clubs, ranges, and home studios worldwide, with dedicated concierge support in every region.' } }
+  ]
+};
 addPage('index.html', {
   title: 'NEAGLE GOLF — Golf Simulators, Launch Monitors & Ball Dispensers',
   description: 'NEAGLE GOLF designs tour-grade golf simulators, launch monitors, 4K golf simulation systems, and automated ball dispensing machines for clubs, ranges, and home studios.',
   navActive: '',
+  extraHead: `<script type="application/ld+json">${JSON.stringify(faqSchema)}</script>`,
   main: `
   <header class="hero-glow relative overflow-hidden">
     <div class="absolute inset-0 tech-grid pointer-events-none"></div>
@@ -213,12 +237,12 @@ addPage('index.html', {
     <div class="space-y-5 text-zinc-400 text-sm md:text-base leading-relaxed">
       <p><strong class="text-white font-semibold">NEAGLE GOLF</strong> is a global provider of <em class="text-zinc-200">tour-grade golf simulators, launch monitors, and 4K golf simulation systems</em> for indoor golf studios, commercial driving ranges, clubs, and private homes. Our simulation packages combine high-speed camera and radar tracking with photoreal course rendering, delivering shot data accurate enough for professional fitting and training.</p>
       <p>Beyond simulation, we engineer <em class="text-zinc-200">automated golf ball dispensers</em> and self-service range hardware that reduce labor costs and unlock new revenue for facility operators. Every system ships with white-glove onboarding, training, and 24/7 concierge support.</p>
-      <div class="glass rounded-2xl p-6 md:p-8">
+      <div class="glass rounded-2xl p-6 md:p-8" id="faq">
         <h3 class="text-white font-semibold text-lg mb-4">Frequently Asked Questions</h3>
         <div class="space-y-4">
-          <div><p class="text-white font-medium">What is the best golf simulator for a commercial range?</p><p class="mt-1">A ceiling or overhead launch-monitor system with multi-surface tracking, 4K projection, and durable enclosure — exactly what NEAGLE GOLF deploys for clubs and venues worldwide.</p></div>
-          <div><p class="text-white font-medium">Do you supply automated ball dispensers?</p><p class="mt-1">Yes. Our dispensing machines support cashless, self-service operation and integrate with range management software for 24/7 commercial use.</p></div>
-          <div><p class="text-white font-medium">Where do you ship?</p><p class="mt-1">NEAGLE GOLF serves clubs, ranges, and home studios worldwide, with dedicated concierge support in every region.</p></div>
+          <div id="faq-commercial-simulator"><p class="text-white font-medium">What is the best golf simulator for a commercial range?</p><p class="mt-1">A ceiling or overhead launch-monitor system with multi-surface tracking, 4K projection, and durable enclosure — exactly what NEAGLE GOLF deploys for clubs and venues worldwide.</p></div>
+          <div id="faq-ball-dispensers"><p class="text-white font-medium">Do you supply automated ball dispensers?</p><p class="mt-1">Yes. Our dispensing machines support cashless, self-service operation and integrate with range management software for 24/7 commercial use.</p></div>
+          <div id="faq-shipping"><p class="text-white font-medium">Where do you ship?</p><p class="mt-1">NEAGLE GOLF serves clubs, ranges, and home studios worldwide, with dedicated concierge support in every region.</p></div>
         </div>
       </div>
     </div>
@@ -280,7 +304,8 @@ for (const catId of Object.keys(catalogDb)) {
     ${breadcrumb([{ label: 'Home', href: '/' }, { label: cat.title }])}
     <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10">
       <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-3">${esc(cat.title)}</h1>
-      <p class="text-zinc-400 max-w-2xl mb-10">${esc(cat.desc)}</p>
+      <p class="text-zinc-400 max-w-2xl mb-6">${esc(cat.desc)}</p>
+      ${catId === 'simulators' ? `<div class="flex flex-wrap gap-3 mb-10"><a href="/golf-simulators/compare/" class="btn-ghost rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-solid fa-table-cells-large text-golfGreen"></i> Compare models</a><a href="/golf-simulators/buying-guide/" class="btn-ghost rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-solid fa-book-open text-golfGreen"></i> Buying guide</a></div>` : ''}
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">${cards}</div>
     </section>`
   });
@@ -296,28 +321,40 @@ for (const catId of Object.keys(catalogDb)) {
     const useCases = (p.useCases || []).map(u => `<span class="text-xs px-3 py-1 rounded-full bg-white/5 text-zinc-300 border border-white/10">${esc(u)}</span>`).join(' ');
     const gallery = (p.images || [p.image]).slice(0, 4).map(src =>
       `<div class="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900"><img src="${src}" alt="${esc(p.name)}" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform"></div>`).join('');
+    const productUrl = SITE + prodLink(catId, p);
     const schema = {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: p.name,
+      sku: p.id,
+      url: productUrl,
       description: p.tagline,
       image: p.images || [p.image],
       brand: { '@type': 'Brand', name: 'NEAGLE GOLF' },
-      offers: { '@type': 'Offer', price: p.price.replace(/[^0-9.]/g, ''), priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
-      category: cat.title
+      category: cat.title,
+      offers: {
+        '@type': 'Offer',
+        url: productUrl,
+        priceCurrency: 'USD',
+        price: p.price.replace(/[^0-9.]/g, ''),
+        itemCondition: 'https://schema.org/NewCondition',
+        availability: 'https://schema.org/PreOrder',
+        seller: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/' }
+      }
     };
     const breadcrumbSchema = {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: SITE + '/' },
         { '@type': 'ListItem', position: 2, name: cat.title, item: SITE + catLink(catId) },
-        { '@type': 'ListItem', position: 3, name: p.name, item: SITE + prodLink(catId, p) }
+        { '@type': 'ListItem', position: 3, name: p.name, item: productUrl }
       ]
     };
     addPage(CAT_URL[catId] + '/' + p.id + '/index.html', {
       title: `${p.name} | NEAGLE GOLF`,
       description: p.tagline,
       navActive: catId,
+      ogImage: p.image,
       extraHead: `<script type="application/ld+json">${JSON.stringify(schema)}</script>
 <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>`,
       main: `
@@ -368,13 +405,14 @@ addPage('catalog/index.html', {
   </section>`
 });
 
-/* 6e. CASE STUDIES */
+/* 6e. CASE STUDIES (listing) */
+const caseSlug = (c) => `/case-studies/${c.id}/`;
 const caseCards = caseStudies.map(c => `
-  <div class="card-glow rounded-3xl overflow-hidden bg-zinc-950/60 border border-white/8 p-5">
+  <a href="${caseSlug(c)}" class="card-glow block rounded-3xl overflow-hidden bg-zinc-950/60 border border-white/8 p-5 hover:border-golfGreen/40 transition-all">
     <div class="aspect-[16/9] rounded-2xl overflow-hidden mb-4 bg-zinc-900"><img src="${c.image}" alt="${esc(c.title)}" loading="lazy" class="w-full h-full object-cover"></div>
     <h3 class="text-lg font-semibold text-white mb-2">${esc(c.title)}</h3>
     <p class="text-zinc-400 text-sm leading-relaxed">${esc(c.description)}</p>
-  </div>`).join('');
+  </a>`).join('');
 addPage('case-studies/index.html', {
   title: 'Customer Cases & Installations | NEAGLE GOLF',
   description: 'See how clubs, ranges, dealerships, and homes worldwide use NEAGLE GOLF simulators and dispensing systems.',
@@ -386,6 +424,47 @@ addPage('case-studies/index.html', {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">${caseCards}</div>
   </section>`
 });
+
+/* 6e-b. CASE STUDY individual pages */
+for (const c of caseStudies) {
+  const csUrl = SITE + caseSlug(c);
+  const csSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: c.title,
+    description: c.description,
+    image: c.image,
+    datePublished: '2025-01-01',
+    author: { '@type': 'Organization', name: 'NEAGLE GOLF' },
+    publisher: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/' },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': csUrl }
+  };
+  const related = caseStudies.filter(x => x.id !== c.id).slice(0, 3).map(x =>
+    `<a href="${caseSlug(x)}" class="card-glow block rounded-2xl overflow-hidden bg-zinc-950/60 border border-white/8 p-4 hover:border-golfGreen/40 transition-all">
+      <div class="aspect-[16/9] rounded-xl overflow-hidden mb-3 bg-zinc-900"><img src="${x.image}" alt="${esc(x.title)}" loading="lazy" class="w-full h-full object-cover"></div>
+      <h4 class="text-sm font-semibold text-white">${esc(x.title)}</h4>
+    </a>`).join('');
+  addPage('case-studies/' + c.id + '/index.html', {
+    title: `${c.title} | NEAGLE GOLF Case Study`,
+    description: c.description,
+    ogImage: c.image,
+    extraHead: `<script type="application/ld+json">${JSON.stringify(csSchema)}</script>`,
+    main: `
+    ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Case Studies', href: '/case-studies/' }, { label: c.title }])}
+    <section class="max-w-4xl mx-auto px-4 md:px-6 pt-10">
+      <span class="text-[10px] md:text-xs uppercase tracking-widest text-golfGreen font-bold">Case Study</span>
+      <h1 class="text-3xl md:text-5xl font-bold tracking-tight leading-tight mt-2 mb-6">${esc(c.title)}</h1>
+      <div class="aspect-[16/9] rounded-3xl overflow-hidden bg-zinc-900 mb-8"><img src="${c.image}" alt="${esc(c.title)}" class="w-full h-full object-cover"></div>
+      <p class="text-zinc-300 text-base leading-relaxed mb-6">${esc(c.description)}</p>
+      <p class="text-zinc-400 text-sm leading-relaxed">This installation demonstrates how NEAGLE GOLF's tour-grade simulation and automation systems help ${esc(c.keywords || 'forward-thinking venues')} engage customers and unlock new value. Our concierge team handles planning, delivery, and on-site setup end to end.</p>
+      <div class="mt-8"><a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Start Your Project</a></div>
+    </section>
+    <section class="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-4">
+      <h2 class="text-2xl font-bold text-white mb-6">More Case Studies</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">${related}</div>
+    </section>`
+  });
+}
 
 /* 6f. ABOUT */
 addPage('about/index.html', {
@@ -411,6 +490,64 @@ addPage('about/index.html', {
   </section>`
 });
 
+/* 6g. COMPARISON page (high-leverage GEO content) */
+const sims = catalogDb.simulators.items;
+const compareRows = (label, fn) =>
+  `<tr class="border-b border-white/5"><th class="text-left py-4 pr-4 text-zinc-300 font-medium align-top w-40">${label}</th>${
+    sims.map(p => `<td class="py-4 text-zinc-400 align-top">${fn(p)}</td>`).join('')
+  }</tr>`;
+addPage('golf-simulators/compare/index.html', {
+  title: 'Golf Simulator Comparison: Golfpai S1 vs A1 vs X1 vs RG Ruge vs Faya Motion | NEAGLE GOLF',
+  description: 'Compare NEAGLE GOLF golf simulators side by side — launch monitor type, projection, space needs, and best use case for each model.',
+  main: `
+  ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Golf Simulators', href: '/golf-simulators/' }, { label: 'Compare' }])}
+  <section class="max-w-7xl mx-auto px-4 md:px-6 pt-10">
+    <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-3">Golf Simulator Comparison</h1>
+    <p class="text-zinc-400 max-w-2xl mb-10">Not sure which system fits your space and budget? Here is how our tour-grade simulators stack up across the factors that matter most.</p>
+    <div class="overflow-x-auto rounded-2xl border border-white/5">
+      <table class="w-full text-sm min-w-[640px]">
+        <thead><tr class="border-b border-white/10">
+          <th class="text-left p-4 text-zinc-400 font-medium">Feature</th>
+          ${sims.map(p => `<th class="text-left p-4 text-white font-semibold">${esc(p.name)}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${compareRows('Tagline', p => esc(p.tagline))}
+          ${compareRows('Best for', p => (p.useCases || []).join(', '))}
+          ${compareRows('Highlights', p => (p.highlights || []).slice(0, 2).join('; '))}
+          ${compareRows('Space required', p => esc(p.spaceRequired || '—'))}
+          ${compareRows('Indicative price', p => esc(p.price))}
+          ${compareRows('Learn more', p => `<a href="${prodLink('simulators', p)}" class="text-golfGreen hover:underline">View details →</a>`)}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-zinc-500 text-sm mt-6">Need a tailored recommendation? <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="text-golfGreen hover:underline">Talk to our concierge team</a> with your room dimensions and use case.</p>
+  </section>`
+});
+
+/* 6h. BUYING GUIDE (knowledge / GEO answer content) */
+addPage('golf-simulators/buying-guide/index.html', {
+  title: 'How to Choose a Golf Simulator: The Complete Buying Guide | NEAGLE GOLF',
+  description: 'A practical guide to choosing a golf simulator — launch monitor types, space and ceiling requirements, projection, and what commercial ranges vs home studios actually need.',
+  main: `
+  ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Golf Simulators', href: '/golf-simulators/' }, { label: 'Buying Guide' }])}
+  <article class="max-w-3xl mx-auto px-4 md:px-6 pt-10 space-y-8">
+    <header>
+      <span class="text-[10px] md:text-xs uppercase tracking-widest text-golfGreen font-bold">Buying Guide</span>
+      <h1 class="text-3xl md:text-5xl font-bold tracking-tight leading-tight mt-2">How to Choose a Golf Simulator</h1>
+      <p class="text-zinc-400 mt-4 leading-relaxed">Whether you run a commercial driving range or plan a home studio, the right simulator comes down to tracking technology, available space, and how the system will actually be used. This guide breaks it down.</p>
+    </header>
+    <section><h2 class="text-2xl font-bold text-white mb-3">1. Launch monitor technology</h2><p class="text-zinc-400 leading-relaxed">Camera-based and radar-based (Doppler) systems each have trade-offs. Camera systems excel in controlled indoor light; radar tracks the full ball flight and is favored for outdoor-adjacent setups. NEAGLE GOLF simulators use tour-grade tracking for sub-millimeter accuracy.</p></section>
+    <section><h2 class="text-2xl font-bold text-white mb-3">2. Space & ceiling height</h2><p class="text-zinc-400 leading-relaxed">Most enclosures need roughly 3 m (10 ft) of ceiling clearance and 4–5 m of depth. Measure swing space — especially for driver — before committing. Our team provides a free room-fit check during concierge onboarding.</p></section>
+    <section><h2 class="text-2xl font-bold text-white mb-3">3. Projection & visuals</h2><p class="text-zinc-400 leading-relaxed">A 4K projector with a short-throw lens keeps the image sharp on a impact screen. Higher contrast and refresh rate reduce perceived latency between strike and ball flight.</p></section>
+    <section><h2 class="text-2xl font-bold text-white mb-3">4. Commercial vs home</h2><p class="text-zinc-400 leading-relaxed">Commercial ranges need durable enclosures, cashless management, and self-service options (pair with our automated ball dispensers). Home studios prioritize footprint, aesthetics, and quick setup.</p></section>
+    <section><h2 class="text-2xl font-bold text-white mb-3">5. Budget & support</h2><p class="text-zinc-400 leading-relaxed">Price varies widely by tracking tech and enclosure. Factor in installation, screens, and ongoing support. NEAGLE GOLF includes white-glove onboarding and 24/7 concierge support on every system.</p></section>
+    <div class="p-8 rounded-3xl bg-gradient-to-tr from-zinc-950 to-zinc-900 border border-white/5 text-center">
+      <h3 class="text-lg font-bold text-white mb-3">Still deciding?</h3>
+      <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Get a Free Recommendation</a>
+    </div>
+  </article>`
+});
+
 /* ── 7. Write files + sitemap ─────────────────────────────────── */
 fs.mkdirSync(DIST, { recursive: true });
 for (const { relPath, opts } of pages) {
@@ -420,19 +557,22 @@ for (const { relPath, opts } of pages) {
 }
 
 // sitemap.xml
+const LASTMOD = new Date().toISOString().slice(0, 10);
 const sm = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapUrls.map(u => `  <url><loc>${u}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('\n')}
+${sitemapUrls.map(u => `  <url><loc>${u}</loc><lastmod>${LASTMOD}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`).join('\n')}
 </urlset>`;
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sm);
 
 // robots.txt
 fs.writeFileSync(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);
 
-// 404 fallback (Cloudflare Pages serves 404.html)
+// 404 fallback (Cloudflare Pages serves 404.html) — noindex, no canonical
 fs.writeFileSync(path.join(DIST, '404.html'), page({
   title: 'Page Not Found | NEAGLE GOLF',
   description: 'The page you are looking for could not be found.',
+  url: '/404.html',
+  noindex: true,
   main: `<section class="max-w-3xl mx-auto px-4 text-center pt-32 pb-32"><h1 class="text-4xl font-bold mb-4">404</h1><p class="text-zinc-400 mb-8">The page you requested could not be found.</p><a href="/" class="btn-glow rounded-full px-8 py-3 text-sm font-semibold inline-flex items-center gap-2">Back to Home</a></section>`
 }));
 

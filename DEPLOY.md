@@ -24,7 +24,16 @@ website/
 │   │   ├── dispenser-machine/index.html
 │   │   └── vending-machine/index.html
 │   ├── catalog/index.html
-│   ├── case-studies/index.html
+│   ├── case-studies/
+│   │   ├── index.html
+│   │   ├── lincoln-4s/index.html
+│   │   ├── automatives/index.html
+│   │   ├── in-house/index.html
+│   │   ├── clubhouse-indoor-golf/index.html
+│   │   └── shenzhen-golf-range/index.html
+│   ├── golf-simulators/
+│   │   ├── compare/index.html
+│   │   └── buying-guide/index.html
 │   ├── about/index.html
 │   ├── 404.html
 │   ├── sitemap.xml
