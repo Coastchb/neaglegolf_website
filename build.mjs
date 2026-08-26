@@ -103,6 +103,9 @@ function embedSpecs(productId) {
   // Remove any remaining inline <style> tags from the body so we do not
   // output the same stylesheet twice (once scoped, once unscoped).
   body = body.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  // Downgrade any top-level <h1> in the embedded specs to <h2> so product
+  // pages keep a single <h1> (the page title) for clean document outline.
+  body = body.replace(/<h1([\s>])/gi, '<h2$1').replace(/<\/h1>/gi, '</h2>');
   if (!body.trim()) return '';
   // Some specs files (A1/S1/X1) rely on CSS variables that are NOT defined
   // inside the file (they expect an external theme). Inject a light-theme
@@ -239,6 +242,11 @@ function footer() {
                     <span class="text-xs font-semibold text-white tracking-wider block uppercase">Explore</span>
                     <a href="/golf-simulators/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Golf Simulators</a>
                     <a href="/golf-ball-dispensers/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Ball Dispensers</a>
+                    <a href="/golf-simulators/cost/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Simulator Cost</a>
+                    <a href="/golf-simulators/room-size/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Room Size</a>
+                    <a href="/golf-simulators/installation/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Installation</a>
+                    <a href="/golf-simulators/compare/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Compare Models</a>
+                    <a href="/golf-simulators/buying-guide/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Buying Guide</a>
                     <a href="/case-studies/" class="block text-zinc-200 hover:text-golfGreen transition-colors">Case Studies</a>
                     <a href="/about/" class="block text-zinc-200 hover:text-golfGreen transition-colors">About NEAGLE</a>
                 </div>
@@ -247,6 +255,229 @@ function footer() {
                 © ${new Date().getFullYear()} NEAGLE GOLF. All rights reserved.
             </div>
         </footer>`;
+}
+
+// ---------------------------------------------------------------------------
+// Guide / resource pages (high-intent SEO/GEO landing pages, generated from
+// the same catalogDb data so prices / space requirements stay in sync).
+// ---------------------------------------------------------------------------
+
+// Single source of truth for space figures: System Size = equipment envelope
+// (from catalog spaceRequired), Recommended Room Size = +1m on width & depth,
+// +0.7m on height for swing clearance. Used by the room-size guide AND every
+// product detail page so the numbers never drift apart.
+const spaceSizes = (p) => {
+  // Read spaceRequired first (simulators), fall back to the `space` field
+  // (dispenser/vending machines) so every product with dimensions gets a
+  // Minimum Space row instead of the customizable fallback.
+  const dims = String(p.spaceRequired || p.space || '').match(/([\d.]+)\s*[×x]\s*([\d.]+)\s*[×x]\s*([\d.]+)/);
+  if (!dims) return null;
+  // Preserve the precision written in the source data (e.g. 1.65 stays 1.65,
+  // 6.0 stays 6.0) for the displayed system size.
+  const fmtNum = (raw) => {
+    const t = String(raw).trim();
+    return t.includes('.') ? t : t + '.0';
+  };
+  const w = parseFloat(dims[1]), d = parseFloat(dims[2]), h = parseFloat(dims[3]);
+  return {
+    sys: `${fmtNum(dims[1])} × ${fmtNum(dims[2])} × ${fmtNum(dims[3])} m`,
+    rec: `${(w + 1).toFixed(1)} × ${(d + 1).toFixed(1)} × ${(h + 0.7).toFixed(1)} m`
+  };
+};
+
+// Topic-cluster contextual links: interconnects the three guide pages with
+// each other and with the compare / product / case-study hubs.
+const clusterLinks = (active) => {
+  const items = [
+    ['/golf-simulators/cost/', 'Simulator Cost & Pricing'],
+    ['/golf-simulators/room-size/', 'Room Size & Space'],
+    ['/golf-simulators/installation/', 'Installation Process'],
+    ['/golf-simulators/compare/', 'Compare Simulators'],
+    ['/golf-simulators/', 'All Simulators'],
+    ['/case-studies/', 'Case Studies']
+  ];
+  return `
+    <div class="mt-14 glass rounded-2xl p-6 md:p-8">
+      <h2 class="text-white font-semibold text-lg mb-1">Keep Exploring</h2>
+      <p class="text-zinc-400 text-sm mb-5">Plan your purchase end to end — cost, space, installation, and real-world setups.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        ${items.map(([href, label]) => href === active
+          ? `<span class="px-4 py-3 rounded-xl border border-golfGreen/30 bg-golfGreen/10 text-golfGreen text-sm font-medium">${label}</span>`
+          : `<a href="${href}" class="px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] hover:border-golfGreen/40 hover:bg-golfGreen/5 text-zinc-200 text-sm transition-colors">${label}</a>`).join('')}
+      </div>
+    </div>`;
+};
+
+function guideCostPage() {
+  const sims = catalogDb.simulators.items
+    .map(p => ({ name: p.name, type: p.type, price: p.price, tracking: p.tracking, courses: p.courses }));
+  const disp = catalogDb.dispenserMachines.items
+    .map(p => ({ name: p.name, type: p.type, price: p.price }));
+  const rowsSim = sims.map(s => `<tr class="border-t border-white/5">
+      <td class="py-3 pr-4 text-white font-medium">${esc(s.name)}</td>
+      <td class="py-3 pr-4 text-zinc-300">${esc(s.tracking || '—')}</td>
+      <td class="py-3 pr-4 text-zinc-300">${s.courses ? esc(String(s.courses)) + ' courses' : '—'}</td>
+      <td class="py-3 text-golfGreen font-semibold">${esc(s.price)}</td>
+    </tr>`).join('');
+  const rowsDisp = disp.map(d => `<tr class="border-t border-white/5">
+      <td class="py-3 pr-4 text-white font-medium">${esc(d.name)}</td>
+      <td class="py-3 pr-4 text-zinc-300">${esc(d.type)}</td>
+      <td class="py-3 text-golfGreen font-semibold">${esc(d.price)}</td>
+    </tr>`).join('');
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: 'How much does a NEAGLE GOLF simulator cost?',
+        acceptedAnswer: { '@type': 'Answer', text: 'NEAGLE GOLF simulator packages range from about ' + sims[sims.length-1].price + ' for the GOLFPAI X1 Smart Golf Simulator up to ' + sims[0].price + ' for the GOLFPAI S1 all-in-one system. Pricing varies by tracking technology, projection, and course library.' } },
+      { '@type': 'Question', name: 'How much does a golf ball dispenser cost?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Automated golf ball dispensers start at ' + disp[0].price + ' for the standard unit, with vending and self-service models priced on configuration.' } }
+    ]
+  };
+  const costMain = `
+    <section class="max-w-4xl mx-auto px-4 md:px-6 pt-16 md:pt-24">
+      <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Pricing</span>
+      <h1 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Golf Simulator Cost &amp; Pricing</h1>
+      <p class="mt-5 text-zinc-400 leading-relaxed">NEAGLE GOLF builds tour-grade golf simulation and automation systems for clubs, ranges, and private studios. Below is the current price range across our simulator and dispenser lines. Every package includes white-glove installation and 24/7 concierge support.</p>
+
+      <h2 class="mt-12 text-2xl font-bold text-white mb-4">Golf Simulator Price Range</h2>
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="text-zinc-400 text-left"><tr><th class="py-3 pr-4">Model</th><th class="py-3 pr-4">Tracking</th><th class="py-3 pr-4">Courses</th><th class="py-3">Price</th></tr></thead>
+          <tbody>${rowsSim}</tbody>
+        </table>
+      </div>
+
+      <h2 class="mt-12 text-2xl font-bold text-white mb-4">Ball Dispenser Price Range</h2>
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="text-zinc-400 text-left"><tr><th class="py-3 pr-4">Model</th><th class="py-3 pr-4">Type</th><th class="py-3">Price</th></tr></thead>
+          <tbody>${rowsDisp}</tbody>
+        </table>
+      </div>
+
+      <div class="mt-12 glass rounded-2xl p-6 md:p-8" itemscope itemtype="https://schema.org/FAQPage">
+        <h2 class="text-white font-semibold text-lg mb-4">Cost FAQ</h2>
+        <div class="space-y-4">
+          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 itemprop="name" class="text-white font-medium">How much does a NEAGLE GOLF simulator cost?</h3>
+            <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">NEAGLE GOLF simulator packages range from about ${esc(sims[sims.length-1].price)} for the GOLFPAI X1 Smart Golf Simulator up to ${esc(sims[0].price)} for the GOLFPAI S1 all-in-one system. Pricing varies by tracking technology, projection, and course library.</span></div>
+          </div>
+          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 itemprop="name" class="text-white font-medium">How much does a golf ball dispenser cost?</h3>
+            <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Automated golf ball dispensers start at ${esc(disp[0].price)} for the standard unit, with vending and self-service models priced on configuration.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Get a Custom Quote</a>
+      </div>
+      ${clusterLinks('/golf-simulators/cost/')}
+    </section>`;
+  return { main: costMain, schema };
+}
+
+function guideRoomSizePage() {
+  // spaceRequired is the equipment/system envelope (W x D x H in meters).
+  // Recommended room size adds ~1m on width & depth and ~0.7m on height for swing clearance.
+  // Both figures are computed by the shared spaceSizes() helper so the guide
+  // table always matches the numbers shown on each product detail page.
+  const items = Object.keys(catalogDb).flatMap(catId => catalogDb[catId].items)
+    .filter(p => p.spaceRequired)
+    .map(p => {
+      const s = spaceSizes(p);
+      return { name: p.name, sys: s ? s.sys : p.spaceRequired, rec: s ? s.rec : p.spaceRequired, cats: p.useCases };
+    });
+  const rows = items.map(i => `<tr class="border-t border-white/5">
+      <td class="py-3 pr-4 text-white font-medium">${esc(i.name)}</td>
+      <td class="py-3 pr-4 text-zinc-300">${esc(i.sys)}</td>
+      <td class="py-3 pr-4 text-zinc-300">${esc(i.rec)}</td>
+      <td class="py-3 text-zinc-300">${esc(i.cats.join(', '))}</td>
+    </tr>`).join('');
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: 'How much room do I need for a golf simulator?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Each NEAGLE GOLF model lists a System Size (the equipment envelope) and a Recommended Room Size (with swing clearance). For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m and needs a room of about 7.0 × 4.8 × 3.5 m. See the per-model table for exact figures.' } }
+    ]
+  };
+  const roomMain = `
+    <section class="max-w-4xl mx-auto px-4 md:px-6 pt-16 md:pt-24">
+      <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Planning</span>
+      <h1 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Golf Simulator Room Size &amp; Space Requirements</h1>
+      <p class="mt-5 text-zinc-400 leading-relaxed">Before choosing a system, confirm your available ceiling height, width, and depth. The table below shows two figures per model: the <strong class="text-white">System Size</strong> (the physical equipment envelope) and the <strong class="text-white">Recommended Room Size</strong> (with swing clearance and operator space). Our team performs a free site survey to validate fit before installation.</p>
+
+      <h2 class="mt-12 text-2xl font-bold text-white mb-4">Space Requirements by Model</h2>
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="text-zinc-400 text-left"><tr><th class="py-3 pr-4">Model</th><th class="py-3 pr-4">System Size (W×D×H)</th><th class="py-3 pr-4">Recommended Room Size</th><th class="py-3">Best For</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+
+      <div class="mt-12 glass rounded-2xl p-6 md:p-8" itemscope itemtype="https://schema.org/FAQPage">
+        <h2 class="text-white font-semibold text-lg mb-4">Space FAQ</h2>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 itemprop="name" class="text-white font-medium">How much room do I need for a golf simulator?</h3>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Each NEAGLE GOLF model lists a System Size (the equipment envelope) and a Recommended Room Size (with swing clearance). For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m and needs a room of about 7.0 × 4.8 × 3.5 m. See the per-model table above for exact figures.</span></div>
+        </div>
+      </div>
+      ${clusterLinks('/golf-simulators/room-size/')}
+    </section>`;
+  return { main: roomMain, schema };
+}
+
+function guideInstallationPage() {
+  const steps = [
+    ['Site Survey', 'We review your room dimensions, ceiling height, power, and network to confirm fit and placement.'],
+    ['Delivery & Unboxing', 'White-glove delivery to the install room; all hardware and cabling are inventoried on-site.'],
+    ['Mounting & Enclosure', 'Projector, screen, and tracking hardware are mounted; impact enclosure and flooring are assembled.'],
+    ['Calibration', 'Launch monitor / radar is calibrated to the hitting position; projection is aligned to the screen.'],
+    ['Software & Courses', 'Simulation software is activated with your course library and user accounts configured.'],
+    ['Training & Handover', 'On-site training for operators/owners, plus 24/7 concierge support after go-live.']
+  ];
+  const stepHtml = steps.map((s, i) => `<div class="flex gap-4">
+      <div class="shrink-0 w-9 h-9 rounded-full bg-golfGreen/15 text-golfGreen flex items-center justify-center font-semibold">${i+1}</div>
+      <div><h3 class="text-white font-medium">${esc(s[0])}</h3><p class="text-zinc-400 text-sm mt-1 leading-relaxed">${esc(s[1])}</p></div>
+    </div>`).join('');
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: 'How is a NEAGLE GOLF simulator installed?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Installation follows six steps: site survey, delivery, mounting and enclosure build, calibration, software activation, and on-site training. Most systems are fully operational within one to two days.' } },
+      { '@type': 'Question', name: 'Do you offer on-site installation?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. Every NEAGLE GOLF system ships with white-glove delivery, professional mounting, calibration, and training as part of the package.' } }
+    ]
+  };
+  const installMain = `
+    <section class="max-w-4xl mx-auto px-4 md:px-6 pt-16 md:pt-24">
+      <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Process</span>
+      <h1 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Golf Simulator Installation Process</h1>
+      <p class="mt-5 text-zinc-400 leading-relaxed">Every NEAGLE GOLF system is delivered and installed by our team — no third-party contractors. The typical deployment takes one to two days depending on enclosure complexity.</p>
+
+      <h2 class="mt-12 text-2xl font-bold text-white mb-6">What to Expect</h2>
+      <div class="space-y-6">${stepHtml}</div>
+
+      <div class="mt-12 glass rounded-2xl p-6 md:p-8" itemscope itemtype="https://schema.org/FAQPage">
+        <h2 class="text-white font-semibold text-lg mb-4">Installation FAQ</h2>
+        <div class="space-y-4">
+          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 itemprop="name" class="text-white font-medium">How is a NEAGLE GOLF simulator installed?</h3>
+            <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Installation follows six steps: site survey, delivery, mounting and enclosure build, calibration, software activation, and on-site training. Most systems are fully operational within one to two days.</span></div>
+          </div>
+          <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+            <h3 itemprop="name" class="text-white font-medium">Do you offer on-site installation?</h3>
+            <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Yes. Every NEAGLE GOLF system ships with white-glove delivery, professional mounting, calibration, and training as part of the package.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Book a Site Survey</a>
+      </div>
+      ${clusterLinks('/golf-simulators/installation/')}
+    </section>`;
+  return { main: installMain, schema };
 }
 
 /* ── 4. Page wrapper ───────────────────────────────────────────── */
@@ -449,6 +680,11 @@ for (const catId of Object.keys(catalogDb)) {
   for (const p of cat.items) {
     const specsRows = Object.entries(p.specs || {}).map(([k, v]) =>
       `<tr class="border-b border-white/5"><th class="text-left py-3 pr-4 text-zinc-300 font-medium align-top">${esc(k)}</th><td class="py-3 text-zinc-400">${esc(v)}</td></tr>`).join('');
+    // Minimum Space row — rendered in the same style as the Key Highlights list.
+    // When the product has no size data, show the customizable fallback instead.
+    const s = spaceSizes(p);
+    const spaceText = s ? s.sys.replace(/ m$/, ' meters') : 'Fully customizable to your space';
+    const spaceSizesHtml = `<li class="flex gap-2 text-zinc-300"><i class="fa-solid fa-ruler-combined text-golfGreen mt-1 text-sm"></i><span>Minimum Space (length, width, height): ${spaceText}</span></li>`;
     const specsHtml = embedSpecs(p.id);
     const highlights = (p.highlights || []).map(h => `<li class="flex gap-2 text-zinc-300"><i class="fa-solid fa-circle-check text-golfGreen mt-1 text-sm"></i><span>${esc(h)}</span></li>`).join('');
     const useCases = (p.useCases || []).map(u => `<span class="text-xs px-3 py-1 rounded-full bg-white/5 text-zinc-300 border border-white/10">${esc(u)}</span>`).join(' ');
@@ -490,7 +726,10 @@ for (const catId of Object.keys(catalogDb)) {
         itemCondition: 'https://schema.org/NewCondition',
         availability: 'https://schema.org/PreOrder',
         seller: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/' }
-      }
+      },
+      ...(s ? { additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Minimum Space', value: s.sys }
+      ] } : {})
     };
     const breadcrumbSchema = {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',
@@ -559,7 +798,7 @@ for (const catId of Object.keys(catalogDb)) {
           <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Get a Quote on WhatsApp</a>
           <div class="mt-10">
             <h2 class="text-xl font-bold text-white mb-4">Key Highlights</h2>
-            <ul class="space-y-3">${highlights}</ul>
+            <ul class="space-y-3">${highlights}${spaceSizesHtml}</ul>
           </div>
         </div>
       </section>
@@ -671,6 +910,57 @@ addPage('catalog/index.html', {
 });
 
 /* 6e. CASE STUDIES (listing) */
+// P1④: Project snapshot facts per case. Each value is verbatim information
+// already present in the case data (title / description / keywords). Rows are
+// omitted when the source case does not state the value — nothing is invented.
+const CASE_FACTS = {
+  'lincoln-4s': [
+    ['Facility', 'Auto Dealership'],
+    ['Simulator', 'Golfpai smart golf simulator'],
+    ['Focus', 'Smart Golf Retention']
+  ],
+  'automatives': [
+    ['Facility', 'Automotive Dealership'],
+    ['Focus', 'Showroom Experience Ecosystem']
+  ],
+  'in-house': [
+    ['Facility', 'Chinese Mansion'],
+    ['Project', 'Basement Golf Studio']
+  ],
+  'jp-rest': [
+    ['Facility', 'Restaurant'],
+    ['Project', 'High-End Hospitality Golf Integration']
+  ],
+  'shanghai-g-town': [
+    ['Location', 'Shanghai, China'],
+    ['Facility', 'Clubhouse'],
+    ['Simulator', 'Golfpai S1'],
+    ['Focus', 'Coastal Golf & Dining']
+  ],
+  'clubhouse': [
+    ['Location', 'Richmond, Greater Vancouver Area'],
+    ['Facility', 'Indoor Golf Center'],
+    ['Simulator', 'RG Eagleye III'],
+    ['Bays', '6'],
+    ['VIP Rooms', '3'],
+    ['Course Library', '180+ real 4K courses'],
+    ['Project', 'Full renovation']
+  ],
+  'oclock': [
+    ['Location', 'Regina'],
+    ['Facility', 'Entertainment Venue'],
+    ['Simulator', 'RG Eagleye III'],
+    ['Bays', '9'],
+    ['VIP Rooms', '2'],
+    ['Project', 'Ground-up build']
+  ],
+  'toroto-house': [
+    ['Location', 'Toronto'],
+    ['Facility', 'Sun Room Conversion'],
+    ['Simulator', 'RG Eagleye III with Auto Tee'],
+    ['Project', 'Multi-Entertainment Suite']
+  ]
+};
 const caseSlug = (c) => `/case-studies/${c.id}/`;
 const caseCards = caseStudies.map(c => `
   <a href="${caseSlug(c)}" class="card-glow block rounded-3xl overflow-hidden bg-zinc-950/60 border border-white/8 p-5 hover:border-golfGreen/40 transition-all">
@@ -693,15 +983,31 @@ addPage('case-studies/index.html', {
 /* 6e-b. CASE STUDY individual pages */
 for (const c of caseStudies) {
   const csUrl = SITE + caseSlug(c);
+  // P1③: <title> uses the case's scene label (before the // │ : separator the
+  // data already uses) and the meta description is trimmed to ~160 chars — no
+  // new content is ever invented, only the existing copy is shortened.
+  const shortLabel = (c.title.split(/[│|]|\/\/|：|:/)[0] || c.title).trim();
+  const metaDesc = c.description.length <= 160
+    ? c.description
+    : c.description.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+  // P1④: Project snapshot — every value is explicitly stated in the case data.
+  const facts = CASE_FACTS[c.id] || [];
+  const factsHtml = facts.length ? `
+    <div class="mt-8 glass rounded-2xl p-6 md:p-8">
+      <h2 class="text-white font-semibold text-lg mb-4">Project Snapshot</h2>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+        ${facts.map(([k, v]) => `<div class="flex items-start justify-between gap-4 border-b border-white/5 pb-2.5"><dt class="text-zinc-400">${esc(k)}</dt><dd class="text-white text-right font-medium">${esc(v)}</dd></div>`).join('')}
+      </dl>
+    </div>` : '';
   const csSchema = {
     '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
+    '@type': 'Article',
+    '@id': csUrl + '#article',
     headline: c.title,
     description: c.description,
-    image: c.image,
-    datePublished: '2025-01-01',
-    author: { '@type': 'Organization', name: 'NEAGLE GOLF' },
-    publisher: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/' },
+    image: [c.image],
+    author: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/', '@id': SITE + '/#organization' },
+    publisher: { '@type': 'Organization', name: 'NEAGLE GOLF', url: SITE + '/', '@id': SITE + '/#organization' },
     mainEntityOfPage: { '@type': 'WebPage', '@id': csUrl }
   };
   const related = caseStudies.filter(x => x.id !== c.id).slice(0, 3).map(x =>
@@ -710,17 +1016,18 @@ for (const c of caseStudies) {
       <h4 class="text-sm font-semibold text-white">${esc(x.title)}</h4>
     </a>`).join('');
   addPage('case-studies/' + c.id + '/index.html', {
-    title: `${c.title} | NEAGLE GOLF Case Study`,
-    description: c.description,
+    title: `${shortLabel} Case Study | NEAGLE GOLF`,
+    description: metaDesc,
     ogImage: c.image,
     extraHead: `<script type="application/ld+json">${JSON.stringify(csSchema)}</script>`,
     main: `
-    ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Case Studies', href: '/case-studies/' }, { label: c.title }])}
+    ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Case Studies', href: '/case-studies/' }, { label: shortLabel }])}
     <section class="max-w-4xl mx-auto px-4 md:px-6 pt-10">
       <span class="text-[10px] md:text-xs uppercase tracking-widest text-golfGreen font-bold">Case Study</span>
       <h1 class="text-3xl md:text-5xl font-bold tracking-tight leading-tight mt-2 mb-6">${esc(c.title)}</h1>
       <div class="aspect-[16/9] rounded-3xl overflow-hidden bg-zinc-900 mb-8"><img src="${c.image}" alt="${esc(c.title)}" class="w-full h-full object-cover"></div>
       <p class="text-zinc-300 text-base leading-relaxed mb-6">${esc(c.description)}</p>
+      ${factsHtml}
       <p class="text-zinc-400 text-sm leading-relaxed">This installation demonstrates how NEAGLE GOLF's tour-grade simulation and automation systems help ${esc(c.keywords || 'forward-thinking venues')} engage customers and unlock new value. Our concierge team handles planning, delivery, and on-site setup end to end.</p>
       <div class="mt-8"><a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Start Your Project</a></div>
     </section>
@@ -762,7 +1069,7 @@ const compareRows = (label, fn) =>
     sims.map(p => `<td class="py-4 text-zinc-400 align-top">${fn(p)}</td>`).join('')
   }</tr>`;
 addPage('golf-simulators/compare/index.html', {
-  title: 'Golf Simulator Comparison: Golfpai S1 vs A1 vs X1 vs RG Ruge vs Faya Motion | NEAGLE GOLF',
+  title: 'Golf Simulator Comparison | GOLFPAI S1 vs A1 vs X1 | NEAGLE GOLF',
   description: 'Compare NEAGLE GOLF golf simulators side by side — launch monitor type, projection, space needs, and best use case for each model.',
   main: `
   ${breadcrumb([{ label: 'Home', href: '/' }, { label: 'Golf Simulators', href: '/golf-simulators/' }, { label: 'Compare' }])}
@@ -811,6 +1118,29 @@ addPage('golf-simulators/buying-guide/index.html', {
       <a href="https://api.whatsapp.com/send?phone=13142242264" target="_blank" class="btn-glow rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Get a Free Recommendation</a>
     </div>
   </article>`
+});
+
+/* 6i. GUIDE PAGES — Cost / Room Size / Installation (high-intent GEO) */
+const costPage = guideCostPage();
+addPage('golf-simulators/cost/index.html', {
+  title: 'Golf Simulator Cost & Pricing | NEAGLE GOLF',
+  description: 'NEAGLE GOLF simulator and ball dispenser pricing — from the ' + catalogDb.simulators.items[catalogDb.simulators.items.length - 1].price + ' GOLFPAI X1 Smart Golf Simulator to the ' + catalogDb.simulators.items[0].price + ' S1 all-in-one. Compare by tracking, projection, and course library.',
+  extraHead: `<script type="application/ld+json">${JSON.stringify(costPage.schema)}</script>`,
+  main: costPage.main
+});
+const roomPage = guideRoomSizePage();
+addPage('golf-simulators/room-size/index.html', {
+  title: 'Golf Simulator Room Size & Space Requirements | NEAGLE GOLF',
+  description: 'How much space do you need for a golf simulator? NEAGLE GOLF lists System Size and Recommended Room Size per model, from launch monitors to all-in-one systems.',
+  extraHead: `<script type="application/ld+json">${JSON.stringify(roomPage.schema)}</script>`,
+  main: roomPage.main
+});
+const installPage = guideInstallationPage();
+addPage('golf-simulators/installation/index.html', {
+  title: 'Golf Simulator Installation Process | NEAGLE GOLF',
+  description: 'How NEAGLE GOLF installs golf simulators: site survey, white-glove delivery, mounting, calibration, software activation, and on-site training with 24/7 support.',
+  extraHead: `<script type="application/ld+json">${JSON.stringify(installPage.schema)}</script>`,
+  main: installPage.main
 });
 
 /* ── 7. Write files + sitemap ─────────────────────────────────── */
