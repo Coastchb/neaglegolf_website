@@ -1,0 +1,14 @@
+{
+  "name": "neagle-golf",
+  "private": true,
+  "version": "1.0.0",
+  "description": "NEAGLE GOLF — static site generated from index.html by build.mjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "npm run build && npx wrangler deploy",
+    "deploy:pages": "npm run build && npx wrangler pages deploy dist"
+  },
+  "devDependencies": {
+    "wrangler": "^4.126.0"
+  }
+}

@@ -1,12 +1,16 @@
-# Cloudflare Pages configuration
-# Docs: https://developers.cloudflare.com/pages/
+# Cloudflare deployment configuration
+# Docs: https://developers.cloudflare.com/workers/static-assets/
 
-name = "neagle-golf"
+name = "neaglegolf-website"
 compatibility_date = "2025-08-25"
 
-# Build settings (used by Cloudflare Pages Git integration & `wrangler pages deploy`)
-# - Build command:  node build.mjs
-# - Build output:   dist
+# Static Assets deployment: serve ./dist as a static site on a Worker.
+# Works with both:
+#   - `npx wrangler deploy`            (Workers project — what the panel uses)
+#   - `npx wrangler pages deploy dist` (Pages project)
+[assets]
+directory = "./dist"
+not_found_handling = "404.html"
 
 # Optional: redirect old SPA-style hash URLs to the new clean static URLs.
 # Uncomment if you previously linked to #category/... / #detail/... anywhere.
