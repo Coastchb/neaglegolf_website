@@ -263,8 +263,7 @@ function footer() {
 // ---------------------------------------------------------------------------
 
 // Single source of truth for space figures: System Size = equipment envelope
-// (from catalog spaceRequired), Recommended Room Size = +1m on width & depth,
-// +0.7m on height for swing clearance. Used by the room-size guide AND every
+// (from catalog spaceRequired). Used by the room-size guide AND every
 // product detail page so the numbers never drift apart.
 const spaceSizes = (p) => {
   // Read spaceRequired first (simulators), fall back to the `space` field
@@ -278,10 +277,8 @@ const spaceSizes = (p) => {
     const t = String(raw).trim();
     return t.includes('.') ? t : t + '.0';
   };
-  const w = parseFloat(dims[1]), d = parseFloat(dims[2]), h = parseFloat(dims[3]);
   return {
-    sys: `${fmtNum(dims[1])} × ${fmtNum(dims[2])} × ${fmtNum(dims[3])} m`,
-    rec: `${(w + 1).toFixed(1)} × ${(d + 1).toFixed(1)} × ${(h + 0.7).toFixed(1)} m`
+    sys: `${fmtNum(dims[1])} × ${fmtNum(dims[2])} × ${fmtNum(dims[3])} m`
   };
 };
 
@@ -379,38 +376,36 @@ function guideCostPage() {
 
 function guideRoomSizePage() {
   // spaceRequired is the equipment/system envelope (W x D x H in meters).
-  // Recommended room size adds ~1m on width & depth and ~0.7m on height for swing clearance.
-  // Both figures are computed by the shared spaceSizes() helper so the guide
+  // System Size is computed by the shared spaceSizes() helper so the guide
   // table always matches the numbers shown on each product detail page.
   const items = Object.keys(catalogDb).flatMap(catId => catalogDb[catId].items)
     .filter(p => p.spaceRequired)
     .map(p => {
       const s = spaceSizes(p);
-      return { name: p.name, sys: s ? s.sys : p.spaceRequired, rec: s ? s.rec : p.spaceRequired, cats: p.useCases };
+      return { name: p.name, sys: s ? s.sys : p.spaceRequired, cats: p.useCases };
     });
   const rows = items.map(i => `<tr class="border-t border-white/5">
       <td class="py-3 pr-4 text-white font-medium">${esc(i.name)}</td>
       <td class="py-3 pr-4 text-zinc-300">${esc(i.sys)}</td>
-      <td class="py-3 pr-4 text-zinc-300">${esc(i.rec)}</td>
       <td class="py-3 text-zinc-300">${esc(i.cats.join(', '))}</td>
     </tr>`).join('');
   const schema = {
     '@context': 'https://schema.org', '@type': 'FAQPage',
     mainEntity: [
       { '@type': 'Question', name: 'How much room do I need for a golf simulator?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Each NEAGLE GOLF model lists a System Size (the equipment envelope) and a Recommended Room Size (with swing clearance). For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m and needs a room of about 7.0 × 4.8 × 3.5 m. See the per-model table for exact figures.' } }
+        acceptedAnswer: { '@type': 'Answer', text: 'Each NEAGLE GOLF model lists its System Size (the physical equipment envelope, W × D × H) in the table above. For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m. See the per-model table for exact figures.' } }
     ]
   };
   const roomMain = `
     <section class="max-w-4xl mx-auto px-4 md:px-6 pt-16 md:pt-24">
       <span class="text-[11px] md:text-xs font-semibold tracking-[0.2em] uppercase text-golfGreen">Planning</span>
       <h1 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Golf Simulator Room Size &amp; Space Requirements</h1>
-      <p class="mt-5 text-zinc-400 leading-relaxed">Before choosing a system, confirm your available ceiling height, width, and depth. The table below shows two figures per model: the <strong class="text-white">System Size</strong> (the physical equipment envelope) and the <strong class="text-white">Recommended Room Size</strong> (with swing clearance and operator space). Our team performs a free site survey to validate fit before installation.</p>
+      <p class="mt-5 text-zinc-400 leading-relaxed">Before choosing a system, confirm your available ceiling height, width, and depth. The table below lists the <strong class="text-white">System Size</strong> (the physical equipment envelope, W × D × H) for each model. Our team performs a free site survey to validate fit before installation.</p>
 
       <h2 class="mt-12 text-2xl font-bold text-white mb-4">Space Requirements by Model</h2>
       <div class="glass rounded-2xl overflow-hidden">
         <table class="w-full text-sm">
-          <thead class="text-zinc-400 text-left"><tr><th class="py-3 pr-4">Model</th><th class="py-3 pr-4">System Size (W×D×H)</th><th class="py-3 pr-4">Recommended Room Size</th><th class="py-3">Best For</th></tr></thead>
+          <thead class="text-zinc-400 text-left"><tr><th class="py-3 pr-4">Model</th><th class="py-3 pr-4">System Size (W×D×H)</th><th class="py-3">Best For</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -419,7 +414,7 @@ function guideRoomSizePage() {
         <h2 class="text-white font-semibold text-lg mb-4">Space FAQ</h2>
         <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <h3 itemprop="name" class="text-white font-medium">How much room do I need for a golf simulator?</h3>
-          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Each NEAGLE GOLF model lists a System Size (the equipment envelope) and a Recommended Room Size (with swing clearance). For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m and needs a room of about 7.0 × 4.8 × 3.5 m. See the per-model table above for exact figures.</span></div>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="mt-2 text-zinc-300 text-sm leading-relaxed"><span itemprop="text">Each NEAGLE GOLF model lists its System Size (the physical equipment envelope, W × D × H) in the table above. For example, the GOLFPAI S1 system is 6.0 × 3.8 × 2.8 m. See the per-model table above for exact figures.</span></div>
         </div>
       </div>
       ${clusterLinks('/golf-simulators/room-size/')}
@@ -1131,7 +1126,7 @@ addPage('golf-simulators/cost/index.html', {
 const roomPage = guideRoomSizePage();
 addPage('golf-simulators/room-size/index.html', {
   title: 'Golf Simulator Room Size & Space Requirements | NEAGLE GOLF',
-  description: 'How much space do you need for a golf simulator? NEAGLE GOLF lists System Size and Recommended Room Size per model, from launch monitors to all-in-one systems.',
+  description: 'How much space do you need for a golf simulator? NEAGLE GOLF lists the System Size (equipment envelope) for each model, from launch monitors to all-in-one systems.',
   extraHead: `<script type="application/ld+json">${JSON.stringify(roomPage.schema)}</script>`,
   main: roomPage.main
 });
