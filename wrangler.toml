@@ -10,7 +10,7 @@ compatibility_date = "2025-08-25"
 #   - `npx wrangler pages deploy dist` (Pages project)
 [assets]
 directory = "./dist"
-not_found_handling = "404.html"
+not_found_handling = "404-page"
 
 # Optional: redirect old SPA-style hash URLs to the new clean static URLs.
 # Uncomment if you previously linked to #category/... / #detail/... anywhere.
