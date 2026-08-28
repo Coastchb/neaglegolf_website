@@ -4,6 +4,10 @@
 name = "neaglegolf-website"
 compatibility_date = "2025-08-25"
 
+# Worker entry that enforces HTTPS + canonical host (www -> apex),
+# then serves the static assets in ./dist via env.ASSETS.fetch().
+main = "worker.js"
+
 # Static Assets deployment: serve ./dist as a static site on a Worker.
 # Works with both:
 #   - `npx wrangler deploy`            (Workers project — what the panel uses)

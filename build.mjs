@@ -17,7 +17,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
 const SRC = path.join(ROOT, 'index.html');
 const DIST = path.join(ROOT, 'dist');
-const SITE = 'https://www.neaglegolf.com';
+const SITE = 'https://neaglegolf.com';
 
 /* ── 1. Load source & extract pieces ───────────────────────────── */
 const html = fs.readFileSync(SRC, 'utf-8');
