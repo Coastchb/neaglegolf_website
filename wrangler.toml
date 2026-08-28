@@ -14,7 +14,9 @@ main = "worker.js"
 #   - `npx wrangler pages deploy dist` (Pages project)
 [assets]
 directory = "./dist"
-not_found_handling = "404-page"
+# 404 handling is done inside worker.js (fall back to /404.html with status 404),
+# so the edge-level 404-page machinery is disabled to avoid 307/500 quirks.
+not_found_handling = "none"
 
 # Optional: redirect old SPA-style hash URLs to the new clean static URLs.
 # Uncomment if you previously linked to #category/... / #detail/... anywhere.

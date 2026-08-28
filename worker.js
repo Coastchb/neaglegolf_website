@@ -6,6 +6,9 @@
  *   http://www.neaglegolf.com/*  -> https://neaglegolf.com/*
  *   https://www.neaglegolf.com/* -> https://neaglegolf.com/*
  *
+ * Unknown paths fall back to the custom 404 page (dist/404.html) instead of
+ * letting the asset layer return a raw 500/307.
+ *
  * workers.dev preview and local dev (wrangler dev) are served as-is.
  */
 export default {
@@ -30,6 +33,29 @@ export default {
     }
 
     // workers.dev preview & everything else — serve static assets
-    return env.ASSETS.fetch(request);
+    let res;
+    try {
+      res = await env.ASSETS.fetch(request);
+    } catch {
+      res = null;
+    }
+    if (!res || res.status === 404 || res.status >= 500) {
+      // serve the custom 404 page (dist/404.html) with a proper 404 status
+      try {
+        const nf = await env.ASSETS.fetch(
+          new Request(new URL('/404.html', url), request)
+        );
+        if (nf && nf.status === 200) {
+          return new Response(nf.body, { status: 404, headers: nf.headers });
+        }
+      } catch {
+        // fall through to plain 404 below
+      }
+      return new Response('404 - Page Not Found', {
+        status: 404,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
+    return res;
   }
 };
